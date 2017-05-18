@@ -1,0 +1,20 @@
+default:
+  autoload:
+    - ./features/bootstrap
+  suites:
+    #paths:
+    #    features: ./features
+    #    bootstrap: ./features/bootstrap
+        
+    apifeatures:
+      contexts:
+        - KitListContext
+        - PlacesContext
+        - RouteContext
+        - TripsContext
+        - UsersContext
+        - VehicleContext
+        
+        
+
+        

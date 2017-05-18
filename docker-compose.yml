@@ -1,0 +1,29 @@
+php:
+  volumes:
+    - "./app:/var/www/html/"
+  build: ./app
+  ports:
+    - "3030:3000"
+  links:
+    - "db:mongo"
+  expose:
+    - "9000"
+
+nginx:
+  restart: always
+  build: ./nginx/
+  ports:
+    - "8888:80"
+  volumes:
+    - /www/public
+  volumes_from:
+    - php
+  links:
+    - php:php
+
+db:
+  build: ./mongo/
+  volumes:
+    - "./mongo:/mongo"
+  ports:
+    - "27017:27017"
