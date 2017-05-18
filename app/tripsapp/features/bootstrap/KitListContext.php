@@ -17,6 +17,29 @@ class KitListContext implements Context
     {
         $json = "{/}";
         $res = $this->client->post('/kitlist/');
+        
+        
+        $ex = false; 
+        try{
+        
+            $res = $this->client->post('/dictionary/keyword',
+                array( 'json' => array(
+                  'project' => 'cairo',
+                  'label' => 'boop',
+                  'sport' => 'football',
+                  'category' => 'game'
+                  )
+                )
+            );
+
+        } catch (Exception $e) {
+            $ex = true;
+            echo 'Caught exception: ',  $e->getMessage(), "\n";
+        }
+        if($ex == false){
+            throw new exception('No error thrown');
+        }
+        
     }
 
     /**

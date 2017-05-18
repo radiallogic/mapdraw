@@ -14,7 +14,6 @@ Feature: route API
     Then I get a valid JSON response
 
   Scenario: GET a list of routes
-    Given there is more than one route in the database
     When I access the url /trip/{id}/route/
     Then I get a list of routes
     And I get a valid JSON response

@@ -14,7 +14,6 @@ Feature: kitList API
     Then I get a valid JSON response
 
   Scenario: GET a list of kitLists
-    Given there is more than one kitList in the database
     When I access the url /kitList/
     Then I get a list of kitLists
     And I get a valid JSON response

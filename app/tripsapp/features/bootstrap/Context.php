@@ -81,8 +81,12 @@ abstract class mainContext implements Context {
      */
     public function iGetA($arg1)
     {
-        var_dump($arg1);
-        // 422 or 201
+        $code = $this->res->getStatusCode();
+        if($code == $arg1){
+            echo "Received " . $arg1;
+        }else{
+            throw new Exception("Received " . $code . " not " . $arg1);
+        }
     }
 }
 

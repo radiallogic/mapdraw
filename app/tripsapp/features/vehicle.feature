@@ -20,7 +20,6 @@ Feature: Vehicle API
     Then I get a valid JSON response
 
   Scenario: GET a list of vehicles
-    Given there is more than one vehicle in the database
     When I access the url /vehicle/
     Then I get a list of vehicles
     And I get a valid JSON response

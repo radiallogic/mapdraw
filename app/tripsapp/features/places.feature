@@ -14,7 +14,6 @@ Feature: places API
     Then I get a valid JSON response
 
   Scenario: GET a list of places
-    Given there is more than one place in the database
     When I access the url /place/
     Then I get a list of places
     And I get a valid JSON response

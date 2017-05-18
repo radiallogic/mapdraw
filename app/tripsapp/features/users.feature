@@ -19,7 +19,6 @@ Feature: user API
     Then I get a valid JSON response
 
   Scenario: GET a list of users
-    Given there is more than one user in the database
     When I access the url /user/
     Then I get a list of users
     And I get a valid JSON response

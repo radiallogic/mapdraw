@@ -14,7 +14,6 @@ Feature: trip API
     Then I get a valid JSON response
 
   Scenario: GET a list of trips
-    Given there is more than one trip in the database
     When I access the url /trip/
     Then I get a list of trips
     And I get a valid JSON response

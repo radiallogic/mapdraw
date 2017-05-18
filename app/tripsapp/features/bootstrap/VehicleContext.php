@@ -47,14 +47,6 @@ class VehicleContext extends mainContext
     }
 
     /**
-     * @Given there is more than one vehicle in the database
-     */
-    public function thereIsMoreThanOneVehicleInTheDatabase()
-    {
-        throw new PendingException();
-    }
-
-    /**
      * @When I access the url \/vehicle\/
      */
     public function iAccessTheUrlVehicle()
