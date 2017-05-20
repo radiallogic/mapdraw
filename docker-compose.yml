@@ -1,4 +1,5 @@
 php:
+  container_name: tripsapp
   volumes:
     - "./app:/var/www/html/"
   build: ./app
@@ -10,6 +11,7 @@ php:
     - "9000"
 
 nginx:
+  container_name: nginx
   restart: always
   build: ./nginx/
   ports:
@@ -22,6 +24,7 @@ nginx:
     - php:php
 
 db:
+  container_name: mongo
   build: ./mongo/
   volumes:
     - "./mongo:/mongo"
