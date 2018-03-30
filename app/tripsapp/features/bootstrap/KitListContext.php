@@ -1,5 +1,7 @@
 <?php
 
+
+
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
@@ -7,16 +9,21 @@ use Behat\Gherkin\Node\TableNode;
 /**
  * Defines application features from the specific context.
  */
-class KitListContext implements Context
+class KitListContext extends GuzzleContext
 {
-    
+    public function __construct()
+    {
+      parent::__construct();
+
+    }
+
     /**
      * @When I post invalid kitList JSON to \/kitList\/
      */
     public function iPostInvalidKitlistJsonToKitlist()
     {
         $json = "{/}";
-        $res = $this->client->post('/kitlist/');
+        $res = $this->client->post('/kitlist', $json);
         
         
         $ex = false; 

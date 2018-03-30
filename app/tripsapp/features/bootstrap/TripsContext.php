@@ -7,7 +7,7 @@ use Behat\Gherkin\Node\TableNode;
 /**
  * Defines application features from the specific context.
  */
-class TripsContext extends mainContext
+class TripsContext extends GuzzleContext
 {
     
     /**

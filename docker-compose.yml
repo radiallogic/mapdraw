@@ -9,7 +9,7 @@ php:
     - "db:mongo"
   expose:
     - "9000"
-
+    
 nginx:
   container_name: nginx
   restart: always

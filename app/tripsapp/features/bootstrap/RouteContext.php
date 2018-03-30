@@ -7,7 +7,7 @@ use Behat\Gherkin\Node\TableNode;
 /**
  * Defines application features from the specific context.
  */
-class RouteContext extends mainContext
+class RouteContext extends GuzzleContext
 {
      /**
      * @When I post invalid route JSON to \/trip\/{id}\/route\/

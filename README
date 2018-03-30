@@ -1,0 +1,24 @@
+
+
+#-----------------------------------Commands
+docker-compose up
+
+docker exec -ti mongo bash
+docker exec -ti nginx bash
+
+
+#-----------------------------------Urls
+
+http://localhost:8888/
+http://localhost:8888/api/kitlists
+
+
+#-----------------------------------TODO
+
+* behat tests setup
+* mongodb access 
+* react 
+* react tests 
+
+
+

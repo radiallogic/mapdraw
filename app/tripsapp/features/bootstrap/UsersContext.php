@@ -7,7 +7,7 @@ use Behat\Gherkin\Node\TableNode;
 /**
  * Defines application features from the specific context.
  */
-class UsersContext extends mainContext
+class UsersContext extends GuzzleContext
 {
     /**
      * @When I access the url \/user\/login with the correct credentials
