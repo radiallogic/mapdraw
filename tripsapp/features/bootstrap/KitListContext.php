@@ -22,27 +22,30 @@ class KitListContext extends GuzzleContext
      */
     public function iPostInvalidKitlistJsonToKitlist()
     {
-        $json = "{/}";
-        $res = $this->client->post('/kitlist', $json);
+        $json = array();
+
+        $this->client = new \GuzzleHttp\Client();
+
+        $res = $this->client->post('http://localhost:3030/api/kitlist/', $json);
         
         
         $ex = false; 
-        try{
+        // try{
         
-            $res = $this->client->post('/dictionary/keyword',
-                array( 'json' => array(
-                  'project' => 'cairo',
-                  'label' => 'boop',
-                  'sport' => 'football',
-                  'category' => 'game'
-                  )
-                )
-            );
+        //     $res = $this->client->post('/kitlist',
+        //         array( 'json' => array(
+        //           'project' => 'cairo',
+        //           'label' => 'boop',
+        //           'sport' => 'football',
+        //           'category' => 'game'
+        //           )
+        //         )
+        //     );
 
-        } catch (Exception $e) {
-            $ex = true;
-            echo 'Caught exception: ',  $e->getMessage(), "\n";
-        }
+        // } catch (Exception $e) {
+        //     $ex = true;
+        //     echo 'Caught exception: ',  $e->getMessage(), "\n";
+        // }
         if($ex == false){
             throw new exception('No error thrown');
         }

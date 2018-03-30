@@ -21,7 +21,7 @@ abstract class GuzzleContext implements Context {
     {
 
         $this->client = new \GuzzleHttp\Client([
-            'base_url' => ['http:/localhost:8888/api', ['version' => 'v1.0'] ],
+            'base_url' => ['http:/localhost:8888/api/', ['version' => 'v1.0'] ],
             'defaults' => [
                 'headers' => ['Accept'     => 'application/json', 'Content-Type' => 'application/json'],
                 //'auth'    => ['cairo', 'jordan-INCREASE-state-STONE'],
