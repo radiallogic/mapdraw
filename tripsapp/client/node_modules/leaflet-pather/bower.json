@@ -1,0 +1,38 @@
+{
+  "name": "leaflet-pather",
+  "version": "0.1.17",
+  "homepage": "https://github.com/Wildhoney/L.Pather",
+  "authors": [
+    "Adam Timberlake <adam.timberlake@gmail.com>"
+  ],
+  "description": "Branching from Leaflet.FreeDraw, L.Pather is a freehand polyline creator that simplifies the polyline for mutability.",
+  "main": "dist/pather.js",
+  "keywords": [
+    "polyline",
+    "leaflet",
+    "simplify",
+    "path",
+    "line",
+    "draw",
+    "freehand",
+    "freedraw"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "example/vendor",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "leaflet": ">0.7.0",
+    "d3": "~3.5.5"
+  },
+  "devDependencies": {
+    "font-awesome": "~4.3.0",
+    "react": "~0.13.2",
+    "mousetrap": "~1.5.2"
+  }
+}
