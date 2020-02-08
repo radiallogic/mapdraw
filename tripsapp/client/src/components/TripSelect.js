@@ -5,6 +5,11 @@ class TripSelect extends React.Component {
         super();
     }
 
+    select = (event) => {
+        this.props.select(event.target.value);
+        this.props.setContentToDefault();
+    }
+
     render(){
         let options = this.props.options.map( (item, i) => {
             return (<option key={i} value={item._id}> {item.name} </option>)
@@ -13,7 +18,7 @@ class TripSelect extends React.Component {
         return (
             <div id="trip-select" className="control">
                 <div className="select">
-                    <select onChange={this.props.select}>
+                    <select onChange={this.select}>
                         {options}
                     </select>
                 </div>

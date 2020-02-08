@@ -11,7 +11,7 @@ export default class Vehicles extends React.Component {
 
         return (
             <div id="vehicles" className="level-item" >
-                <VehicleSelect options={this.props.vehicles} />\
+                <VehicleSelect options={this.props.vehicles} />
             </div>
         )
     }

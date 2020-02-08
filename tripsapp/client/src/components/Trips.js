@@ -2,7 +2,7 @@ import React from 'react';
 
 import TripAdd from './TripAdd'
 import TripSelect from './TripSelect'
-
+import TripTitle from './TripTitle'
 
 
 class Trips extends React.Component {
@@ -11,54 +11,71 @@ class Trips extends React.Component {
 
         this.state = {
             expanded: false,
-            selected: 'None', 
-            add: false
+            add: false,
+            content: ''
         }
     }
 
-    save = () => {
-
+    componentDidMount = () => {
+        this.setContentToDefault();
     }
 
-    select = (trip) => {
-        this.setState({selected: trip});
-        this.props.select(trip);
+    componentDidUpdate = (prevProps) => {
+        console.log(" props: ", prevProps )
+
+        if(this.props.trip !== prevProps.trip){
+            this.setContentToDefault();
+        }
+    } 
+
+    select = (id) => {
+        console.log('trip ', id);
+        this.props.select(id);
+    }
+
+    setContentToDefault = () => {
+        this.setState(
+            {
+            content: <TripTitle expand={this.expand} selected={this.props.trip}/>, 
+            button: <button className="button is-primary is-outlined" onClick={this.add}>Add Trip</button> 
+            }
+        )
+    }
+
+    save = (name) =>{
+        console.log('save function');
+        this.props.save(name);
+        this.setContentToDefault();
     }
 
     expand = () =>{
         console.log('expand function');
-        this.setState({expanded:true});
+        this.setState({content: <TripSelect select={this.select}
+                                            options={this.props.trips}
+                                            setContentToDefault={this.setContentToDefault} /> });
     }
 
     add = () =>{
         console.log('add function');
-        this.setState({add:true, expanded:true});
+        this.setState({content: <TripAdd    save={this.props.save} 
+                                            setContentToDefault={this.setContentToDefault} />, 
+                        button: <button className="button is-primary is-outlined" onClick={this.setContentToDefault}>Cancel</button>});
     }
 
     render(){
- 
-        if(this.state.expanded){
-            return (
-                <div id="trips">
-                    {this.state.add && <TripAdd save={this.save} />}
-                    <TripSelect select={this.select} options={this.props.trips}/>
-                </div>
-            );
-        }else{
-            return (
+
+        return (
             
-                <div id="trips" className="level-item" >
-                    <span onClick={this.add}>
-                        +
-                    </span>
+            <div id="trips" className="level-item" >
 
-                    <span onClick={this.expand}>
-                        {this.state.selected}
-                    </span>
+                {this.state.button}
 
-                </div>
-            )
-        }
+                <span className="button is-primary is-light">
+                    {this.state.content}
+                </span>
+
+            </div>
+        )
 
     }
 }

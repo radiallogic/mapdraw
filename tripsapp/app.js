@@ -2,44 +2,45 @@ const express = require('express')
 const app = express()
 const port = 3000
 
-mongo = require('mongodb').MongoClient;
-ObjectID = require('mongodb').ObjectID;
+const mongo = require('mongodb').MongoClient;
+const ObjectID = require('mongodb').ObjectID;
+
+const url = "mongodb://localhost:27017/"; // tripsapp 
 
 
-var url = "mongodb://localhost:27017/"; // tripsapp 
-
+app.use(express.json());
 
 app.use('/', express.static('client'));
 
 const objects = ['trips', 'kitlists', 'routes', 'vehicles', 'sites']; 
 
-app.get('/api/:object/:id', (req, res) => {
-	console.log(req.params);
+// app.get('/api/:object/:id', (req, res) => {
+// 	console.log(req.params);
 
-	mongo.connect(url, (err, client) => {
-		if (err) {
-			console.error(err);
-			return 
-		}
+// 	mongo.connect(url, (err, client) => {
+// 		if (err) {
+// 			console.error(err);
+// 			return 
+// 		}
 
-		let object = req.params.object;
-		//validate object is in objects
-		console.log("id"); 
-		console.log(object); 
+// 		let object = req.params.object;
+// 		//TODO: validate object is in objects
+// 		// console.log("id"); 
+// 		// console.log(object); 
 
-		const db = client.db('tripsapp')
-		const collection = db.collection(object)
+// 		const db = client.db('tripsapp')
+// 		const collection = db.collection(object)
 
-		let query = {};
-		if(req.params.id != '-1'){
-			query = { _id : new ObjectID(req.params.id) };
-		}
+// 		let query = {};
+// 		if(req.params.id != '-1'){
+// 			query = { _id : new ObjectID(req.params.id) };
+// 		}
 
-		collection.find(query).toArray((err, items) => {
-			res.send(items);
-		})
-	})
-})
+// 		collection.find(query).toArray((err, items) => {
+// 			res.send(items);
+// 		})
+// 	})
+// })
 
 
 app.get('/api/:object/', (req, res) => {
@@ -52,10 +53,7 @@ app.get('/api/:object/', (req, res) => {
 		}
 
 		let object = req.params.object;
-		//validate object is in objects
-
-		console.log("collection"); 
-		console.log(object); 
+		//TODO: validate object is in objects
 
 		const db = client.db('tripsapp')
 		const collection = db.collection(object)
@@ -68,7 +66,11 @@ app.get('/api/:object/', (req, res) => {
 	})
 })
 
-app.post('/api/:object/data/data:', (req, res) => {
+app.post('/api/:object/', (req, res) => { // data/data:
+
+	console.log('Got a POST request'); 
+	console.log('body is ',req.body);
+	
 	mongo.connect(url, (err, client) => {
 		if (err) {
 			console.error(err);
@@ -77,27 +79,46 @@ app.post('/api/:object/data/data:', (req, res) => {
 		const db = client.db('tripsapp')
 		const collection = db.collection(req.params.object)
 
-		collection.insertOne(req.params.data, (err, result) => {
 
+		let body = req.body;
+		if(body._id == null){
+			body._id = new ObjectID();
+		}
+
+		collection.insertOne(req.body, (err, result) => {
+			if(err == null){
+				console.log(result.ops);
+				res.send(result.ops[0])
+			}else{
+				//TODO check this for security
+				res.send(err)
+				console.log('error: ', err)
+			}
 		})
 	})
-	//res.send('Got a POST request')
+
+	
 })
 
-app.put('/api/:object', (req, res) => {
-	mongo.connect(url, (err, client) => {
-		if (err) {
-			console.error(err);
-			return 
-		}
-		const db = client.db('tripsapp')
-		const collection = db.collection(req.params.object)
+// app.put('/api/:object', (req, res) => {
 
-		// collection.deleteOne({name: 'Togo'}, (err, item) => {
-		// 	console.log(item)
-		// })
-	})
-})
+// 	console.log('Got a PUT request'); 
+// 	console.log('body is ',req.body);
+   
+
+// 	mongo.connect(url, (err, client) => {
+// 		if (err) {
+// 			console.error(err);
+// 			return 
+// 		}
+// 		const db = client.db('tripsapp')
+// 		const collection = db.collection(req.params.object)
+
+// 		collection.insertOne(res.body);
+// 	})
+
+// 	//res.send(req.body);
+// })
 
 app.delete('/api/:object/:id', (req, res) => {
 
