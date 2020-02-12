@@ -16,10 +16,14 @@ class App extends Component {
       trips: [], 
       vehicles: [], 
       kitlists: [],
+
+      id: '',
       trip: 'None', 
       vehicle: '',
       kitlist: '',  
-      route: []
+      route: [],
+
+      error: '',
 
     }
   }
@@ -44,49 +48,111 @@ class App extends Component {
       .catch(function(err) {
         console.log('Fetch Error :-S', err);
       });
-  });
+    });
   }
 
-  setSelected = (id, data = null) => {
+  addKitlist = (kitlist) => {
+    this.setState(prevState => ({
+      kitlists: [...prevState.kitlists, kitlist]
+    }))
+  }
+
+  removekitlist = (kitlist) => {
+    let kitlists = [...this.state.kitlists]; 
+    const index = array.indexOf(kitlist)
+    if (index !== -1) {
+      array.splice(index, 1);
+      this.setState({kitlists: kitlists});
+    }
+  }
+
+  addVehicle = (vehicle) => {
+    console.log('add vehicle: ', vehicle); 
+    // save to server here
+
+    this.setState(prevState => ({
+      vehicles: [...prevState.vehicles, vehicle]
+    }), () => {
+      console.log('vehicles: ', this.state.vehicles); 
+    });
+  }
+
+  removeVehicle = (vehicle) => {
+    let vehicles = [...this.state.vehicles]; 
+    const index = array.indexOf(vehicle)
+    if (index !== -1) {
+      array.splice(index, 1);
+      this.setState({vehicles: vehicles});
+    }
+  }
+
+  setSelectedTrip = (id, data = null) => {
     if(data != null){
+
+      // update id row in js.
+
       this.setState(prevState => ({
         trips: [...prevState.trips, data]
       }))
     }
-    console.log('in setSelected: ', id);
-    //needs new data to work from. 
 
     this.state.trips.map( (item) => {
       if(item._id == id){
-        console.log(item._id);
-
-        this.setState({trip: item.name }, () => { // , vehicle: item.vehicle, kitlist: item.kitlist, route: item.kitlist
+        this.setState({trip: item.name, id: item._id, vehicle: item.vehicle}, () => { // kitlist: item.kitlist, route: item.kitlist
           console.log("state now: ", this.state);
         });
       }
     })    
   }
 
-  saveTrip = (name) => {
-    console.log("in saveTrip: " + name);
-
-    fetch('/api/trips', {
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      method: 'POST',
-      body: JSON.stringify({name:name})
-    }).then( (response) => {
-      return response.json();
-    }).then( (data) => {
-      console.log('returned data: ', data);
-      this.getAllData(); // stack order? 
-      this.setSelected(data._id, data);
-
-      // deal with errors here
+  setSelectedVehicle = (vehicle) => {
+    console.log('setSelectedVehicle: ', vehicle);
+    this.setState({vehicle:vehicle}, () => {
+      this.saveTrip();
     });
+  }
 
+  saveName = (name) => {
+    console.log('saveName: ', vehicle);
+    this.setState({trip: name} , () => {
+      this.saveTrip();
+    });
+  }
+
+  saveTrip = () => {
+
+    console.log('state before trip', this.state); 
+
+    if(this.state.trip !== '' ){
+      let body = {name:this.state.trip, vehicle: this.state.vehicle}; 
+
+      // add ID to body if not blank
+      if(this.state.id !== null && this.state.id !== ''){
+        body._id = this.state.id;
+      }
+
+      body = JSON.stringify(body);
+      console.log('body', body);
+
+      fetch('/api/trips', {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        method: 'POST',
+        body: body
+      }).then( (response) => {
+        return response.json();
+      }).then( (data) => {
+        console.log('returned data: ', data);
+        this.getAllData(); // stack order? 
+        this.setSelectedTrip(data._id, data);
+
+        // deal with errors here
+      });
+    }else{
+      this.setState({error: "Name can't be empty"});
+    }
   }
 
   render() {
@@ -95,18 +161,26 @@ class App extends Component {
       <>
         <div className="section">
           
-          <div  className="level">
-
+          <div className="level">
+            { this.state.error && <h3 className="error"> { this.state.error } </h3> }
             <Trips 
               trips={this.state.trips}
               trip={this.state.trip}
-              select={this.setSelected}
-              save={this.saveTrip}
+              select={this.setSelectedTrip}
+              save={this.saveName}
               />
 
-            <Vehicles vehicles={this.state.vehicles} vehicle={this.state.vehicle} />
+            <Vehicles 
+              vehicles={this.state.vehicles}
+              vehicle={this.state.vehicle}
+              add={this.addVehicle}
+              remove={this.removeVehicle}
+              select={this.setSelectedVehicle} />
 
-            <KitList />
+            <KitList 
+              add={this.addKitlist}
+              remove={this.removekitlist}
+            />
           </div>
 
         </div>

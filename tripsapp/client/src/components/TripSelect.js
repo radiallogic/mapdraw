@@ -16,11 +16,14 @@ class TripSelect extends React.Component {
         });
 
         return (
-            <div id="trip-select" className="control">
-                <div className="select">
-                    <select onChange={this.select}>
-                        {options}
-                    </select>
+            <div className="field">
+                <div id="trip-select" className="control">
+                    <div className="select">
+                        <select onChange={this.select} >
+                            <option key={0} value=""> None Selected </option>
+                            {options}
+                        </select>
+                    </div>
                 </div>
             </div>
         );

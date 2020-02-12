@@ -44,7 +44,7 @@ const objects = ['trips', 'kitlists', 'routes', 'vehicles', 'sites'];
 
 
 app.get('/api/:object/', (req, res) => {
-	console.log(req.params);
+	//console.log('params: ', req.params);
 
 	mongo.connect(url, (err, client) => {
 		if (err) {
@@ -69,7 +69,7 @@ app.get('/api/:object/', (req, res) => {
 app.post('/api/:object/', (req, res) => { // data/data:
 
 	console.log('Got a POST request'); 
-	console.log('body is ',req.body);
+	console.log('body is ', req.body);
 	
 	mongo.connect(url, (err, client) => {
 		if (err) {
@@ -83,18 +83,35 @@ app.post('/api/:object/', (req, res) => { // data/data:
 		let body = req.body;
 		if(body._id == null){
 			body._id = new ObjectID();
+			collection.insertOne(req.body, (err, result) => {
+				if(err == null){
+					console.log('Returning from Insert', result.ops);
+					res.send(result.ops[0])
+				}else{
+					//TODO check this for security
+					res.send(err)
+					console.log('error: ', err)
+				}
+			})
+		}else{
+
+			const id = new ObjectID(body._id);
+			let update = {...body};
+			delete update._id;
+			
+			collection.updateOne({_id: id },  { $set: update} , (err, result) => {
+				if(err == null){
+					console.log(" Returning from Update: ", body);
+					res.send(body)
+				}else{
+					//TODO check this for security
+					res.send(err)
+					console.log('error: ', err)
+				}
+			})
 		}
 
-		collection.insertOne(req.body, (err, result) => {
-			if(err == null){
-				console.log(result.ops);
-				res.send(result.ops[0])
-			}else{
-				//TODO check this for security
-				res.send(err)
-				console.log('error: ', err)
-			}
-		})
+		
 	})
 
 	

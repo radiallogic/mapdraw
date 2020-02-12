@@ -1,6 +1,6 @@
 import React from 'react';
 
-class TripAdd extends React.Component {
+class VehicleAdd extends React.Component {
     constructor(){
         super();
 
@@ -13,8 +13,7 @@ class TripAdd extends React.Component {
 
     save = (event) => {
         event.preventDefault();
-        this.props.save(this.state.value); 
-        this.props.setContentToDefault();
+        this.props.add(this.state.value); 
     } 
 
     render(){
@@ -32,4 +31,4 @@ class TripAdd extends React.Component {
     }
 }
 
-export default TripAdd;
+export default VehicleAdd;
