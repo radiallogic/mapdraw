@@ -1,0 +1,5 @@
+
+# fix a bug with the default virtual box setup getting in the way of vagrant private networks
+VBoxManage dhcpserver remove --netname HostInterfaceNetworking-vboxnet0 
+vagrant plugin install vagrant-vbguest
+

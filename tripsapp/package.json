@@ -2,14 +2,26 @@
   "name": "tripsapp",
   "version": "1.0.0",
   "description": "",
-  "main": "app.js",
+  "main": "server.js",
   "scripts": {
-    "start": "nodejs ./app.js"
+    "start": "nodejs ./server.js",
+    "test": "jest"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
-    "mongodb": "^3.5.2"
+    "mongodb": "^3.5.2",
+    "passport": "^0.4.1",
+    "supertest": "^4.0.2"
+  },
+  "devDependencies": {
+    "jest": "^25.2.7"
+  },
+  "jest": {
+    "modulePathIgnorePatterns": [
+      "client",
+      "node_modules"
+    ]
   }
 }

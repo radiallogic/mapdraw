@@ -109,7 +109,8 @@ git config --global user.email "max@radiallogic.co.uk"
 git config --global user.name "Max B"
 
 
+echo "installing yarn" 
 
+curl -o- -L https://yarnpkg.com/install.sh | bash
 
-
-
+# cd /var/www/html/tripsapp/ 

@@ -1,7 +1,6 @@
+
 const express = require('express')
 const app = express()
-const port = 3000
-
 const mongo = require('mongodb').MongoClient;
 const ObjectID = require('mongodb').ObjectID;
 
@@ -9,8 +8,19 @@ const url = "mongodb://localhost:27017/"; // tripsapp
 
 
 app.use(express.json());
-
 app.use('/', express.static('client'));
+
+
+app.configure(function() {
+    app.use(express.static('public'));
+    app.use(express.cookieParser());
+    app.use(express.bodyParser());
+    app.use(express.session({ secret: 'keyboard cat' }));
+    app.use(passport.initialize());
+    app.use(passport.session());
+    app.use(app.router);
+});
+
 
 const objects = ['trips', 'kitlists', 'routes', 'vehicles', 'sites']; 
 
@@ -155,4 +165,4 @@ app.delete('/api/:object/:id', (req, res) => {
  	res.send('Got a DELETE request')
 })
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+module.exports = app;

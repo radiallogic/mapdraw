@@ -1,8 +1,7 @@
 import React from 'react'
 import  { LayersControl, Marker, Map, Popup, TileLayer, ZoomControl, GeoJSON, ScaleControl} from 'react-leaflet'
 
-
-import Pather from './Pather'
+import Paths from '../Paths/react-leaflet-paths';
 
 export default class MapContainer extends React.Component {
 	constructor() {
@@ -51,15 +50,8 @@ export default class MapContainer extends React.Component {
 			  url='https://{s}.tile.osm.org/{z}/{x}/{y}.png'
 			/>
 
-			<Pather />
-			
-			<Marker position={position}>
-			  <Popup>
-				A pretty CSS3 popup. <br/> Easily customizable.
-			  </Popup>
-			</Marker>
-
-			
+			<Paths />
+						
 		  </Map>
 		);
 	  }

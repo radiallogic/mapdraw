@@ -186,7 +186,7 @@ class App extends Component {
         </div>
 
         <div className="section">
-         
+          <MapContainer />
         </div>
       </>
     );
