@@ -1,6 +1,6 @@
 import React from 'react';
 
-import VehicleSelect from './VehicleSelect'
+import VehicleSelect from '../VehicleSelect'
 import VehicleCurrent from './VehicleCurrent'
 import VehicleAdd from './VehicleAdd'
 
