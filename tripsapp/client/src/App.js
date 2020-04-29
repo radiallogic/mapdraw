@@ -2,11 +2,13 @@
 import React, { Component } from "react";
 import ReactDOM from 'react-dom';
 
+import User from './components/User/User'
+
 import MapContainer from './components/MapContainer'
 
-import Trips from './components/Trips'
-import Vehicles from './components/Vehicles'
-import KitList from './components/KitList'
+import Trips from './components/Trip/Trips'
+import Vehicles from './components/Trip/Vehicles'
+import KitList from './components/Trip/KitList'
 
 class App extends Component {
   constructor(){
@@ -159,6 +161,7 @@ class App extends Component {
 
     return (
       <>
+        <User />
         <div className="section">
           
           <div className="level">

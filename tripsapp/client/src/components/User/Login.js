@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import ReactModal from 'react-modal';
+import Forgotten from './Forgotten';
 
 class Login extends Component {
     constructor(){
@@ -38,6 +39,9 @@ class Login extends Component {
     login = () => {
 
 
+
+        //<Forgotten className="is-pulled-right"/> 
+
         this.close();
     }
 
@@ -64,6 +68,9 @@ class Login extends Component {
                     <button className="button is-primary is-light" onClick={this.login}>Login</button>
                 </div>
             </div>
+
+            
+            
 
             </ReactModal>
             </>

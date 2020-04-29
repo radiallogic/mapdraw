@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import Login from './Login';
 import Signup from './Signup';
-import Forgotten from './Forgotten';
 
 class User extends Component {
     constructor(){
@@ -14,9 +13,8 @@ class User extends Component {
 
         return (
             <div>
-                <Login />
-                <Signup />
-                <Forgotten />
+                <Login className="is-pulled-right"/>
+                <Signup className="is-pulled-right" />
             </div>
         )
     }

@@ -6,51 +6,45 @@ const ObjectID = require('mongodb').ObjectID;
 
 const url = "mongodb://localhost:27017/"; // tripsapp 
 
-
 app.use(express.json());
 app.use('/', express.static('client'));
 
 
-app.configure(function() {
-    app.use(express.static('public'));
-    app.use(express.cookieParser());
-    app.use(express.bodyParser());
-    app.use(express.session({ secret: 'keyboard cat' }));
-    app.use(passport.initialize());
-    app.use(passport.session());
-    app.use(app.router);
-});
+const userController = require('./controllers/user.controller');
+/**
+ * User app routes.
+ */
+app.post("/user/signup", userController.postSignup);
+app.post("/user/login", userController.postLogin);
+app.get("/user/logout", userController.logout);
+app.post("/user/forgot", userController.postForgot);
+app.post("/user/reset/:token", userController.postReset);
+
+// app.get("/contact", contactController.getContact);
+// app.post("/contact", contactController.postContact);
+
+// app.get("/account", passportConfig.isAuthenticated, userController.getAccount);
+// app.post("/account/profile", passportConfig.isAuthenticated, userController.postUpdateProfile);
+// app.post("/account/password", passportConfig.isAuthenticated, userController.postUpdatePassword);
+// app.post("/account/delete", passportConfig.isAuthenticated, userController.postDeleteAccount);
+// app.get("/account/unlink/:provider", passportConfig.isAuthenticated, userController.getOauthUnlink);
+
+/**
+ * API examples routes.
+ */
+// app.get("/api", apiController.getApi);
+// app.get("/api/facebook", passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getFacebook);
+
+/**
+ * OAuth authentication routes. (Sign in)
+ */
+// app.get("/auth/facebook", passport.authenticate("facebook", { scope: ["email", "public_profile"] }));
+// app.get("/auth/facebook/callback", passport.authenticate("facebook", { failureRedirect: "/login" }), (req, res) => {
+//     res.redirect(req.session.returnTo || "/");
+// });
 
 
-const objects = ['trips', 'kitlists', 'routes', 'vehicles', 'sites']; 
 
-// app.get('/api/:object/:id', (req, res) => {
-// 	console.log(req.params);
-
-// 	mongo.connect(url, (err, client) => {
-// 		if (err) {
-// 			console.error(err);
-// 			return 
-// 		}
-
-// 		let object = req.params.object;
-// 		//TODO: validate object is in objects
-// 		// console.log("id"); 
-// 		// console.log(object); 
-
-// 		const db = client.db('tripsapp')
-// 		const collection = db.collection(object)
-
-// 		let query = {};
-// 		if(req.params.id != '-1'){
-// 			query = { _id : new ObjectID(req.params.id) };
-// 		}
-
-// 		collection.find(query).toArray((err, items) => {
-// 			res.send(items);
-// 		})
-// 	})
-// })
 
 
 app.get('/api/:object/', (req, res) => {
@@ -64,6 +58,7 @@ app.get('/api/:object/', (req, res) => {
 
 		let object = req.params.object;
 		//TODO: validate object is in objects
+		const objects = ['trips', 'kitlists', 'routes', 'vehicles', 'sites']; 
 
 		const db = client.db('tripsapp')
 		const collection = db.collection(object)
@@ -126,26 +121,6 @@ app.post('/api/:object/', (req, res) => { // data/data:
 
 	
 })
-
-// app.put('/api/:object', (req, res) => {
-
-// 	console.log('Got a PUT request'); 
-// 	console.log('body is ',req.body);
-   
-
-// 	mongo.connect(url, (err, client) => {
-// 		if (err) {
-// 			console.error(err);
-// 			return 
-// 		}
-// 		const db = client.db('tripsapp')
-// 		const collection = db.collection(req.params.object)
-
-// 		collection.insertOne(res.body);
-// 	})
-
-// 	//res.send(req.body);
-// })
 
 app.delete('/api/:object/:id', (req, res) => {
 

@@ -40,7 +40,7 @@ Update
 
 echo "Install nodejs "
 sudo apt-get install curl software-properties-common
-curl -sL https://deb.nodesource.com/setup_10.x | sudo bash -
+curl -sL https://deb.nodesource.com/setup_12.x | sudo bash -
 sudo apt-get install -y nodejs apache2 
 
 
