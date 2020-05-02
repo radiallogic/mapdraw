@@ -5,10 +5,15 @@ import ReactDOM from 'react-dom';
 import User from './components/User/User'
 
 import MapContainer from './components/MapContainer'
+import MapControls from './components/MapControls'
 
 import Trips from './components/Trip/Trips'
 import Vehicles from './components/Trip/Vehicles'
 import KitList from './components/Trip/KitList'
+
+import Bubble from './Bubble'
+import './app.scss'
+
 
 class App extends Component {
   constructor(){
@@ -161,36 +166,54 @@ class App extends Component {
 
     return (
       <>
-        <User />
-        <div className="section">
-          
-          <div className="level">
+       
+
+        <div className="flex-container"> 
+        
+        <div className="page">
+          <div className="header">
             { this.state.error && <h3 className="error"> { this.state.error } </h3> }
-            <Trips 
-              trips={this.state.trips}
-              trip={this.state.trip}
-              select={this.setSelectedTrip}
-              save={this.saveName}
-              />
 
-            <Vehicles 
-              vehicles={this.state.vehicles}
-              vehicle={this.state.vehicle}
-              add={this.addVehicle}
-              remove={this.removeVehicle}
-              select={this.setSelectedVehicle} />
-
-            <KitList 
-              add={this.addKitlist}
-              remove={this.removekitlist}
-            />
+            <Bubble className="login-bubble">
+              <User />
+            </Bubble>
           </div>
 
+          <div className="menu-parent">
+            <Bubble className="child">
+              <Trips 
+                trips={this.state.trips}
+                trip={this.state.trip}
+                select={this.setSelectedTrip}
+                save={this.saveName}
+                />
+            </Bubble>
+
+            <Bubble className="child">
+              <Vehicles 
+                vehicles={this.state.vehicles}
+                vehicle={this.state.vehicle}
+                add={this.addVehicle}
+                remove={this.removeVehicle}
+                select={this.setSelectedVehicle} />
+            </Bubble>
+            
+            <Bubble className="child">
+              <KitList 
+                add={this.addKitlist}
+                remove={this.removekitlist}
+              />
+            </Bubble>
+
+            <Bubble className="child">
+              <MapControls />
+            </Bubble>
+
+          </div>
+        </div>
         </div>
 
-        <div className="section">
-          <MapContainer />
-        </div>
+        <MapContainer />
       </>
     );
 

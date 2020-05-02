@@ -16,13 +16,14 @@ Update
 sudo apt-get install -y vim htop curl git unzip
 sudo apt-get install dirmngr -y --install-recommends
 
-echo "-- Install mongo key"
-sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 9DA31620334BD75D9DCB49F368818C72E52529D4
+echo "-- Install mongodb key"
+sudo wget -qO - https://www.mongodb.org/static/pgp/server-4.2.asc | sudo apt-key add -
 
-echo "Install mongodb "
-echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.0.list
-Update
+echo "-- Install mongodb"
+echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.2 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.2.list
+sudo apt-get update
 sudo apt-get install -y mongodb-org
+
 
 echo "-- Install Yarn --"
 curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
@@ -114,3 +115,5 @@ echo "installing yarn"
 curl -o- -L https://yarnpkg.com/install.sh | bash
 
 # cd /var/www/html/tripsapp/ 
+
+echo "cd /var/www/html/tripsapp" >> /home/vagrant/.bashrc

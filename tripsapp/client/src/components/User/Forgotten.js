@@ -9,6 +9,8 @@ class Forgotten extends Component {
         {   open: false, 
             email: ""
         };
+
+        ReactModal.setAppElement('#root');
     }
 
     updateEmail = (e) => {
@@ -33,7 +35,7 @@ class Forgotten extends Component {
 
         return (
             <>
-            <Button onClick={this.open}> Forgotten Password </Button>
+            <button onClick={this.open}> Forgotten Password </button>
             <ReactModal 
                 isOpen={this.state.open}
                 onRequestClose={this.closeModal}

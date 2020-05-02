@@ -35,7 +35,7 @@ export const postLogin = async (req: Request, res: Response, next: NextFunction)
         }
         req.logIn(user, (err) => {
             if (err) { return next(err); }
-            return res.send( { msg: "Success! You are logged in." } );
+            return res.status(200).send( { msg: "Success! You are logged in." } );
         });
     })(req, res, next);
 };
@@ -101,7 +101,7 @@ export const postUpdateProfile = async (req: Request, res: Response, next: NextF
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
-        return res.send({"errors": errors.array()});
+        return res.status(403).send({"errors": errors.array()});
     }
 
     const user = req.user as UserDocument;
@@ -116,7 +116,7 @@ export const postUpdateProfile = async (req: Request, res: Response, next: NextF
                 }
                 return next(err);
             }
-            res.send({ msg: "Profile information has been updated." });
+            res.status(200).send({ msg: "Profile information has been updated." });
         });
     });
 };
@@ -141,7 +141,7 @@ export const postUpdatePassword = async (req: Request, res: Response, next: Next
         user.password = req.body.password;
         user.save((err: WriteError) => {
             if (err) { return next(err); }
-            res.send({ msg: "Password has been changed." });
+            res.status(200).send({ msg: "Password has been changed." });
         });
     });
 };
@@ -155,7 +155,7 @@ export const postDeleteAccount = (req: Request, res: Response, next: NextFunctio
     User.remove({ _id: user.id }, (err) => {
         if (err) { return next(err); }
         req.logout();
-        res.send({ msg: "Your account has been deleted." });
+        res.status(200).send({ msg: "Your account has been deleted." });
     });
 };
 
@@ -172,7 +172,7 @@ export const getOauthUnlink = (req: Request, res: Response, next: NextFunction) 
         user.tokens = user.tokens.filter((token: AuthToken) => token.kind !== provider);
         user.save((err: WriteError) => {
             if (err) { return next(err); }
-            return res.send({ msg: provider + " account has been unlinked." });
+            return res.status(200).send({ msg: provider + " account has been unlinked." });
         });
     });
 };
@@ -200,7 +200,7 @@ export const postReset = async (req: Request, res: Response, next: NextFunction)
                 .exec((err, user: any) => {
                     if (err) { return next(err); }
                     if (!user) {
-                        return res.send({ msg: "Password reset token is invalid or has expired." });
+                        return res.status(403).send({ msg: "Password reset token is invalid or has expired." });
                     }
                     user.password = req.body.password;
                     user.passwordResetToken = undefined;

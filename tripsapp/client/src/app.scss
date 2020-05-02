@@ -1,0 +1,72 @@
+
+.leaflet-container {
+    top: 0px;
+    left: 0px;
+
+    position: absolute;
+
+    height: 100%;
+    width: 100%;
+
+    z-index: 10;
+} 
+
+.flex-container {
+    z-index: 900;
+    display: flex;
+    pointer-events: none;
+}
+
+.header{
+    z-index: 900;
+    flex-direction: row;
+}
+
+.page{
+    z-index: 900;
+    flex-direction: column;
+}
+
+.menu-parent{
+    flex-direction: column;
+    width: 30%;
+    z-index: 900;
+}
+
+.child{
+    //position: fixed;
+}
+
+.button{
+    background: #ffffff;
+    box-shadow:  20px 20px 60px #d9d9d9, 
+             -20px -20px 60px #ffffff;
+}
+
+.bubble {
+    background-color: rgba(255, 255, 255, .5);
+
+    -webkit-box-shadow: 10px 10px 30px -5px rgba(0,0,0,0.75);
+    -moz-box-shadow: 10px 10px 30px -5px rgba(0,0,0,0.75);
+    box-shadow: 10px 10px 30px -5px rgba(0,0,0,0.75);
+
+    border-radius: 15px;
+
+    padding: 20px;
+    margin: 10px;
+
+    z-index: 900;
+}
+  
+
+.login-bubble {
+    margin-left: auto;
+    z-index: 900;
+    top: 20px;
+    right: 20px;
+}
+
+
+
+
+

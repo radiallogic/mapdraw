@@ -10,6 +10,8 @@ class Signup extends Component {
             email: "", 
             pass: ""
         };
+
+        ReactModal.setAppElement('#root');
     }
 
     updateEmail = (e) => {
@@ -42,7 +44,7 @@ class Signup extends Component {
 
         return (
             <>
-            <Button onClick={this.open}> Login </Button>
+            <button className="button" onClick={this.open}> Sign up </button>
             <ReactModal 
                 isOpen={this.state.open}
                 onRequestClose={this.closeModal}

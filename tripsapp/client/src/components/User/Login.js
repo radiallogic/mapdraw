@@ -11,6 +11,8 @@ class Login extends Component {
             email: "", 
             pass: ""
         };
+
+        ReactModal.setAppElement('#root');
     }
 
 
@@ -50,7 +52,7 @@ class Login extends Component {
 
         return (
             <>
-            <Button onClick={this.open}> Login </Button>
+            <button className="button" onClick={this.open}> Login </button>
             <ReactModal 
                 isOpen={this.state.open}
                 onRequestClose={this.closeModal}

@@ -5,8 +5,8 @@
   "main": "server.js",
   "scripts": {
     "build": "npx tsc --allowJs --skipLibCheck ",
-    "start": "nodejs ./build/server.js",
-    "test": "jest"
+    "start": "nodemon ./build/server.js",
+    "test": "npx jest ./build/tests/"
   },
   "author": "",
   "license": "DBAD",
@@ -23,17 +23,20 @@
   },
   "devDependencies": {
     "@types/express": "^4.17.6",
+    "@types/jest": "^25.2.1",
     "@types/mongodb": "^3.5.14",
     "@types/mongoose": "^5.7.14",
     "@types/node": "^13.13.4",
     "@types/passport": "^1.0.3",
     "jest": "^25.2.7",
+    "nodemon": "^2.0.3",
     "supertest": "^4.0.2",
     "ts-loader": "^7.0.1",
     "tslint": "^6.1.2",
     "typescript": "^3.8.3"
   },
   "jest": {
+    "testEnvironment": "node",
     "modulePathIgnorePatterns": [
       "client",
       "node_modules"
