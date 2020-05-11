@@ -1,13 +1,14 @@
 import React from 'react'
 import  { LayersControl, Marker, Map, Popup, TileLayer, ZoomControl, GeoJSON, ScaleControl} from 'react-leaflet'
 
-import Paths from '../Paths/react-leaflet-paths';
+import Paths, {ALL}  from '../Paths/react-leaflet-paths';
+export const ADD = 9;
 
 export default class MapContainer extends React.Component {
 	constructor() {
 		super();
 		this.state = {
-			zoom: 15,
+			zoom: 6,
 			position : [51.454, -2.587]
 		};
 	};
@@ -24,34 +25,67 @@ export default class MapContainer extends React.Component {
 		});
 		
         //this.updatePosition();
-    };
+	};
+	
     updatePosition = () => {
 
-    }
+	}	
+	
+	onZoomEnd = () => {
+		// var zoom = this.refs.map.leafletElement.getZoom();
+	}
 
 	handlePopupClose = () => {
 		//console.log('handlePopupClose');
 
-		// var zoom = this.refs.map.leafletElement.getZoom();
+		
 		// this.props.setCenter(this.refs.map.leafletElement.getCenter(), zoom); 
 		// this.updateAllowPositionUpdate(true);
 
 		// this.refs.map.leafletElement.setZoom(zoom);
 	}
 
+	handleOnMarkers = () => {
+		console.log('handle on markers');
+	}
 
-	render() {
+	addMarker = (event) => {
 
-		const position = [51.454, -2.587];
+		if(this.props.mode & ADD ){
+			console.log("addMarker", event );
+			// create site marker and save? 
+
+		}
+
+	}
+
+	render() {		
 		return (
-		  <Map center={this.state.position} zoom={5}>
+		  <Map 
+			center={this.state.position}
+			zoom={this.state.zoom}
+			
+			onDragend={this.updatePosition}
+			onZoomend={this.onZoomEnd}
+			onClick={this.addMarker}
+
+			>
+
 			<TileLayer
 			  attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
 			  url='https://{s}.tile.osm.org/{z}/{x}/{y}.png'
 			/>
 
-			<Paths />
-						
+			<Paths 
+			    paths={this.props.paths}
+			    mode={this.props.mode}
+				onMarkers={this.handleOnMarkers}
+				onModeChange={this.handleModeChange}
+				ref={this.freedrawRef}
+			/>
+
+			{this.state.markers}
+
 		  </Map>
 		);
 	  }

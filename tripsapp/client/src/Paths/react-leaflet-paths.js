@@ -1,5 +1,6 @@
-import LeafletPaths from './Paths';
+import LeafletPaths from './Paths'; 
 import { MapLayer, withLeaflet } from 'react-leaflet';
+
 
 class Paths extends MapLayer {
   createLeafletElement(props) {
@@ -7,12 +8,18 @@ class Paths extends MapLayer {
   }
 
   updateLeafletElement(fromProps, toProps) {
+
+    // load path here 
     this.leafletElement.mode(toProps.mode);
+
+    this.leafletElement.setPaths(toProps.paths);
   }
 
   componentDidMount() {
     const { map } = this.props.leaflet;
     map.addLayer(this.leafletElement);
+
+    console.log( 'map in react-leaflet-paths' , map);
     this.attachEvents();
   }
 
@@ -26,4 +33,5 @@ class Paths extends MapLayer {
   }
 }
 
+export {ALL, NONE, DELETE} from './Paths';
 export default withLeaflet(Paths);

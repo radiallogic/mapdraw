@@ -162,12 +162,14 @@ class App extends Component {
     }
   }
 
+  setMode = (mode) => {
+    this.setState({mode:mode});
+  }
+
   render() {
 
     return (
       <>
-       
-
         <div className="flex-container"> 
         
         <div className="page">
@@ -199,29 +201,29 @@ class App extends Component {
             </Bubble>
             
             <Bubble className="child">
-              <KitList 
-                add={this.addKitlist}
-                remove={this.removekitlist}
+              <MapControls 
+                setMode={this.setMode}
               />
-            </Bubble>
-
-            <Bubble className="child">
-              <MapControls />
             </Bubble>
 
           </div>
         </div>
         </div>
 
-        <MapContainer />
+        <MapContainer mode={this.state.mode} />
       </>
     );
 
   }
 }
 
+{/* <Bubble className="child">
+<KitList 
+  add={this.addKitlist}
+  remove={this.removekitlist}
+/>
+</Bubble> */}
 
-//  <MapContainer />
-//export default App;
+//   
 
 ReactDOM.render(<App />, document.getElementById('root'));

@@ -74,6 +74,7 @@ export default class Paths extends FeatureGroup {
     constructor(options = defaultOptions) {
         super();
         this.options = { ...defaultOptions, ...options };
+        this.polylines = [];
     }
 
     createPolyline = (map, latLngs, options = defaultOptions) => {
@@ -85,16 +86,12 @@ export default class Paths extends FeatureGroup {
         let geojson = turf.lineString(coords);
         let simplified = turf.simplify(geojson, {tolerance: 0.01, highQuality: false} );
     
-        console.log('simplified: ', simplified); 
-    
-        // var geojson = new geoJSON(simplified);
-        // geojson.addTo(map);
-    
-        var polyline = new Polyline(map, simplified.geometry.coordinates, options, {
-            //fire: this.fire.bind(this),
-            //mode: this.getMode.bind(this),
-            //remove: this.removePath.bind(this)
-        });
+        // console.log('simplified: ', simplified); 
+
+        let polyline = new Polyline(simplified.geometry.coordinates); 
+        polyline.addTo(map);
+
+        console.log( 'map in createPolyline' , map);
     
         this.polylines.push(polyline);
     
@@ -135,25 +132,25 @@ export default class Paths extends FeatureGroup {
 
     }
 
-    /**
-     * @method onRemove
-     * @param {Object} map
-     * @return {void}
-     */
-    onRemove = (map) => {
+    // /**
+    //  * @method onRemove
+    //  * @param {Object} map
+    //  * @return {void}
+    //  */
+    // onRemove = (map) => {
 
-        // Remove the item from the map.
-        polygons.delete(map);
+    //     // Remove the item from the map.
+    //     polygons.delete(map);
 
-        // Remove the SVG layer.
-        this.svg.remove();
+    //     // Remove the SVG layer.
+    //     this.svg.remove();
 
-        // Remove the appendages from the map container.
-        delete map[cancelKey];
-        delete map[instanceKey];
-        // delete map.simplifyPolygon;
+    //     // Remove the appendages from the map container.
+    //     delete map[cancelKey];
+    //     delete map[instanceKey];
+    //     // delete map.simplifyPolygon;
 
-    }
+    // }
 
     /**
      * @method create
@@ -177,6 +174,10 @@ export default class Paths extends FeatureGroup {
         //updateFor(this.map, 'remove');
     }
 
+    setPaths = () => {
+
+    }
+
     /**
      * @method clear
      * @return {void}
@@ -193,26 +194,28 @@ export default class Paths extends FeatureGroup {
      */
     mode(mode = null) {
 
+        console.log(' here in mode  ');
+
         // Set mode when passed `mode` is numeric, and then yield the current mode.
         typeof mode === 'number' && modeFor(this.map, mode, this.options);
         return this.map[modesKey];
     }
 
-    /**
-     * @method size
-     * @return {Number}
-     */
-    size() {
-        return polygons.get(this.map).size;
-    }
+    // /**
+    //  * @method size
+    //  * @return {Number}
+    //  */
+    // size() {
+    //     return polygons.get(this.map).size;
+    // }
 
-    /**
-     * @method all
-     * @return {Array}
-     */
-    all() {
-        return Array.from(polygons.get(this.map));
-    }
+    // /**
+    //  * @method all
+    //  * @return {Array}
+    //  */
+    // all() {
+    //     return Array.from(polygons.get(this.map));
+    // }
 
     /**
      * @method cancel
@@ -355,7 +358,7 @@ export default class Paths extends FeatureGroup {
 //     return new paths(options);
 // };
 
-// export { CREATE, EDIT, DELETE, APPEND, EDIT_APPEND, NONE, ALL } from './helpers/Flags';
+export { CREATE, EDIT, DELETE, APPEND, EDIT_APPEND, NONE, ALL } from './helpers/Flags';
 
 // if (typeof window !== 'undefined') {
 

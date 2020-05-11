@@ -1,4 +1,11 @@
 
+
+$main: #97CAEF;
+$light: #CAFAFE;
+$strong-highlight: #3FEEE6;
+$dark-highlight: #55BCC9;
+
+
 .leaflet-container {
     top: 0px;
     left: 0px;
@@ -23,6 +30,7 @@
 }
 
 .page{
+    width:100%;
     z-index: 900;
     flex-direction: column;
 }
@@ -34,17 +42,65 @@
 }
 
 .child{
+    margin: auto;
     //position: fixed;
 }
 
-.button{
+select{
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    padding: .375rem .75rem;
+
+    option, * {
+        background-color: white;
+        color: white;
+    }
+}
+
+.button, .select select, input{
+
+    display: inline-flex;
+    font-weight: 400;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+    appearance: none;
+
+    border: 1px solid transparent;
+    padding: .375rem .75rem;
+    margin: .25rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: .25rem;
+    transition: color .15s ease-in-out, background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+
     background: #ffffff;
-    box-shadow:  20px 20px 60px #d9d9d9, 
-             -20px -20px 60px #ffffff;
+    box-shadow: .25rem .25rem .75rem $strong-highlight, 
+                .25rem .25rem .75rem #ffffff;
+
+    z-index: 900;
+
+    
+}
+
+.button:focus {
+    outline: none;
+}
+
+.highlight{
+    background: $main;
 }
 
 .bubble {
-    background-color: rgba(255, 255, 255, .5);
+    display: inline-flex;
+
+    background-color: $light ; //rgba(255, 255, 255, .5)
 
     -webkit-box-shadow: 10px 10px 30px -5px rgba(0,0,0,0.75);
     -moz-box-shadow: 10px 10px 30px -5px rgba(0,0,0,0.75);
@@ -56,17 +112,17 @@
     margin: 10px;
 
     z-index: 900;
+
+    pointer-events: all;
 }
   
 
 .login-bubble {
-    margin-left: auto;
+    width: 12.5em;
+    display: flex;
+    justify-content: center;
     z-index: 900;
-    top: 20px;
-    right: 20px;
+    margin-left: auto;
 }
-
-
-
 
 
