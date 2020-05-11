@@ -1,35 +1,36 @@
 import { DivIcon, Marker, DomEvent } from 'leaflet';
-import { polygons, modesKey, notifyDeferredKey } from '../Paths';
+import { polylines, modesKey, notifyDeferredKey } from '../Paths';
 import { updateFor } from './Layer';
 import { CREATE, EDIT } from './Flags';
 
 /**
  * @method createEdges
  * @param {Object} map
- * @param {L.Polygon} polygon
+ * @param {L.polyline} polyline
  * @param {Object} options
  * @return {Array}
  */
-export default function createEdges(map, polygon, options) {
+export default function createEdges(map, polyline, options) {
 
-    /**
-     * @method fetchLayerPoints
-     * @param polygon {Object}
-     * @return {Array}
-     */
-    const fetchLayerPoints = polygon => {
+    // /**
+    //  * @method fetchLayerPoints
+    //  * @param polyline {Object}
+    //  * @return {Array}
+    //  */
+    // const fetchLayerPoints = polyline => {
 
-        return polygon.getLatLngs()[0].map(latLng => {
-            return map.latLngToLayerPoint(latLng);
-        });
+    //     return polyline.getLatLngs()[0].map(latLng => {
+    //         return map.latLngToLayerPoint(latLng);
+    //     });
 
-    };
+    // };
 
-    const markers = fetchLayerPoints(polygon).map(point => {
+    // ;
+
+    const markers = polyline.getLatLngs().map(latLng => {
 
         const mode = map[modesKey];
-        const icon = new DivIcon({ className: `leaflet-edge ${mode & EDIT ? '' : 'disabled'}`.trim() });
-        const latLng = map.layerPointToLatLng(point);
+        const icon = new DivIcon();
         const marker = new Marker(latLng, { icon }).addTo(map);
 
         // Disable the propagation when you click on the marker.
@@ -39,7 +40,7 @@ export default function createEdges(map, polygon, options) {
 
             if (!(map[modesKey] & EDIT)) {
 
-                // Polygons can only be created when the mode includes edit.
+                // polylines can only be created when the mode includes edit.
                 map.off('mousedown', mouseDown);
                 return;
 
@@ -62,10 +63,10 @@ export default function createEdges(map, polygon, options) {
                 // Update the marker with the new lat/lng.
                 marker.setLatLng(latLng);
 
-                // ...And finally update the polygon to match the current markers.
+                // ...And finally update the polyline to match the current markers.
                 const latLngs = markers.map(marker => marker.getLatLng());
-                polygon.setLatLngs(latLngs);
-                polygon.redraw();
+                polyline.setLatLngs(latLngs);
+                polyline.redraw();
 
             };
 
@@ -90,21 +91,21 @@ export default function createEdges(map, polygon, options) {
                 map.off('mousedown', mouseDown);
                 map.off('mousemove', mouseMove);
 
-                // Attempt to simplify the polygon to prevent voids in the polygon.
-                // fillPolygon(map, polygon, options);
+                // Attempt to simplify the polyline to prevent voids in the polyline.
+                // fillpolyline(map, polyline, options);
 
-                // Merge the polygons if the options allow using a two-pass approach as this yields the better results.
-                // const merge = () => mergePolygons(map, Array.from(polygons.get(map)), options);
-               //  options.mergePolygons && merge() && merge();
+                // Merge the polylines if the options allow using a two-pass approach as this yields the better results.
+                // const merge = () => mergepolylines(map, Array.from(polylines.get(map)), options);
+               //  options.mergepolylines && merge() && merge();
 
-                // Trigger the event for having modified the edges of a polygon, unless the `notifyAfterEditExit`
+                // Trigger the event for having modified the edges of a polyline, unless the `notifyAfterEditExit`
                 // option is equal to `true`, in which case we'll defer the notification.
-                options.notifyAfterEditExit ? (() => {
+                // options.notifyAfterEditExit ? (() => {
 
-                    // Deferred function that will be invoked by `modeFor` when the `EDIT` mode is exited.
-                    map[notifyDeferredKey] = () => updateFor(map, 'edit');
+                //     // Deferred function that will be invoked by `modeFor` when the `EDIT` mode is exited.
+                //     //map[notifyDeferredKey] = () => updateFor(map, 'edit');
 
-                })() : updateFor(map, 'edit');
+                // })() : updateFor(map, 'edit');
 
             }
 

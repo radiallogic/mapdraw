@@ -120,7 +120,7 @@ class App extends Component {
   }
 
   saveName = (name) => {
-    console.log('saveName: ', vehicle);
+    console.log('saveName: ', name);
     this.setState({trip: name} , () => {
       this.saveTrip();
     });
@@ -164,6 +164,10 @@ class App extends Component {
 
   setMode = (mode) => {
     this.setState({mode:mode});
+  }
+
+  setRoute = (route) => {
+    this.setState({route:route});
   }
 
   render() {
@@ -210,7 +214,7 @@ class App extends Component {
         </div>
         </div>
 
-        <MapContainer mode={this.state.mode} />
+        <MapContainer mode={this.state.mode} setRoute={this.setRoute} />
       </>
     );
 

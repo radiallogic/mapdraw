@@ -16,7 +16,7 @@ class VehicleSelect extends React.Component {
                 <div id="vehicle-select" className="control">
                     <div className="select" >
                         <select onChange={this.props.select} value={this.props.vehicle}>
-                            <option key={0} value=""> None Selected </option>
+                            <option key={0} value=""> Pick Vehicle </option>
                             {options}
                         </select>
                     </div>

@@ -50,40 +50,40 @@ import * as turf from '@turf/turf';
 
 // };
 
-/**
- * @method createFor
- * @param {Object} map
- * @param {Array} latLngs
- * @param {Object} [options = defaultOptions]
- * @param {Boolean} [preventMutations = false]
- * @return {Array|Boolean}
- */
-export const CreatePolyline = (map, latLngs, options = defaultOptions) => {
+// /**
+//  * @method createFor
+//  * @param {Object} map
+//  * @param {Array} latLngs
+//  * @param {Object} [options = defaultOptions]
+//  * @param {Boolean} [preventMutations = false]
+//  * @return {Array|Boolean}
+//  */
+// export const CreatePolyline = (map, latLngs, options = defaultOptions) => {
 
-    let coords =  latLngs.map( (item, i) => {
-        return [ item.lat, item.lng ];
-    } );
+//     let coords =  latLngs.map( (item, i) => {
+//         return [ item.lat, item.lng ];
+//     } );
 
-    let geojson = turf.lineString(coords);
-    let options = {tolerance: 0.01, highQuality: false};
-    let simplified = turf.simplify(geojson, options);
+//     let geojson = turf.lineString(coords);
+//     let options = {tolerance: 0.01, highQuality: false};
+//     let simplified = turf.simplify(geojson, options);
 
-    console.log('simplified: ', simplified); 
+//     console.log('simplified: ', simplified); 
 
-    // var geojson = new geoJSON(simplified);
-    // geojson.addTo(map);
+//     // var geojson = new geoJSON(simplified);
+//     // geojson.addTo(map);
 
 
-    var polyline = new Polyline(map, simplified.geometry.coordinates, options, {
-        //fire: this.fire.bind(this),
-        //mode: this.getMode.bind(this),
-        //remove: this.removePath.bind(this)
-    });
+//     var polyline = new Polyline(map, simplified.geometry.coordinates, options, {
+//         //fire: this.fire.bind(this),
+//         //mode: this.getMode.bind(this),
+//         //remove: this.removePath.bind(this)
+//     });
 
-    this.polylines.push(polyline);
+//     this.polylines.push(polyline);
 
-    return polyline;
-};
+//     return polyline;
+// };
 
 /**
  * @method removeFor

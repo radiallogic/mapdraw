@@ -53,8 +53,7 @@ export default class Vehicles extends React.Component {
     render(){
         return (
             <div id="trips" className="level-item" >   
-                {this.state.button}
-                {this.state.content}
+                {this.state.button} {this.state.content}
             </div>
         )
     }

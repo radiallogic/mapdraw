@@ -7,6 +7,7 @@ import { line, curveMonotoneX } from 'd3-shape';
 
 import * as turf from '@turf/turf';
 import { CREATE, EDIT, DELETE, APPEND, EDIT_APPEND, NONE, ALL, modeFor } from './helpers/Flags';
+import createEdges from './helpers/Edges';
 
 // Preventing binding to the `window`.
 noConflict();
@@ -89,9 +90,8 @@ export default class Paths extends FeatureGroup {
         // console.log('simplified: ', simplified); 
 
         let polyline = new Polyline(simplified.geometry.coordinates); 
+        createEdges(map, polyline, options); 
         polyline.addTo(map);
-
-        console.log( 'map in createPolyline' , map);
     
         this.polylines.push(polyline);
     
@@ -174,8 +174,20 @@ export default class Paths extends FeatureGroup {
         //updateFor(this.map, 'remove');
     }
 
-    setPaths = () => {
+    removeFor = () => {
+        map.removeLayer(polygon);
+        edgesKey in polygon && polygon[edgesKey].map(edge => map.removeLayer(edge));
 
+        // Remove polygon from the master set.
+        polygons.get(map).delete(polygon);
+    }
+
+    setPaths = () => {
+        // clear all map layers 
+
+        // set paths 
+
+        // update map draw. 
     }
 
     /**
