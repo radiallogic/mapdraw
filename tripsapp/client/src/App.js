@@ -28,7 +28,8 @@ class App extends Component {
       trip: 'None', 
       vehicle: '',
       kitlist: '',  
-      route: [],
+      paths: [],
+      sites: [],
 
       error: '',
 
@@ -58,20 +59,20 @@ class App extends Component {
     });
   }
 
-  addKitlist = (kitlist) => {
-    this.setState(prevState => ({
-      kitlists: [...prevState.kitlists, kitlist]
-    }))
-  }
+  // addKitlist = (kitlist) => {
+  //   this.setState(prevState => ({
+  //     kitlists: [...prevState.kitlists, kitlist]
+  //   }))
+  // }
 
-  removekitlist = (kitlist) => {
-    let kitlists = [...this.state.kitlists]; 
-    const index = array.indexOf(kitlist)
-    if (index !== -1) {
-      array.splice(index, 1);
-      this.setState({kitlists: kitlists});
-    }
-  }
+  // removekitlist = (kitlist) => {
+  //   let kitlists = [...this.state.kitlists]; 
+  //   const index = array.indexOf(kitlist)
+  //   if (index !== -1) {
+  //     array.splice(index, 1);
+  //     this.setState({kitlists: kitlists});
+  //   }
+  // }
 
   addVehicle = (vehicle) => {
     console.log('add vehicle: ', vehicle); 
@@ -105,7 +106,15 @@ class App extends Component {
 
     this.state.trips.map( (item) => {
       if(item._id == id){
-        this.setState({trip: item.name, id: item._id, vehicle: item.vehicle}, () => { // kitlist: item.kitlist, route: item.kitlist
+
+        if(item.paths == undefined){
+          item.paths = [];
+        }
+        if(item.sites == undefined){
+          item.sites = [];
+        }
+
+        this.setState({trip: item.name, id: item._id, vehicle: item.vehicle, paths: item.paths, sites: item.sites}, () => { // kitlist: item.kitlist
           console.log("state now: ", this.state);
         });
       }
@@ -131,7 +140,7 @@ class App extends Component {
     console.log('state before trip', this.state); 
 
     if(this.state.trip !== '' ){
-      let body = {name:this.state.trip, vehicle: this.state.vehicle}; 
+      let body = {name:this.state.trip, vehicle: this.state.vehicle, paths: this.state.paths, sites: this.state.sites}; 
 
       // add ID to body if not blank
       if(this.state.id !== null && this.state.id !== ''){
@@ -166,8 +175,18 @@ class App extends Component {
     this.setState({mode:mode});
   }
 
-  setRoute = (route) => {
-    this.setState({route:route});
+  addPath = (path) => {
+    const {paths} = this.state
+    console.log('set paths');
+    paths.push(path);
+    this.setState({paths});
+    this.saveTrip();
+  }
+
+  addSite = (latlng) => {
+    const {sites} = this.state
+		sites.push(latlng);
+		this.setState({sites})
   }
 
   render() {
@@ -214,7 +233,13 @@ class App extends Component {
         </div>
         </div>
 
-        <MapContainer mode={this.state.mode} setRoute={this.setRoute} />
+        <MapContainer 
+          mode={this.state.mode}
+          addPath={this.addPath}
+          addSite={this.addSite}
+          paths={this.state.paths}
+          sites={this.state.sites}
+          />
       </>
     );
 

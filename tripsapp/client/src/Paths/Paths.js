@@ -1,13 +1,12 @@
 // import 'core-js';
 // import 'regenerator-runtime/runtime';
 
-import { noConflict, FeatureGroup, Point, Polyline, Marker } from 'leaflet';
+import { noConflict, FeatureGroup, Point, Polyline, Marker, LayerGroup, DivIcon, DomEvent } from 'leaflet';
 import { select } from 'd3-selection';
 import { line, curveMonotoneX } from 'd3-shape';
 
 import * as turf from '@turf/turf';
 import { CREATE, EDIT, DELETE, APPEND, EDIT_APPEND, NONE, ALL, modeFor } from './helpers/Flags';
-import createEdges from './helpers/Edges';
 
 // Preventing binding to the `window`.
 noConflict();
@@ -90,13 +89,101 @@ export default class Paths extends FeatureGroup {
         // console.log('simplified: ', simplified); 
 
         let polyline = new Polyline(simplified.geometry.coordinates); 
-        createEdges(map, polyline, options); 
-        polyline.addTo(map);
+        this.createEdges(this.map, polyline); 
+        polyline.addTo(this.layerGroup);
     
-        this.polylines.push(polyline);
+
+        this.options.addPath(simplified.geometry.coordinates); 
+
+        //this.polylines.push(polyline);
     
         return polyline;
     };
+
+    createEdges = (map, polyline)  => {
+
+        const markers = polyline.getLatLngs().map(latLng => {
+    
+            const mode = map[modesKey];
+            const icon = new DivIcon();
+            const marker = new Marker(latLng, { icon }).addTo(this.layerGroup);
+    
+            // Disable the propagation when you click on the marker.
+            DomEvent.disableClickPropagation(marker);
+    
+            marker.on('mousedown', function mouseDown() {
+    
+                if (!(map[modesKey] & EDIT)) {
+    
+                    // polylines can only be created when the mode includes edit.
+                    map.off('mousedown', mouseDown);
+                    return;
+    
+                }
+    
+                // Disable the map dragging as otherwise it's difficult to reposition the edge.
+                map.dragging.disable();
+    
+                /**
+                 * @method mouseMove
+                 * @param {Object} event
+                 * @return {void}
+                 */
+                const mouseMove = event => {
+    
+                    // Determine where to move the marker to from the mouse move event.
+                    const containerPoint = map.latLngToContainerPoint(event.latlng);
+                    const latLng = map.containerPointToLatLng(containerPoint);
+    
+                    // Update the marker with the new lat/lng.
+                    marker.setLatLng(latLng);
+    
+                    // ...And finally update the polyline to match the current markers.
+                    const latLngs = markers.map(marker => marker.getLatLng());
+                    polyline.setLatLngs(latLngs);
+                    polyline.redraw();
+    
+                };
+    
+                // Listen for the mouse move events to determine where to move the marker to.
+                map.on('mousemove', mouseMove);
+    
+                /**
+                 * @method mouseUp
+                 * @return {void}
+                 */
+                function mouseUp() {
+    
+                    if (!(map[modesKey] & CREATE)) {
+    
+                        // Re-enable the dragging of the map only if created mode is not enabled.
+                        map.dragging.enable();
+                    }
+    
+                    // Stop listening to the events.
+                    map.off('mouseup', mouseUp);
+                    map.off('mousedown', mouseDown);
+                    map.off('mousemove', mouseMove);
+    
+                }
+    
+                // Cleanup the mouse events when the user releases the mouse button.
+                // We need to listen on both map and marker, because if the user moves the edge too quickly then
+                // the mouse up will occur on the map layer.
+                map.on('mouseup', mouseUp);
+                marker.on('mouseup', mouseUp);
+    
+            });
+    
+            return marker;
+    
+        });
+    
+        return markers;
+    
+    }
+    
+
 
     /**
      * @method onAdd
@@ -113,12 +200,6 @@ export default class Paths extends FeatureGroup {
         map[instanceKey] = this;
         map[notifyDeferredKey] = () => {};
 
-        // Setup the dependency injection for simplifying the polygon.
-        //map.simplifyPolygon = simplifyPolygon;
-
-        // Add the item to the map.
-        //polygons.set(map, new Set());
-
         // Set the initial mode.
         modeFor(map, this.options.mode, this.options);
 
@@ -130,27 +211,13 @@ export default class Paths extends FeatureGroup {
         // Set the mouse events.
         this.listenForEvents(map, svg, this.options);
 
+
+        this.layerGroup = new LayerGroup; 
+        this.layerGroup.addTo(this.map);
+
     }
 
-    // /**
-    //  * @method onRemove
-    //  * @param {Object} map
-    //  * @return {void}
-    //  */
-    // onRemove = (map) => {
 
-    //     // Remove the item from the map.
-    //     polygons.delete(map);
-
-    //     // Remove the SVG layer.
-    //     this.svg.remove();
-
-    //     // Remove the appendages from the map container.
-    //     delete map[cancelKey];
-    //     delete map[instanceKey];
-    //     // delete map.simplifyPolygon;
-
-    // }
 
     /**
      * @method create
@@ -164,30 +231,22 @@ export default class Paths extends FeatureGroup {
         return created;
     }
 
-    /**
-     * @method remove
-     * @param {Object} polygon
-     * @return {void}
-     */
-    remove(polygon) {
-        polygon ? removeFor(this.map, polygon) : super.remove();
-        //updateFor(this.map, 'remove');
-    }
+    setPaths = (paths) => {
+        
+        this.layerGroup.clearLayers();
 
-    removeFor = () => {
-        map.removeLayer(polygon);
-        edgesKey in polygon && polygon[edgesKey].map(edge => map.removeLayer(edge));
+        // draw paths ???
+        paths.map( path => {
 
-        // Remove polygon from the master set.
-        polygons.get(map).delete(polygon);
-    }
 
-    setPaths = () => {
-        // clear all map layers 
+            console.log('set paths ', path);
+        
 
-        // set paths 
+            let polyline = new Polyline(path); 
+            this.createEdges(this.map, polyline); 
+            polyline.addTo(this.layerGroup);
+        }) 
 
-        // update map draw. 
     }
 
     /**
@@ -195,8 +254,7 @@ export default class Paths extends FeatureGroup {
      * @return {void}
      */
     clear() {
-        clearFor(this.map);
-        //updateFor(this.map, 'clear');
+        this.layerGroup.clearLayers();
     }
 
     /**
@@ -206,28 +264,12 @@ export default class Paths extends FeatureGroup {
      */
     mode(mode = null) {
 
-        console.log(' here in mode  ');
+        console.log(' here in mode ', mode);
 
         // Set mode when passed `mode` is numeric, and then yield the current mode.
         typeof mode === 'number' && modeFor(this.map, mode, this.options);
         return this.map[modesKey];
     }
-
-    // /**
-    //  * @method size
-    //  * @return {Number}
-    //  */
-    // size() {
-    //     return polygons.get(this.map).size;
-    // }
-
-    // /**
-    //  * @method all
-    //  * @return {Array}
-    //  */
-    // all() {
-    //     return Array.from(polygons.get(this.map));
-    // }
 
     /**
      * @method cancel

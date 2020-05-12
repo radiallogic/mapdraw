@@ -8,11 +8,14 @@ class Paths extends MapLayer {
   }
 
   updateLeafletElement(fromProps, toProps) {
+    if(fromProps.mode != toProps.mode){
+      this.leafletElement.mode(toProps.mode);
+    }
 
-    // load path here 
-    this.leafletElement.mode(toProps.mode);
-
-    this.leafletElement.setPaths(toProps.paths);
+    if(fromProps.paths != toProps.paths && toProps.paths != undefined){
+      console.log('paths changed')
+      this.leafletElement.setPaths(toProps.paths);
+    }
   }
 
   componentDidMount() {

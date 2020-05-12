@@ -1,7 +1,8 @@
 
 
 use tripsapp;
-db.trips.insert({"name": "trip 1", 'route': [], 'vehicle': ''})
+db.dropDatabase()
+db.trips.insert({"name": "trip 1", 'route': [], 'sites': [], 'vehicle': ''})
 db.trips.insert({"name": "trip 2", 'route': [], 'vehicle': ''})
 db.trips.insert({"name": "trip 3", 'route': [], 'vehicle': ''})
 db.trips.insert({"name": "trip 4", 'route': [], 'vehicle': ''})

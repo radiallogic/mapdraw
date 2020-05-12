@@ -9,7 +9,8 @@ export default class MapContainer extends React.Component {
 		super();
 		this.state = {
 			zoom: 6,
-			position : [51.454, -2.587]
+			position : [51.454, -2.587],
+			markers: []
 		};
 	};
 
@@ -51,10 +52,9 @@ export default class MapContainer extends React.Component {
 
 	addMarker = (event) => {
 
-		if(this.props.mode & ADD ){
-			console.log("addMarker", event );
-			// create site marker and save? 
-
+		if(this.props.mode == ADD){ 
+			//console.log("addMarker", event );
+			this.props.addSite(event.latlng);
 		}
 
 	}
@@ -68,7 +68,6 @@ export default class MapContainer extends React.Component {
 			onDragend={this.updatePosition}
 			onZoomend={this.onZoomEnd}
 			onClick={this.addMarker}
-
 			>
 
 			<TileLayer
@@ -76,7 +75,8 @@ export default class MapContainer extends React.Component {
 			  url='https://{s}.tile.osm.org/{z}/{x}/{y}.png'
 			/>
 
-			<Paths 
+			<Paths
+				addPath={this.props.addPath}
 			    paths={this.props.paths}
 			    mode={this.props.mode}
 				onMarkers={this.handleOnMarkers}
@@ -84,7 +84,9 @@ export default class MapContainer extends React.Component {
 				ref={this.freedrawRef}
 			/>
 
-			{this.state.markers}
+			{this.props.sites.map((position, idx) =>
+                <Marker key={`marker-${idx}`} position={position}></Marker>
+            )}
 
 		  </Map>
 		);
