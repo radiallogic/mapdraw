@@ -2,6 +2,11 @@ import React, { Component } from "react";
 import ReactModal from 'react-modal';
 import Forgotten from './Forgotten';
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
+
+import customStyles from './UserStyle';
+
 class Login extends Component {
     constructor(){
         super();
@@ -15,6 +20,7 @@ class Login extends Component {
         ReactModal.setAppElement('#root');
     }
 
+    
 
     // onFacebookLogin = () => {
     //     const inOneHour = new Date(new Date().getTime() + 60 * 60 * 1000);
@@ -40,11 +46,8 @@ class Login extends Component {
 
     login = () => {
 
-
-
-        //<Forgotten className="is-pulled-right"/> 
-
-        this.close();
+        let data = this.props.login(this.state.email, this.state.pass);
+        console.log('data', data);
     }
 
 
@@ -54,10 +57,12 @@ class Login extends Component {
             <>
             <button className="button" onClick={this.open}> Login </button>
             <ReactModal 
+                style={customStyles}
                 isOpen={this.state.open}
                 onRequestClose={this.closeModal}
             >
                 
+            <FontAwesomeIcon icon={faTimes} onClick={this.close} />
 
             <div id="user-login" className="field">
                 <div className="control">

@@ -14,7 +14,6 @@ import KitList from './components/Trip/KitList'
 import Bubble from './Bubble'
 import './app.scss'
 
-
 class App extends Component {
   constructor(){
     super();
@@ -25,7 +24,7 @@ class App extends Component {
       kitlists: [],
 
       id: '',
-      trip: 'None', 
+      name: 'None', 
       vehicle: '',
       kitlist: '',  
       paths: [],
@@ -114,7 +113,7 @@ class App extends Component {
           item.sites = [];
         }
 
-        this.setState({trip: item.name, id: item._id, vehicle: item.vehicle, paths: item.paths, sites: item.sites}, () => { // kitlist: item.kitlist
+        this.setState({name: item.name, id: item._id, vehicle: item.vehicle, paths: item.paths, sites: item.sites}, () => { // kitlist: item.kitlist
           console.log("state now: ", this.state);
         });
       }
@@ -139,7 +138,7 @@ class App extends Component {
 
     console.log('state before trip', this.state); 
 
-    if(this.state.trip !== '' ){
+    if(this.state.name !== '' ){
       let body = {name:this.state.trip, vehicle: this.state.vehicle, paths: this.state.paths, sites: this.state.sites}; 
 
       // add ID to body if not blank
@@ -177,7 +176,7 @@ class App extends Component {
 
   addPath = (path) => {
     const {paths} = this.state
-    console.log('set paths');
+    //console.log('set paths');
     paths.push(path);
     this.setState({paths});
     this.saveTrip();
@@ -208,7 +207,7 @@ class App extends Component {
             <Bubble className="child">
               <Trips 
                 trips={this.state.trips}
-                trip={this.state.trip}
+                name={this.state.name}
                 select={this.setSelectedTrip}
                 save={this.saveName}
                 />

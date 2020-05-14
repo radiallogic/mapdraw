@@ -14,7 +14,7 @@ export default class MapContainer extends React.Component {
 		};
 	};
 
-  	Ref = React.createRef();
+  	//Ref = React.createRef();
 
     componentDidMount = () => {
     	//console.log('componentDidMount');

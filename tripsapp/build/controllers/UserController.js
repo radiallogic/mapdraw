@@ -76,28 +76,27 @@ exports.postSignup = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
         email: req.body.email,
         password: req.body.password
     });
-    let foo = User_1.User.findOne({ email: req.body.email }, (err, existingUser) => {
+    User_1.User.findOne({ email: req.body.email }, (err, existingUser) => {
         if (err) {
             return next(err);
         }
         if (existingUser) {
             return res.send({ msg: "Account with that email address already exists." });
         }
+        //console.log(' user ',user);
         user.save((err) => {
-            console.log(' in user save');
+            console.log(' in user save', err);
             if (err) {
                 return next(err);
             }
             req.logIn(user, (err) => {
-                console.log('login after sign up');
+                console.log('login after sign up', err);
                 if (err) {
                     return next(err);
                 }
             });
         });
-        console.log(' here 4 ');
     });
-    console.log(' here 5 ', foo);
 });
 /**
  * POST /account/profile
@@ -331,4 +330,4 @@ exports.getFacebook = (req, res, next) => {
         });
     });
 };
-//# sourceMappingURL=user.controller.js.map
+//# sourceMappingURL=UserController.js.map

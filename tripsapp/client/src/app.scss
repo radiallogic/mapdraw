@@ -1,10 +1,8 @@
 
 
-$main: #97CAEF;
-$light: #CAFAFE;
-$strong-highlight: #3FEEE6;
-$dark-highlight: #55BCC9;
-
+$grey: #585858;
+$light-grey: #928f8f;
+$dark-highlight: #147e96;
 
 .leaflet-container {
     top: 0px;
@@ -72,7 +70,7 @@ select{
 
     appearance: none;
 
-    border: 1px solid transparent;
+    border: 1px solid $light-grey;
     padding: .375rem .75rem;
     margin: .25rem;
     font-size: 1rem;
@@ -81,7 +79,7 @@ select{
     transition: color .15s ease-in-out, background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 
     background: #ffffff;
-    box-shadow: .25rem .25rem .75rem $strong-highlight, 
+    box-shadow: .25rem .25rem .75rem $grey, 
                 .25rem .25rem .75rem #ffffff;
 
     z-index: 900;
@@ -94,22 +92,22 @@ select{
 }
 
 .highlight{
-    background: $main;
+    background: $dark-highlight;
 }
 
 .bubble {
     display: inline-flex;
 
-    background-color: $light ; //rgba(255, 255, 255, .5)
+    background-color: rgba(255, 255, 255, .5);
 
-    -webkit-box-shadow: 10px 10px 30px -5px rgba(0,0,0,0.75);
-    -moz-box-shadow: 10px 10px 30px -5px rgba(0,0,0,0.75);
-    box-shadow: 10px 10px 30px -5px rgba(0,0,0,0.75);
+    -webkit-box-shadow: 1em 1em 3em -0.5em rgba(0,0,0,0.75);
+    -moz-box-shadow: 1em 1em 3em -0.5em rgba(0,0,0,0.75);
+    box-shadow: 1em 1em 3em -0.5em rgba(0,0,0,0.75);
 
-    border-radius: 15px;
+    border-radius: 1em;
 
-    padding: 20px;
-    margin: 10px;
+    padding: 1em;
+    margin: 1em;
 
     z-index: 900;
 
@@ -126,3 +124,6 @@ select{
 }
 
 
+.ReactModalPortal, .ReactModalPortal > *{
+    z-index: 900;
+}

@@ -100,11 +100,12 @@ export default class Paths extends FeatureGroup {
         return polyline;
     };
 
-    createEdges = (map, polyline)  => {
+    // creates the dragable markers on a line
+    createEdges = (map, polyline)  => { 
 
         const markers = polyline.getLatLngs().map(latLng => {
     
-            const mode = map[modesKey];
+            //const mode = map[modesKey];
             const icon = new DivIcon();
             const marker = new Marker(latLng, { icon }).addTo(this.layerGroup);
     
@@ -211,13 +212,10 @@ export default class Paths extends FeatureGroup {
         // Set the mouse events.
         this.listenForEvents(map, svg, this.options);
 
-
         this.layerGroup = new LayerGroup; 
         this.layerGroup.addTo(this.map);
 
     }
-
-
 
     /**
      * @method create
@@ -225,23 +223,16 @@ export default class Paths extends FeatureGroup {
      * @param {Object} [options = { concavePolygon: false }]
      * @return {Object}
      */
-    create = (latLngs, options = { concavePolygon: false })  => {
-        const created = createPolyline(this.map, latLngs, { ...this.options, ...options });
-        //updateFor(this.map, 'create');
-        return created;
-    }
+    // create = (latLngs, options = { concavePolygon: false })  => {
+    //     const created = createPolyline(this.map, latLngs, { ...this.options, ...options });
+    //     //updateFor(this.map, 'create');
+    //     return created;
+    // }
 
-    setPaths = (paths) => {
-        
+    setPaths = (paths) => {        
         this.layerGroup.clearLayers();
 
-        // draw paths ???
-        paths.map( path => {
-
-
-            console.log('set paths ', path);
-        
-
+        paths.map( path => {        
             let polyline = new Polyline(path); 
             this.createEdges(this.map, polyline); 
             polyline.addTo(this.layerGroup);

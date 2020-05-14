@@ -1,6 +1,11 @@
 import React, { Component } from "react";
 import ReactModal from 'react-modal';
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
+
+import customStyles from './UserStyle';
+
 class Signup extends Component {
     constructor(){
         super();
@@ -8,7 +13,8 @@ class Signup extends Component {
         this.state = 
         {   open: false, 
             email: "", 
-            pass: ""
+            pass: "", 
+            passcon: "", 
         };
 
         ReactModal.setAppElement('#root');
@@ -35,8 +41,12 @@ class Signup extends Component {
     }
 
     signup = () => {
+        let data = this.props.signUp(this.state.email, this.state.pass, this.state.passcon);
+        console.log('data', data);
 
-        this.close();
+        // if errors display errors
+
+        // else this.close();
     }
 
 
@@ -46,10 +56,12 @@ class Signup extends Component {
             <>
             <button className="button" onClick={this.open}> Sign up </button>
             <ReactModal 
+                style={customStyles}
                 isOpen={this.state.open}
                 onRequestClose={this.closeModal}
             >
                 
+            <FontAwesomeIcon icon={faTimes} onClick={this.close} /> 
 
             <div id="user-login" className="field">
                 <div className="control">

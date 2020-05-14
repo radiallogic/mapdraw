@@ -36,7 +36,7 @@ class Trips extends React.Component {
         this.setState(
             {
             content: <TripSelect 
-                        trip={this.props.trip}
+                        name={this.props.name}
                         select={this.select}
                         options={this.props.trips}
                         setContentToDefault={this.setContentToDefault}

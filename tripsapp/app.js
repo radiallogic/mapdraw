@@ -4,13 +4,43 @@ const app = express()
 const mongo = require('mongodb').MongoClient;
 const ObjectID = require('mongodb').ObjectID;
 
-const url = "mongodb://localhost:27017/"; // tripsapp 
+import passport from "passport";
+import session from "express-session";
+import mongoose from "mongoose";
+import mongostore from "connect-mongo";
+
+
+
+const MongoStore = mongostore(session);
+const url = "mongodb://localhost:27017/tripsapp"; // tripsapp 
+
+mongoose.connect(url);
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function(callback) {
+    console.log("connection to db open")
+});
+
 
 app.use(express.json());
 app.use('/', express.static('client'));
+//app.use(compression());
+app.use(session({
+    resave: true,
+    saveUninitialized: true,
+    secret: 'AsuperSecrettTT!!!StRinGGG',
+    store: new MongoStore({
+        url: url,
+        autoReconnect: true
+    })
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 
+// Passport configuration
+import * as passportConfig from "./config/passport";
 
-const userController = require('./controllers/user.controller');
+const userController = require('./controllers/UserController');
 /**
  * User app routes.
  */
@@ -32,18 +62,16 @@ app.post("/user/reset/:token", userController.postReset);
 /**
  * API examples routes.
  */
-// app.get("/api", apiController.getApi);
-// app.get("/api/facebook", passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getFacebook);
+//app.get("/api", apiController.getApi);
+app.get("/api/facebook", passportConfig.isAuthenticated, passportConfig.isAuthorized, userController.getFacebook);
 
 /**
  * OAuth authentication routes. (Sign in)
  */
-// app.get("/auth/facebook", passport.authenticate("facebook", { scope: ["email", "public_profile"] }));
-// app.get("/auth/facebook/callback", passport.authenticate("facebook", { failureRedirect: "/login" }), (req, res) => {
-//     res.redirect(req.session.returnTo || "/");
-// });
-
-
+app.get("/auth/facebook", passport.authenticate("facebook", { scope: ["email", "public_profile"] }));
+app.get("/auth/facebook/callback", passport.authenticate("facebook", { failureRedirect: "/login" }), (req, res) => {
+    res.redirect(req.session.returnTo || "/");
+});
 
 
 

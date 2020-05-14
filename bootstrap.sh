@@ -16,6 +16,13 @@ Update
 sudo apt-get install -y vim htop curl git unzip
 sudo apt-get install dirmngr -y --install-recommends
 
+
+echo "Install nodejs "
+sudo apt-get install curl software-properties-common
+curl -sL https://deb.nodesource.com/setup_14.x | sudo bash -
+sudo apt-get install -y nodejs apache2 
+
+
 echo "-- Install mongodb key"
 sudo wget -qO - https://www.mongodb.org/static/pgp/server-4.2.asc | sudo apt-key add -
 
@@ -37,12 +44,6 @@ sudo apt-get update && sudo apt-get install yarn
 # echo 'deb http://packages.dotdeb.org stretch all' >> /etc/apt/sources.list
 # echo 'deb-src http://packages.dotdeb.org stretch all' >> /etc/apt/sources.list
 Update
-
-
-echo "Install nodejs "
-sudo apt-get install curl software-properties-common
-curl -sL https://deb.nodesource.com/setup_12.x | sudo bash -
-sudo apt-get install -y nodejs apache2 
 
 
 sudo npm install --global webpack nodemon webpack-cli

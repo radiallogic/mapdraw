@@ -2,15 +2,17 @@ import { Request, Response, NextFunction } from "express";
 import { check, sanitize, validationResult } from "express-validator";
 
 import passport = require( "passport");
-import { User, UserDocument, AuthToken } from "../models/user";
+import { User, UserDocument, AuthToken } from "../models/User";
 
 import { IVerifyOptions } from "passport-local";
 import { WriteError } from "mongodb";
 import nodemailer from "nodemailer";
-// import "../config/passport";
+import "../config/passport";
 
 const crypto = require('crypto');
 const async = require("async");
+
+import graph from "fbgraph";
 
 /**
  * POST /login
@@ -55,6 +57,9 @@ export const logout = (req: Request, res: Response) => {
  * Create a new local account.
  */
 export const postSignup = async (req: Request, res: Response, next: NextFunction) => {
+
+    //console.log(' postSignup ', req);
+
     await check("email", "Email is not valid").isEmail().run(req);
     await check("password", "Password must be at least 4 characters long").isLength({ min: 4 }).run(req);
     await check("confirmPassword", "Passwords do not match").equals(req.body.password).run(req);
@@ -77,9 +82,16 @@ export const postSignup = async (req: Request, res: Response, next: NextFunction
         if (existingUser) {
             return res.send( { msg: "Account with that email address already exists." } );
         }
+
+        //console.log(' user ',user);
+
         user.save((err) => {
+            console.log(' in user save', err);
+
             if (err) { return next(err); }
             req.logIn(user, (err) => {
+                console.log('login after sign up', err);
+
                 if (err) {
                     return next(err);
                 }
@@ -302,3 +314,19 @@ export const postForgot = async (req: Request, res: Response, next: NextFunction
     });
 };
 
+/**
+ * GET /api/facebook
+ * Facebook API example.
+ */
+export const getFacebook = (req: Request, res: Response, next: NextFunction) => {
+    const user = req.user as UserDocument;
+    const token = user.tokens.find((token: any) => token.kind === "facebook");
+    graph.setAccessToken(token.accessToken);
+    graph.get(`${user.facebook}?fields=id,name,email,first_name,last_name,gender,link,locale,timezone`, (err: Error, results: graph.FacebookUser) => {
+        if (err) { return next(err); }
+        res.render("api/facebook", {
+            title: "Facebook API",
+            profile: results
+        });
+    });
+};
