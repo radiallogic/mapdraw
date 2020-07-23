@@ -75,6 +75,10 @@ export default class Paths extends FeatureGroup {
         super();
         this.options = { ...defaultOptions, ...options };
         this.polylines = [];
+
+        this.lineStyle = { strokeColor:'#5e03fc',
+        strokeOpacity: 0.5,
+        strokeWeight: 2 };
     }
 
     createPolyline = (map, latLngs, options = defaultOptions) => {
@@ -88,7 +92,7 @@ export default class Paths extends FeatureGroup {
     
         // console.log('simplified: ', simplified); 
 
-        let polyline = new Polyline(simplified.geometry.coordinates); 
+        let polyline = new Polyline(simplified.geometry.coordinates, this.lineStyle); 
         this.createEdges(this.map, polyline); 
         polyline.addTo(this.layerGroup);
     
@@ -106,7 +110,7 @@ export default class Paths extends FeatureGroup {
         const markers = polyline.getLatLngs().map(latLng => {
     
             //const mode = map[modesKey];
-            const icon = new DivIcon();
+            const icon = new DivIcon({className: 'line-icon'});
             const marker = new Marker(latLng, { icon }).addTo(this.layerGroup);
     
             // Disable the propagation when you click on the marker.
@@ -233,12 +237,17 @@ export default class Paths extends FeatureGroup {
         this.layerGroup.clearLayers();
 
         paths.map( path => {        
-            let polyline = new Polyline(path); 
+            let polyline = new Polyline(path, this.lineStyle); 
             this.createEdges(this.map, polyline); 
             polyline.addTo(this.layerGroup);
         }) 
 
     }
+
+    setVehicle = (vehicle) => {
+        // colour
+    } 
+
 
     /**
      * @method clear

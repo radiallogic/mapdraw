@@ -1,8 +1,7 @@
 import React from 'react';
 
-import TripAdd from './TripAdd'
+import TripAddEdit from './TripAddEdit'
 import TripSelect from './TripSelect'
-import TripTitle from './TripTitle'
 
 
 class Trips extends React.Component {
@@ -22,7 +21,7 @@ class Trips extends React.Component {
 
     componentDidUpdate = (prevProps) => {
         //console.log(" props: ", prevProps )
-        if(this.props.trips !== prevProps.trips){
+        if(this.props.trips !== prevProps.trips || this.props.id !== prevProps.id ){
             this.setContentToDefault();
         }
     } 
@@ -32,16 +31,22 @@ class Trips extends React.Component {
         this.props.select(id);
     }
 
+
     setContentToDefault = () => {
+
+        console.log('in trips, setContentToDefault: ', this.props.name ); 
+
         this.setState(
             {
             content: <TripSelect 
                         name={this.props.name}
+                        id={this.props.id}
                         select={this.select}
+                        edit={this.addedit}
                         options={this.props.trips}
                         setContentToDefault={this.setContentToDefault}
                     />, 
-            button: <button className="button is-primary is-outlined" onClick={this.add}>Add Trip</button> 
+            button: <button className="button is-primary is-outlined" onClick={this.addedit}>Add Trip</button> 
             }
         )
     }
@@ -52,10 +57,12 @@ class Trips extends React.Component {
         this.setContentToDefault();
     }
 
-    add = () =>{
+    addedit = () =>{
         console.log('add function');
-        this.setState({content: <TripAdd save={this.props.save} 
-                                         setContentToDefault={this.setContentToDefault} />, 
+        this.setState({content: <TripAddEdit
+                                        name={this.props.name}
+                                        save={this.props.save} 
+                                        setContentToDefault={this.setContentToDefault} />, 
                         button: <button className="button is-primary is-outlined" onClick={this.setContentToDefault}>Cancel</button>});
     }
     

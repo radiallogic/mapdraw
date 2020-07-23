@@ -1,20 +1,38 @@
 import React, { Component } from "react";
 import Login from './Login';
 import Signup from './Signup';
+import Logout from './Logout';
 
 class User extends Component {
     constructor(){
         super();
 
-        this.state = {  };
+        this.state = 
+        { loggedin: false, 
+          error: ""
+        };
     }
-    // app.post("/user/signup", userController.postSignup);
-    // app.post("/user/login", userController.postLogin);
-    // app.get("/user/logout", userController.logout);
-    // app.post("/user/forgot", userController.postForgot);
+
+    componentDidMount = () => {
+      this.isLoggedIn();
+    }
+
+    isLoggedIn = () => {
+      
+      fetch('/user/isloggedin/' ).then( (response) => {
+        return response.json();
+      }).then( (data) => {
+        console.log(' isloggedin data', data) 
+        if(data === ['yes']){
+          this.setState({loggedin:true});
+        }else{
+          this.setState({loggedin:false});
+        }
+    });
+    }
 
     signUp = (user, pass, passcon) => {
-
+        this.setState({ error: ""});
         let body = {email: user, password: pass, confirmPassword: passcon};
         body = JSON.stringify(body);
         console.log('body', body);
@@ -27,15 +45,17 @@ class User extends Component {
             method: 'POST',
             body: body
           }).then( (response) => {
-            return response.json();
-          }).then( (data) => {
-            console.log('returned data: ', data);
-            return data;
-          });
+            if(response.ok){
+              this.props.clear();
+              this.setState({loggedin:true, error: ""});
+            }else{
+              this.setState({error: response.json() });
+            }
+        });
     }
 
     login = (user, pass) => {
-        
+        this.setState({ error: ""});
         let body = {email: user, password: pass};
         body = JSON.stringify(body);
         console.log('body', body);
@@ -48,22 +68,46 @@ class User extends Component {
             method: 'POST',
             body: body
           }).then( (response) => {
-            return response.json();
-          }).then( (data) => {
-            console.log('returned data: ', data);
-
-            // deal with errors here
+            console.log('response.status ', response.status );
+            console.log('response.ok ', response.ok ); 
+            if(response.ok){
+              this.props.clear();
+              this.setState({loggedin:true, error: ""});
+            }else{
+              this.setState({error: response.json() });
+            }
           });
+    }
+
+    logout = () => {
+      this.setState({ error: ""});
+      fetch('/user/logout/').then( (response) => {
+        if(response.ok){
+          this.props.clear();
+          this.setState({loggedin:false});
+        }else{
+          return response.json();
+        }
+      });
     }
 
     render(){
 
+      if(this.state.loggedin == true){
         return (
-            <>
-                <Login login={this.login}/>
-                <Signup signUp={this.signUp} />
-            </>
+          <>
+              <Logout logout={this.logout} />
+          </>
         )
+      }else{
+        return (
+          <>
+              <Login login={this.login} error={this.state.error} />
+              <Signup signUp={this.signUp} error={this.state.error} />
+          </>
+        )
+      }
+        
     }
 }
 

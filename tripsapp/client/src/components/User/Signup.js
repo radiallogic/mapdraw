@@ -4,6 +4,8 @@ import ReactModal from 'react-modal';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
+import Error from './Error';
+
 import customStyles from './UserStyle';
 
 class Signup extends Component {
@@ -41,12 +43,7 @@ class Signup extends Component {
     }
 
     signup = () => {
-        let data = this.props.signUp(this.state.email, this.state.pass, this.state.passcon);
-        console.log('data', data);
-
-        // if errors display errors
-
-        // else this.close();
+        this.props.signUp(this.state.email, this.state.pass, this.state.passcon);
     }
 
 
@@ -64,6 +61,9 @@ class Signup extends Component {
             <FontAwesomeIcon icon={faTimes} onClick={this.close} /> 
 
             <div id="user-login" className="field">
+
+                <Error error={this.props.error} />
+
                 <div className="control">
                     <input className="input" value={this.state.email} onChange={this.updateEmail} type="text" placeholder="Email" />
                 </div>

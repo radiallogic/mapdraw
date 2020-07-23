@@ -4,7 +4,7 @@ import { updateFor } from './Layer';
 import createEdges from './Edges';
 import { DELETE, APPEND } from './Flags';
 import handlePolygonClick from './Polygon';
-import * as turf from '@turf/turf';
+//import * as turf from '@turf/turf';
 
 // /**
 //  * @method appendEdgeFor

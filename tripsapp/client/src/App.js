@@ -1,4 +1,8 @@
 // client/src/App.js
+import "core-js/stable";
+import "regenerator-runtime/runtime";
+
+
 import React, { Component } from "react";
 import ReactDOM from 'react-dom';
 
@@ -11,7 +15,7 @@ import Trips from './components/Trip/Trips'
 import Vehicles from './components/Trip/Vehicles'
 import KitList from './components/Trip/KitList'
 
-import Bubble from './Bubble'
+import Bubble from './components/Bubble'
 import './app.scss'
 
 class App extends Component {
@@ -32,6 +36,9 @@ class App extends Component {
 
       error: '',
 
+
+			zoom: 6,
+			position : [51.454, -2.587],
     }
   }
 
@@ -48,6 +55,9 @@ class App extends Component {
             return;
           }
           response.json().then( (data) => {
+
+              console.log('from server', data)
+
             this.setState({[item]:data});
           });
         }
@@ -94,6 +104,8 @@ class App extends Component {
   }
 
   setSelectedTrip = (id, data = null) => {
+    console.log('setSelectedTrip' );
+
     if(data != null){
 
       // update id row in js.
@@ -113,7 +125,15 @@ class App extends Component {
           item.sites = [];
         }
 
-        this.setState({name: item.name, id: item._id, vehicle: item.vehicle, paths: item.paths, sites: item.sites}, () => { // kitlist: item.kitlist
+        this.setState(
+          {name: item.name, 
+            id: item._id,
+            vehicle: item.vehicle,
+            paths: item.paths,
+            sites: item.sites,
+            zoom: item.zoom, 
+            position: item.position
+          }, () => { // kitlist: item.kitlist
           console.log("state now: ", this.state);
         });
       }
@@ -121,7 +141,7 @@ class App extends Component {
   }
 
   setSelectedVehicle = (vehicle) => {
-    console.log('setSelectedVehicle: ', vehicle);
+    //console.log('setSelectedVehicle: ', vehicle);
     this.setState({vehicle:vehicle}, () => {
       this.saveTrip();
     });
@@ -129,17 +149,23 @@ class App extends Component {
 
   saveName = (name) => {
     console.log('saveName: ', name);
-    this.setState({trip: name} , () => {
+    this.setState({trip: name},  () => {
       this.saveTrip();
     });
   }
 
   saveTrip = () => {
 
-    console.log('state before trip', this.state); 
-
+    //console.log('state before save', this.state); 
+    console.log('saveTrip: ',  this.state.zoom );
     if(this.state.name !== '' ){
-      let body = {name:this.state.trip, vehicle: this.state.vehicle, paths: this.state.paths, sites: this.state.sites}; 
+      let body = {name:this.state.trip, 
+        vehicle: this.state.vehicle, 
+        paths: this.state.paths, 
+        sites: this.state.sites, 
+        zoom: this.state.zoom, 
+        position: this.state.position
+      }; 
 
       // add ID to body if not blank
       if(this.state.id !== null && this.state.id !== ''){
@@ -160,9 +186,9 @@ class App extends Component {
         return response.json();
       }).then( (data) => {
         console.log('returned data: ', data);
-        this.getAllData(); // stack order? 
-        this.setSelectedTrip(data._id, data);
-
+        //this.getAllData(); // stack order? 
+        
+        //this.setSelectedTrip(data._id, data);
         // deal with errors here
       });
     }else{
@@ -172,6 +198,21 @@ class App extends Component {
 
   setMode = (mode) => {
     this.setState({mode:mode});
+  }
+
+  setPosition = (position) => {
+    this.setState({position:position}, () => {
+      this.saveTrip();
+    });
+  }
+  
+  setZoom = (zoom) => {
+    console.log('app set zoom ', this.state.zoom, zoom );
+    this.setState({zoom:zoom}, () => {
+      this.saveTrip();
+      console.log('zoom set')
+    });
+    
   }
 
   addPath = (path) => {
@@ -199,7 +240,7 @@ class App extends Component {
             { this.state.error && <h3 className="error"> { this.state.error } </h3> }
 
             <Bubble className="login-bubble">
-              <User />
+              <User clear={this.getAllData}/>
             </Bubble>
           </div>
 
@@ -207,6 +248,7 @@ class App extends Component {
             <Bubble className="child">
               <Trips 
                 trips={this.state.trips}
+                id={this.state.id}
                 name={this.state.name}
                 select={this.setSelectedTrip}
                 save={this.saveName}
@@ -223,7 +265,8 @@ class App extends Component {
             </Bubble>
             
             <Bubble className="child">
-              <MapControls 
+              <MapControls
+                vehicle={this.state.vehicle}
                 setMode={this.setMode}
               />
             </Bubble>
@@ -234,6 +277,12 @@ class App extends Component {
 
         <MapContainer 
           mode={this.state.mode}
+
+          position={this.state.position}
+          zoom={this.state.zoom}
+          setPosition={this.setPosition}
+          setZoom={this.setZoom}
+
           addPath={this.addPath}
           addSite={this.addSite}
           paths={this.state.paths}

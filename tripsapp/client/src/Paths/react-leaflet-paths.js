@@ -13,16 +13,22 @@ class Paths extends MapLayer {
     }
 
     if(fromProps.paths != toProps.paths && toProps.paths != undefined){
-      console.log('paths changed')
+      //console.log('react-leaflet-paths: paths changed')
       this.leafletElement.setPaths(toProps.paths);
     }
+
+    if(fromProps.vehicle != toProps.vehicle && toProps.vehicle != undefined){
+      //console.log('react-leaflet-paths: paths changed')
+      this.leafletElement.setVehicle(toProps.vehicle);
+    }
+
   }
 
   componentDidMount() {
     const { map } = this.props.leaflet;
     map.addLayer(this.leafletElement);
 
-    console.log( 'map in react-leaflet-paths' , map);
+    //console.log( 'map in react-leaflet-paths' , map);
     this.attachEvents();
   }
 

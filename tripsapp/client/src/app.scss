@@ -16,6 +16,13 @@ $dark-highlight: #147e96;
     z-index: 10;
 } 
 
+.line-icon {
+    border-radius: 50%;
+    height: 5px;
+    width: 5px;
+    background-color: rgba(255, 255, 255, .5);
+}
+
 .flex-container {
     z-index: 900;
     display: flex;
@@ -83,9 +90,42 @@ select{
                 .25rem .25rem .75rem #ffffff;
 
     z-index: 900;
-
-    
 }
+
+// select{
+//     // background-image:
+//     //   linear-gradient(45deg, transparent 50%, gray 50%),
+//     //   linear-gradient(135deg, gray 50%, transparent 50%),
+//     //   linear-gradient(to right, #ccc, #ccc);
+//     // background-position:
+//     //   calc(100% - 20px) calc(1em + 2px),
+//     //   calc(100% - 15px) calc(1em + 2px),
+//     //   calc(100% - 2.5em) 0.5em;
+//     background-size:
+//       5px 5px,
+//       5px 5px,
+//       1px 1.5em;
+//     background-repeat: no-repeat;
+//   }
+  
+//   select:focus {
+//     background-image:
+//       linear-gradient(45deg, green 50%, transparent 50%),
+//       linear-gradient(135deg, transparent 50%, green 50%),
+//       linear-gradient(to right, #ccc, #ccc);
+//     background-position:
+//       calc(100% - 15px) 1em,
+//       calc(100% - 20px) 1em,
+//       calc(100% - 2.5em) 0.5em;
+//     background-size:
+//       5px 5px,
+//       5px 5px,
+//       1px 1.5em;
+//     background-repeat: no-repeat;
+//     border-color: green;
+//     outline: 0;
+//   }
+
 
 .button:focus {
     outline: none;
@@ -113,7 +153,20 @@ select{
 
     pointer-events: all;
 }
+
+.trip-select, .edit-button{
+    display: inline-block;
+}
+
+
+
+
   
+  
+select:-moz-focusring {
+color: transparent;
+text-shadow: 0 0 0 #000;
+}
 
 .login-bubble {
     width: 12.5em;
@@ -126,4 +179,9 @@ select{
 
 .ReactModalPortal, .ReactModalPortal > *{
     z-index: 900;
+}
+
+.error{
+    border-color:  rgb(209, 0, 0);
+    background-color: rgb(255, 149, 149);
 }

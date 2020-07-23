@@ -7,36 +7,39 @@
     "webpack": "webpack -w"
   },
   "author": "",
-  "license": "ISC",
+  "license": "DBAD",
   "dependencies": {
-    "@babel/cli": "^7.4.4",
-    "@babel/plugin-proposal-class-properties": "^7.5.5",
-    "@babel/plugin-transform-arrow-functions": "^7.2.0",
-    "@babel/preset-env": "^7.4.4",
-    "@babel/preset-react": "^7.0.0",
+    "@babel/runtime": "^7.10.5",
     "@fortawesome/fontawesome-svg-core": "^1.2.28",
     "@fortawesome/free-solid-svg-icons": "^5.13.0",
     "@fortawesome/react-fontawesome": "^0.1.9",
     "@turf/turf": "^5.1.6",
-    "babel-loader": "^8.0.6",
     "bulma": "^0.7.5",
+    "core-js": "^3.6.5",
     "d3": "^5.15.0",
     "leaflet": "^1.5.1",
-    "leaflet-pather": "^0.1.17",
     "passport-http": "^0.3.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-leaflet": "^2.4.0",
     "react-modal": "^3.11.2",
-    "react-router-dom": "^5.0.0",
-    "webpack": "^4.31.0",
-    "webpack-cli": "^3.3.2"
+    "regenerator-runtime": "^0.13.7"
   },
   "devDependencies": {
+    "@babel/cli": "^7.4.4",
     "@babel/core": "^7.4.4",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/plugin-transform-arrow-functions": "^7.2.0",
+    "@babel/plugin-transform-runtime": "^7.10.5",
+    "@babel/preset-env": "^7.4.4",
+    "@babel/preset-react": "^7.0.0",
+    "babel-loader": "^8.0.6",
     "css-loader": "^3.5.3",
-    "node-sass": "^4.14.0",
+    "node-sass": "^4.14.1",
     "sass-loader": "^8.0.2",
-    "style-loader": "^1.2.1"
+    "source-map-loader": "^1.0.1",
+    "style-loader": "^1.2.1",
+    "webpack": "^4.31.0",
+    "webpack-cli": "^3.3.2"
   }
 }

@@ -2,14 +2,13 @@ import React from 'react'
 import  { LayersControl, Marker, Map, Popup, TileLayer, ZoomControl, GeoJSON, ScaleControl} from 'react-leaflet'
 
 import Paths, {ALL}  from '../Paths/react-leaflet-paths';
+
 export const ADD = 9;
 
 export default class MapContainer extends React.Component {
 	constructor() {
 		super();
 		this.state = {
-			zoom: 6,
-			position : [51.454, -2.587],
 			markers: []
 		};
 	};
@@ -17,6 +16,7 @@ export default class MapContainer extends React.Component {
   	//Ref = React.createRef();
 
     componentDidMount = () => {
+
     	//console.log('componentDidMount');
 		document.addEventListener('keydown', event => {
 			// Cancel the current FreeDraw action when the escape key is pressed.
@@ -24,16 +24,36 @@ export default class MapContainer extends React.Component {
 				this.Ref.current.leafletElement.cancel();
 		 	}
 		});
-		
+
         //this.updatePosition();
 	};
 	
-    updatePosition = () => {
 
+	componentDidUpdate(prevProps){
+		//console.log(' prevProps ', this.props.zoom, prevProps.zoom);   
+		
+		if(this.props.position !== prevProps.position ){
+			this.setState({position:this.props.position});
+		}
+		if(this.props.zoom !== prevProps.zoom ){
+			this.setState({zoom:this.props.zoom});
+		}
+	}
+
+    onDragend = () => {
+		console.log('onDragend');
+		this.props.setPosition(this.refs.map.leafletElement.getCenter() )
 	}	
 	
-	onZoomEnd = () => {
-		// var zoom = this.refs.map.leafletElement.getZoom();
+	onZoomend = () => {
+		console.log('onZoomend');
+		let zoom = this.refs.map.leafletElement.getZoom();
+		console.log(zoom);
+		console.log(this.props.zoom)
+
+		if(this.props.zoom !== zoom){
+			this.props.setZoom(zoom);
+		}
 	}
 
 	handlePopupClose = () => {
@@ -62,11 +82,13 @@ export default class MapContainer extends React.Component {
 	render() {		
 		return (
 		  <Map 
-			center={this.state.position}
-			zoom={this.state.zoom}
+		    ref='map'
+
+			center={this.props.position}
+			zoom={this.props.zoom}
 			
-			onDragend={this.updatePosition}
-			onZoomend={this.onZoomEnd}
+			onDragend={this.onDragend}
+			onZoomend={this.onZoomend}
 			onClick={this.addMarker}
 			>
 
@@ -76,6 +98,7 @@ export default class MapContainer extends React.Component {
 			/>
 
 			<Paths
+			    vehicle={this.state.vehicle}
 				addPath={this.props.addPath}
 			    paths={this.props.paths}
 			    mode={this.props.mode}

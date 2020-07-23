@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import ReactModal from 'react-modal';
 import Forgotten from './Forgotten';
+import Error from './Error';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
@@ -22,11 +23,11 @@ class Login extends Component {
 
     
 
-    // onFacebookLogin = () => {
-    //     const inOneHour = new Date(new Date().getTime() + 60 * 60 * 1000);
-    //     Cookies.set('lastLocation_before_logging', this.props.location.pathname, { expires: inOneHour });
-    //     window.location.href = `${window.location.origin}/auth/facebook`;
-    // };
+    onFacebookLogin = () => {
+        const inOneHour = new Date(new Date().getTime() + 60 * 60 * 1000);
+        Cookies.set('lastLocation_before_logging', this.props.location.pathname, { expires: inOneHour });
+        window.location.href = `${window.location.origin}/auth/facebook`;
+    };
 
     updateEmail = (e) => {
         this.setState({email: e.target.value});
@@ -45,9 +46,7 @@ class Login extends Component {
     }
 
     login = () => {
-
-        let data = this.props.login(this.state.email, this.state.pass);
-        console.log('data', data);
+        this.props.login(this.state.email, this.state.pass);
     }
 
 
@@ -65,6 +64,9 @@ class Login extends Component {
             <FontAwesomeIcon icon={faTimes} onClick={this.close} />
 
             <div id="user-login" className="field">
+
+                <Error error={this.props.error} />
+
                 <div className="control">
                     <input className="input" value={this.state.email} onChange={this.updateEmail} type="text" placeholder="Email" />
                 </div>
@@ -75,9 +77,6 @@ class Login extends Component {
                     <button className="button is-primary is-light" onClick={this.login}>Login</button>
                 </div>
             </div>
-
-            
-            
 
             </ReactModal>
             </>
