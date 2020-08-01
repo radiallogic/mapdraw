@@ -1,6 +1,3 @@
-// import 'core-js';
-// import 'regenerator-runtime/runtime';
-
 import { noConflict, FeatureGroup, Point, Polyline, Marker, LayerGroup, DivIcon, DomEvent } from 'leaflet';
 import { select } from 'd3-selection';
 import { line, curveMonotoneX } from 'd3-shape';
@@ -79,6 +76,8 @@ export default class Paths extends FeatureGroup {
         this.lineStyle = { strokeColor:'#5e03fc',
         strokeOpacity: 0.5,
         strokeWeight: 2 };
+
+        this.zoom = 6;
     }
 
     createPolyline = (map, latLngs, options = defaultOptions) => {
@@ -88,9 +87,28 @@ export default class Paths extends FeatureGroup {
         } );
     
         let geojson = turf.lineString(coords);
-        let simplified = turf.simplify(geojson, {tolerance: 0.01, highQuality: false} );
-    
-        // console.log('simplified: ', simplified); 
+
+        let tolerance = 0.01;
+        if(this.zoom < 18 && this.zoom >= 15){
+            tolerance = 0;
+        }
+        if(this.zoom < 15 && this.zoom >= 11){
+            tolerance = 0.001;
+        }
+        if(this.zoom < 11 && this.zoom >= 8){
+            tolerance = 0.01;
+        }
+        if(this.zoom < 8 && this.zoom >= 5){
+            tolerance = 0.1;
+        } 
+        if(this.zoom < 5 && this.zoom >= 3){
+            tolerance = 0.5;
+        } 
+        if(this.zoom < 3 && this.zoom >= 1){
+            tolerance = 1;
+        } 
+
+        let simplified = turf.simplify(geojson, {tolerance: tolerance, highQuality: false} );
 
         let polyline = new Polyline(simplified.geometry.coordinates, this.lineStyle); 
         this.createEdges(this.map, polyline); 
@@ -116,6 +134,22 @@ export default class Paths extends FeatureGroup {
             // Disable the propagation when you click on the marker.
             DomEvent.disableClickPropagation(marker);
     
+            marker.on('dblclick', (e) => {
+                console.log('markerclick: ', e);
+                e.originalEvent.stopPropagation(); 
+                // let coords = e.sourceTarget._latlngs.map( (item, i ) => {
+                //     return [item.lat, item.lng ];
+                // });
+
+
+                // remove point fromt coords and create new line. 
+
+                //let newline = {};
+                //console.log('markerclick 1: ', newline);
+
+                //this.options.modifyPath(newline); 
+            });
+
             marker.on('mousedown', function mouseDown() {
     
                 if (!(map[modesKey] & EDIT)) {
@@ -221,23 +255,32 @@ export default class Paths extends FeatureGroup {
 
     }
 
-    /**
-     * @method create
-     * @param {LatLng[]} latLngs
-     * @param {Object} [options = { concavePolygon: false }]
-     * @return {Object}
-     */
-    // create = (latLngs, options = { concavePolygon: false })  => {
-    //     const created = createPolyline(this.map, latLngs, { ...this.options, ...options });
-    //     //updateFor(this.map, 'create');
-    //     return created;
-    // }
-
     setPaths = (paths) => {        
         this.layerGroup.clearLayers();
 
         paths.map( path => {        
             let polyline = new Polyline(path, this.lineStyle); 
+            
+            polyline.on('dblclick', (e) => {
+                e.originalEvent.stopPropagation(); 
+                let coords = e.sourceTarget._latlngs.map( (item, i ) => {
+                    return [item.lat, item.lng ];
+                });
+
+                let line = turf.lineString(coords);
+                let splitter = turf.point([e.latlng.lat, e.latlng.lng]);
+                let split = turf.lineSplit(line, splitter);
+
+                let linePart = split.features[1].geometry.coordinates;
+                linePart.pop(); // remove duplicate coordinates;
+                let newline = split.features[0].geometry.coordinates.concat( linePart );
+                
+                console.log('HERE 5: ', newline);
+
+                this.options.modifyPath(newline); 
+
+            });
+
             this.createEdges(this.map, polyline); 
             polyline.addTo(this.layerGroup);
         }) 
@@ -245,9 +288,20 @@ export default class Paths extends FeatureGroup {
     }
 
     setVehicle = (vehicle) => {
-        // colour
+        this.vehicle = vehicle;
+
+        // setVehicle
+        if(this.vehicle.toLowerCase() == 'paraglider'){
+            this.lineStyle.strokeColor = '#ff6ec7'; 
+        }
+        if(this.vehicle.toLowerCase() == 'canoe'){
+            this.lineStyle.strokeColor = '08e8de'; 
+        }
     } 
 
+    setZoom = (zoom) => {
+        this.zoom = zoom;
+    }
 
     /**
      * @method clear
@@ -413,18 +467,3 @@ export default class Paths extends FeatureGroup {
 // };
 
 export { CREATE, EDIT, DELETE, APPEND, EDIT_APPEND, NONE, ALL } from './helpers/Flags';
-
-// if (typeof window !== 'undefined') {
-
-//     // Attach to the `window` as `paths` if it exists, as this would prevent `new paths.default` when
-//     // using the web version.
-//     window.paths = paths;
-//     paths.CREATE = CREATE;
-//     paths.EDIT = EDIT;
-//     paths.DELETE = DELETE;
-//     paths.APPEND = APPEND;
-//     paths.EDIT_APPEND = EDIT_APPEND;
-//     paths.NONE = NONE;
-//     paths.ALL = ALL;
-
-// }

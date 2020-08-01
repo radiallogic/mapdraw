@@ -79641,6 +79641,19 @@ var App = /*#__PURE__*/function (_Component) {
       });
     });
 
+    _defineProperty(_assertThisInitialized(_this), "saveNew", function (name) {
+      console.log('save New: ', name);
+
+      _this.setState({
+        trip: name,
+        paths: [],
+        vehicle: '',
+        id: ''
+      }, function () {
+        _this.saveTrip();
+      });
+    });
+
     _defineProperty(_assertThisInitialized(_this), "saveTrip", function () {
       //console.log('state before save', this.state); 
       console.log('saveTrip: ', _this.state.zoom);
@@ -79671,9 +79684,10 @@ var App = /*#__PURE__*/function (_Component) {
         }).then(function (response) {
           return response.json();
         }).then(function (data) {
-          console.log('returned data: ', data); //this.getAllData(); // stack order? 
-          //this.setSelectedTrip(data._id, data);
-          // deal with errors here
+          // If new data
+          if (_this.state.id == null || _this.state.id == '') {
+            _this.setSelectedTrip(data._id, data);
+          }
         });
       } else {
         _this.setState({
@@ -79715,9 +79729,32 @@ var App = /*#__PURE__*/function (_Component) {
 
       _this.setState({
         paths: paths
+      }, function () {
+        _this.saveTrip();
+      });
+    });
+
+    _defineProperty(_assertThisInitialized(_this), "modifyPath", function (newpath) {
+      var paths = _this.state.paths;
+      var index = paths.map(function (item, i) {
+        if (item[0][0] == newpath[0][0] && item[0][1] == newpath[0][1] || item[item.length - 1][0] == newpath[newpath.length - 1][0] && item[item.length - 1][1] == newpath[newpath.length - 1][1]) {
+          return i;
+        }
+
+        return -1;
       });
 
-      _this.saveTrip();
+      if (index != -1) {
+        paths[index] = newpath;
+      }
+
+      _this.setState({
+        paths: paths
+      }, function () {
+        console.log('Set paths');
+
+        _this.saveTrip();
+      });
     });
 
     _defineProperty(_assertThisInitialized(_this), "addSite", function (latlng) {
@@ -79770,7 +79807,8 @@ var App = /*#__PURE__*/function (_Component) {
         id: this.state.id,
         name: this.state.name,
         select: this.setSelectedTrip,
-        save: this.saveName
+        save: this.saveName,
+        savenew: this.saveNew
       })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2___default.a.createElement(_components_Bubble__WEBPACK_IMPORTED_MODULE_10__["default"], {
         className: "child"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2___default.a.createElement(_components_Trip_Vehicles__WEBPACK_IMPORTED_MODULE_8__["default"], {
@@ -79791,6 +79829,7 @@ var App = /*#__PURE__*/function (_Component) {
         setPosition: this.setPosition,
         setZoom: this.setZoom,
         addPath: this.addPath,
+        modifyPath: this.modifyPath,
         addSite: this.addSite,
         paths: this.state.paths,
         sites: this.state.sites
@@ -79879,8 +79918,6 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-// import 'core-js';
-// import 'regenerator-runtime/runtime';
 
 
 
@@ -79967,11 +80004,36 @@ var Paths = /*#__PURE__*/function (_FeatureGroup) {
         return [item.lat, item.lng];
       });
       var geojson = _turf_turf__WEBPACK_IMPORTED_MODULE_3__["lineString"](coords);
-      var simplified = _turf_turf__WEBPACK_IMPORTED_MODULE_3__["simplify"](geojson, {
-        tolerance: 0.01,
-        highQuality: false
-      }); // console.log('simplified: ', simplified); 
+      var tolerance = 0.01;
 
+      if (_this.zoom < 18 && _this.zoom >= 15) {
+        tolerance = 0;
+      }
+
+      if (_this.zoom < 15 && _this.zoom >= 11) {
+        tolerance = 0.001;
+      }
+
+      if (_this.zoom < 11 && _this.zoom >= 8) {
+        tolerance = 0.01;
+      }
+
+      if (_this.zoom < 8 && _this.zoom >= 5) {
+        tolerance = 0.1;
+      }
+
+      if (_this.zoom < 5 && _this.zoom >= 3) {
+        tolerance = 0.5;
+      }
+
+      if (_this.zoom < 3 && _this.zoom >= 1) {
+        tolerance = 1;
+      }
+
+      var simplified = _turf_turf__WEBPACK_IMPORTED_MODULE_3__["simplify"](geojson, {
+        tolerance: tolerance,
+        highQuality: false
+      });
       var polyline = new leaflet__WEBPACK_IMPORTED_MODULE_0__["Polyline"](simplified.geometry.coordinates, _this.lineStyle);
 
       _this.createEdges(_this.map, polyline);
@@ -79995,6 +80057,18 @@ var Paths = /*#__PURE__*/function (_FeatureGroup) {
         }).addTo(_this.layerGroup); // Disable the propagation when you click on the marker.
 
         leaflet__WEBPACK_IMPORTED_MODULE_0__["DomEvent"].disableClickPropagation(marker);
+        marker.on('dblclick', function (e) {
+          console.log('markerclick: ', e);
+          e.originalEvent.preventDefault();
+
+          var coords = e.sourceTarget._latlngs.map(function (item, i) {
+            return [item.lat, item.lng];
+          }); // remove point fromt coords and create new line. 
+          //let newline = {};
+          //console.log('markerclick 1: ', newline);
+          //this.options.modifyPath(newline); 
+
+        });
         marker.on('mousedown', function mouseDown() {
           if (!(map[modesKey] & _helpers_Flags__WEBPACK_IMPORTED_MODULE_4__["EDIT"])) {
             // polylines can only be created when the mode includes edit.
@@ -80081,6 +80155,24 @@ var Paths = /*#__PURE__*/function (_FeatureGroup) {
 
       paths.map(function (path) {
         var polyline = new leaflet__WEBPACK_IMPORTED_MODULE_0__["Polyline"](path, _this.lineStyle);
+        polyline.on('dblclick', function (e) {
+          e.originalEvent.preventDefault();
+
+          var coords = e.sourceTarget._latlngs.map(function (item, i) {
+            return [item.lat, item.lng];
+          });
+
+          var line = _turf_turf__WEBPACK_IMPORTED_MODULE_3__["lineString"](coords);
+          var splitter = _turf_turf__WEBPACK_IMPORTED_MODULE_3__["point"]([e.latlng.lat, e.latlng.lng]);
+          var split = _turf_turf__WEBPACK_IMPORTED_MODULE_3__["lineSplit"](line, splitter);
+          var linePart = split.features[1].geometry.coordinates;
+          delete linePart[0]; // remove duplicate coordinates;
+
+          var newline = split.features[0].geometry.coordinates.concat(linePart);
+          console.log('HERE 5: ', newline);
+
+          _this.options.modifyPath(newline);
+        });
 
         _this.createEdges(_this.map, polyline);
 
@@ -80088,7 +80180,20 @@ var Paths = /*#__PURE__*/function (_FeatureGroup) {
       });
     });
 
-    _defineProperty(_assertThisInitialized(_this), "setVehicle", function (vehicle) {// colour
+    _defineProperty(_assertThisInitialized(_this), "setVehicle", function (vehicle) {
+      _this.vehicle = vehicle; // setVehicle
+
+      if (_this.vehicle.toLowerCase() == 'paraglider') {
+        _this.lineStyle.strokeColor = '#ff6ec7';
+      }
+
+      if (_this.vehicle.toLowerCase() == 'canoe') {
+        _this.lineStyle.strokeColor = '08e8de';
+      }
+    });
+
+    _defineProperty(_assertThisInitialized(_this), "setZoom", function (zoom) {
+      _this.zoom = zoom;
     });
 
     _this.options = _objectSpread(_objectSpread({}, defaultOptions), options);
@@ -80098,6 +80203,7 @@ var Paths = /*#__PURE__*/function (_FeatureGroup) {
       strokeOpacity: 0.5,
       strokeWeight: 2
     };
+    _this.zoom = 6;
     return _this;
   }
 
@@ -80266,18 +80372,7 @@ var Paths = /*#__PURE__*/function (_FeatureGroup) {
 
 
 
- // if (typeof window !== 'undefined') {
-//     // Attach to the `window` as `paths` if it exists, as this would prevent `new paths.default` when
-//     // using the web version.
-//     window.paths = paths;
-//     paths.CREATE = CREATE;
-//     paths.EDIT = EDIT;
-//     paths.DELETE = DELETE;
-//     paths.APPEND = APPEND;
-//     paths.EDIT_APPEND = EDIT_APPEND;
-//     paths.NONE = NONE;
-//     paths.ALL = ALL;
-// }
+
 
 /***/ }),
 
@@ -80510,18 +80605,22 @@ var Paths = /*#__PURE__*/function (_MapLayer) {
   }, {
     key: "updateLeafletElement",
     value: function updateLeafletElement(fromProps, toProps) {
+      console.log('updateLeafletElement');
+
       if (fromProps.mode != toProps.mode) {
         this.leafletElement.mode(toProps.mode);
       }
 
       if (fromProps.paths != toProps.paths && toProps.paths != undefined) {
-        //console.log('react-leaflet-paths: paths changed')
         this.leafletElement.setPaths(toProps.paths);
       }
 
       if (fromProps.vehicle != toProps.vehicle && toProps.vehicle != undefined) {
-        //console.log('react-leaflet-paths: paths changed')
         this.leafletElement.setVehicle(toProps.vehicle);
+      }
+
+      if (fromProps.zoom != toProps.zoom && toProps.zoom != undefined) {
+        this.leafletElement.setZoom(toProps.zoom);
       }
     }
   }, {
@@ -80712,14 +80811,12 @@ var MapContainer = /*#__PURE__*/function (_React$Component) {
     });
 
     _defineProperty(_assertThisInitialized(_this), "onDragend", function () {
-      console.log('onDragend');
-
+      // console.log('onDragend');
       _this.props.setPosition(_this.refs.map.leafletElement.getCenter());
     });
 
     _defineProperty(_assertThisInitialized(_this), "onZoomend", function () {
-      console.log('onZoomend');
-
+      // console.log('onZoomend');
       var zoom = _this.refs.map.leafletElement.getZoom();
 
       console.log(zoom);
@@ -80728,16 +80825,6 @@ var MapContainer = /*#__PURE__*/function (_React$Component) {
       if (_this.props.zoom !== zoom) {
         _this.props.setZoom(zoom);
       }
-    });
-
-    _defineProperty(_assertThisInitialized(_this), "handlePopupClose", function () {//console.log('handlePopupClose');
-      // this.props.setCenter(this.refs.map.leafletElement.getCenter(), zoom); 
-      // this.updateAllowPositionUpdate(true);
-      // this.refs.map.leafletElement.setZoom(zoom);
-    });
-
-    _defineProperty(_assertThisInitialized(_this), "handleOnMarkers", function () {
-      console.log('handle on markers');
     });
 
     _defineProperty(_assertThisInitialized(_this), "addMarker", function (event) {
@@ -80784,52 +80871,21 @@ var MapContainer = /*#__PURE__*/function (_React$Component) {
         url: "https://{s}.tile.osm.org/{z}/{x}/{y}.png"
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Paths_react_leaflet_paths__WEBPACK_IMPORTED_MODULE_2__["default"], {
         vehicle: this.state.vehicle,
+        modifyPath: this.props.modifyPath,
         addPath: this.props.addPath,
         paths: this.props.paths,
         mode: this.props.mode,
         onMarkers: this.handleOnMarkers,
         onModeChange: this.handleModeChange,
-        ref: this.freedrawRef
+        ref: this.freedrawRef,
+        zoom: this.props.zoom
       }), this.props.sites.map(function (position, idx) {
         return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_leaflet__WEBPACK_IMPORTED_MODULE_1__["Marker"], {
           key: "marker-".concat(idx),
           position: position
         });
       }));
-    } //   render(){
-    // 		let mode = ALL;
-    //         let draw = <Freedraw
-    // 	            mode={mode}
-    // 	            onMarkers={this.handleOnMarkers}
-    // 	            onModeChange={this.handleModeChange}
-    // 	            ref={this.freedrawRef}
-    //              />;
-    //         return (
-    // 			<Map
-    // 				className="map" 
-    //                 ref='map' 
-    //                 center={this.state.position} 
-    //                 // zoom={this.state.zoom} 
-    //                 // maxZoom={18}
-    //                 // onDragend={this.updatePosition}
-    //                 // onZoomend={this.onZoomEnd}
-    //                 // onClick={this.addMarker}
-    //                 // onPopupClose={this.handlePopupClose}
-    //                 // setMessage={this.props.setMessage}
-    //                 // setLoading={this.props.setLoading}
-    //             >
-    // <TileLayer
-    //           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-    //           url='https://{s}.tile.osm.org/{z}/{x}/{y}.png'
-    //         />
-    // 				<Marker position={this.state.position}>
-    // 					<Popup>A pretty CSS3 popup.<br />Easily customizable.</Popup>
-    // 				</Marker>
-    //             {/* {draw} */}
-    //             </Map>
-    //        )
-    //    }
-
+    }
   }]);
 
   return MapContainer;
@@ -81247,9 +81303,13 @@ var TripAddEdit = /*#__PURE__*/function (_React$Component) {
     _this = _super.call(this);
 
     _defineProperty(_assertThisInitialized(_this), "componentDidMount", function () {
-      _this.setState({
-        value: _this.props.name
-      });
+      console.log(' TripAddEdit componentDidMount ', _this.props.addedit);
+
+      if (_this.props.addedit == 'edit') {
+        _this.setState({
+          value: _this.props.name
+        });
+      }
     });
 
     _defineProperty(_assertThisInitialized(_this), "update", function (event) {
@@ -81261,13 +81321,13 @@ var TripAddEdit = /*#__PURE__*/function (_React$Component) {
     _defineProperty(_assertThisInitialized(_this), "save", function (event) {
       event.preventDefault();
 
-      _this.props.save(_this.state.value);
+      _this.props.save(_this.state.value, _this.props.addedit);
 
       _this.props.setContentToDefault();
     });
 
     _this.state = {
-      value: ''
+      value: 'Empty Trip Name'
     };
     return _this;
   }
@@ -81275,10 +81335,9 @@ var TripAddEdit = /*#__PURE__*/function (_React$Component) {
   _createClass(TripAddEdit, [{
     key: "componentDidUpdate",
     value: function componentDidUpdate(prevProps) {
-      console.log('addedit:', prevProps);
-
+      //console.log('addedit:', prevProps); 
       if (this.props.name !== prevProps.name) {
-        console.log('trip addedit: ', this.props.name);
+        //console.log('trip addedit: ', this.props.name);
         this.setState({
           value: this.props.name
         });
@@ -81466,8 +81525,9 @@ var Trips = /*#__PURE__*/function (_React$Component) {
     });
 
     _defineProperty(_assertThisInitialized(_this), "componentDidUpdate", function (prevProps) {
-      //console.log(" props: ", prevProps )
-      if (_this.props.trips !== prevProps.trips || _this.props.id !== prevProps.id) {
+      // console.log(" prev props: ", prevProps.name );
+      // console.log(" props: ", this.props.name );
+      if (_this.props.trips !== prevProps.trips || _this.props.id !== prevProps.id || _this.props.name !== prevProps.name) {
         _this.setContentToDefault();
       }
     });
@@ -81486,30 +81546,42 @@ var Trips = /*#__PURE__*/function (_React$Component) {
           name: _this.props.name,
           id: _this.props.id,
           select: _this.select,
-          edit: _this.addedit,
+          edit: _this.edit,
           options: _this.props.trips,
           setContentToDefault: _this.setContentToDefault
         }),
         button: /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
           className: "button is-primary is-outlined",
-          onClick: _this.addedit
+          onClick: _this.add
         }, "Add Trip")
       });
     });
 
-    _defineProperty(_assertThisInitialized(_this), "save", function (name) {
-      console.log('save function');
-
-      _this.props.save(name);
+    _defineProperty(_assertThisInitialized(_this), "save", function (name, addedit) {
+      //console.log('save function ... ', addedit  );
+      if (addedit == "add") {
+        //console.log(' HERE: ', addedit  );
+        _this.props.savenew(name);
+      } else {
+        _this.props.save(name);
+      }
 
       _this.setContentToDefault();
     });
 
-    _defineProperty(_assertThisInitialized(_this), "addedit", function () {
-      console.log('add function');
+    _defineProperty(_assertThisInitialized(_this), "add", function () {
+      _this.addedit('add');
+    });
 
+    _defineProperty(_assertThisInitialized(_this), "edit", function () {
+      _this.addedit('edit');
+    });
+
+    _defineProperty(_assertThisInitialized(_this), "addedit", function (addedit) {
+      //console.log('addedit function ', addedit );
       _this.setState({
         content: /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_TripAddEdit__WEBPACK_IMPORTED_MODULE_1__["default"], {
+          addedit: addedit,
           name: _this.props.name,
           save: _this.props.save,
           setContentToDefault: _this.setContentToDefault

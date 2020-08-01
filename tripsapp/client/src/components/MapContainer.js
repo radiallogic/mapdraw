@@ -31,7 +31,9 @@ export default class MapContainer extends React.Component {
 
 	componentDidUpdate(prevProps){
 		//console.log(' prevProps ', this.props.zoom, prevProps.zoom);   
-		
+		if(this.props.paths !== prevProps.paths){
+			console.log(' Paths changed in mapContainer')
+		}
 		if(this.props.position !== prevProps.position ){
 			this.setState({position:this.props.position});
 		}
@@ -41,12 +43,12 @@ export default class MapContainer extends React.Component {
 	}
 
     onDragend = () => {
-		console.log('onDragend');
+		// console.log('onDragend');
 		this.props.setPosition(this.refs.map.leafletElement.getCenter() )
 	}	
 	
 	onZoomend = () => {
-		console.log('onZoomend');
+		// console.log('onZoomend');
 		let zoom = this.refs.map.leafletElement.getZoom();
 		console.log(zoom);
 		console.log(this.props.zoom)
@@ -56,19 +58,19 @@ export default class MapContainer extends React.Component {
 		}
 	}
 
-	handlePopupClose = () => {
-		//console.log('handlePopupClose');
+	// handlePopupClose = () => {
+	// 	//console.log('handlePopupClose');
 
 		
-		// this.props.setCenter(this.refs.map.leafletElement.getCenter(), zoom); 
-		// this.updateAllowPositionUpdate(true);
+	// 	// this.props.setCenter(this.refs.map.leafletElement.getCenter(), zoom); 
+	// 	// this.updateAllowPositionUpdate(true);
 
-		// this.refs.map.leafletElement.setZoom(zoom);
-	}
+	// 	// this.refs.map.leafletElement.setZoom(zoom);
+	// }
 
-	handleOnMarkers = () => {
-		console.log('handle on markers');
-	}
+	// handleOnMarkers = () => {
+	// 	console.log('handle on markers');
+	// }
 
 	addMarker = (event) => {
 
@@ -98,13 +100,15 @@ export default class MapContainer extends React.Component {
 			/>
 
 			<Paths
-			    vehicle={this.state.vehicle}
+				vehicle={this.state.vehicle}
+				modifyPath={this.props.modifyPath}
 				addPath={this.props.addPath}
 			    paths={this.props.paths}
 			    mode={this.props.mode}
 				onMarkers={this.handleOnMarkers}
 				onModeChange={this.handleModeChange}
 				ref={this.freedrawRef}
+				zoom={this.props.zoom}
 			/>
 
 			{this.props.sites.map((position, idx) =>
@@ -113,44 +117,5 @@ export default class MapContainer extends React.Component {
 
 		  </Map>
 		);
-	  }
- //   render(){
-
-// 		let mode = ALL;
-
-//         let draw = <Freedraw
-// 	            mode={mode}
-// 	            onMarkers={this.handleOnMarkers}
-// 	            onModeChange={this.handleModeChange}
-// 	            ref={this.freedrawRef}
-//              />;
-        
-//         return (
-// 			<Map
-// 				className="map" 
-//                 ref='map' 
-//                 center={this.state.position} 
-//                 // zoom={this.state.zoom} 
-//                 // maxZoom={18}
-//                 // onDragend={this.updatePosition}
-//                 // onZoomend={this.onZoomEnd}
-//                 // onClick={this.addMarker}
-//                 // onPopupClose={this.handlePopupClose}
-//                 // setMessage={this.props.setMessage}
-//                 // setLoading={this.props.setLoading}
-//             >
-// <TileLayer
-//           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-//           url='https://{s}.tile.osm.org/{z}/{x}/{y}.png'
-//         />
-				
-// 				<Marker position={this.state.position}>
-// 					<Popup>A pretty CSS3 popup.<br />Easily customizable.</Popup>
-// 				</Marker>
-
-//             {/* {draw} */}
-//             </Map>
-//        )
-//    }
-
+	}
 }

@@ -4,20 +4,21 @@ class TripAddEdit extends React.Component {
     constructor(){
         super();
 
-        this.state = {value: ''}
+        this.state = {value: 'Empty Trip Name'}
     }
 
 
     componentDidMount = () => {
-        this.setState({value:this.props.name});
+        console.log(' TripAddEdit componentDidMount ', this.props.addedit );
+        if( this.props.addedit == 'edit'){
+            this.setState({value:this.props.name});
+        }
     }
     
     componentDidUpdate(prevProps) {
-
-        console.log('addedit:', prevProps); 
-
+        //console.log('addedit:', prevProps); 
         if (this.props.name !== prevProps.name) {
-          console.log('trip addedit: ', this.props.name);
+          //console.log('trip addedit: ', this.props.name);
           this.setState({value:this.props.name});
         }
     }
@@ -28,7 +29,7 @@ class TripAddEdit extends React.Component {
 
     save = (event) => {
         event.preventDefault();
-        this.props.save(this.state.value); 
+        this.props.save(this.state.value, this.props.addedit ); 
         this.props.setContentToDefault();
     } 
 

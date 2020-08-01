@@ -8,18 +8,21 @@ class Paths extends MapLayer {
   }
 
   updateLeafletElement(fromProps, toProps) {
+    console.log('updateLeafletElement');
     if(fromProps.mode != toProps.mode){
       this.leafletElement.mode(toProps.mode);
     }
 
     if(fromProps.paths != toProps.paths && toProps.paths != undefined){
-      //console.log('react-leaflet-paths: paths changed')
       this.leafletElement.setPaths(toProps.paths);
     }
 
     if(fromProps.vehicle != toProps.vehicle && toProps.vehicle != undefined){
-      //console.log('react-leaflet-paths: paths changed')
       this.leafletElement.setVehicle(toProps.vehicle);
+    }
+
+    if(fromProps.zoom != toProps.zoom && toProps.zoom != undefined){
+      this.leafletElement.setZoom(toProps.zoom);
     }
 
   }

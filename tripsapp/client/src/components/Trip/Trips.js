@@ -3,6 +3,8 @@ import React from 'react';
 import TripAddEdit from './TripAddEdit'
 import TripSelect from './TripSelect'
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowsAlt, faEdit, faMapMarker, faMinusCircle } from '@fortawesome/free-solid-svg-icons';
 
 class Trips extends React.Component {
     constructor(){
@@ -20,8 +22,13 @@ class Trips extends React.Component {
     }
 
     componentDidUpdate = (prevProps) => {
-        //console.log(" props: ", prevProps )
-        if(this.props.trips !== prevProps.trips || this.props.id !== prevProps.id ){
+        // console.log(" prev props: ", prevProps.name );
+        // console.log(" props: ", this.props.name );
+
+        if(this.props.trips !== prevProps.trips ||
+             this.props.id !== prevProps.id || 
+             this.props.name !== prevProps.name ){
+
             this.setContentToDefault();
         }
     } 
@@ -42,24 +49,38 @@ class Trips extends React.Component {
                         name={this.props.name}
                         id={this.props.id}
                         select={this.select}
-                        edit={this.addedit}
+                        edit={this.edit}
                         options={this.props.trips}
                         setContentToDefault={this.setContentToDefault}
                     />, 
-            button: <button className="button is-primary is-outlined" onClick={this.addedit}>Add Trip</button> 
+            button: <button name="add" className="button is-primary is-outlined" onClick={this.add}>Add Trip</button> 
             }
         )
     }
 
-    save = (name) =>{
-        console.log('save function');
-        this.props.save(name);
+    save = (name, addedit) =>{
+        //console.log('save function ... ', addedit  );
+        if(addedit == "add"){
+            //console.log(' HERE: ', addedit  );
+            this.props.savenew(name);
+        }else{
+            this.props.save(name);
+        }
         this.setContentToDefault();
     }
 
-    addedit = () =>{
-        console.log('add function');
+    add = () => {
+        this.addedit('add');
+    }
+
+    edit = () => {
+        this.addedit('edit');
+    }
+
+    addedit = (addedit) =>{
+        //console.log('addedit function ', addedit );
         this.setState({content: <TripAddEdit
+                                        addedit={addedit}
                                         name={this.props.name}
                                         save={this.props.save} 
                                         setContentToDefault={this.setContentToDefault} />, 
@@ -71,6 +92,9 @@ class Trips extends React.Component {
             <div id="trips" className="level-item" >   
                 {this.state.button}
                 {this.state.content}
+                <button name="edit" onClick={this.props.edit} className={"button edit-button "} > 
+                    <FontAwesomeIcon icon={faEdit}> </FontAwesomeIcon> 
+                </button> 
             </div>
         )
     }

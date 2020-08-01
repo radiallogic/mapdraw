@@ -4,7 +4,7 @@ import "regenerator-runtime/runtime";
 
 
 import React, { Component } from "react";
-import ReactDOM from 'react-dom';
+import ReactDOM, { unstable_batchedUpdates } from 'react-dom';
 
 import User from './components/User/User'
 
@@ -149,7 +149,14 @@ class App extends Component {
 
   saveName = (name) => {
     console.log('saveName: ', name);
-    this.setState({trip: name},  () => {
+    this.setState({trip: name}, () => {
+      this.saveTrip();
+    });
+  }
+
+  saveNew = (name) => {
+    console.log('save New: ', name);
+    this.setState({trip: name, paths: [], vehicle: '', id: '' }, () => {
       this.saveTrip();
     });
   }
@@ -185,11 +192,10 @@ class App extends Component {
       }).then( (response) => {
         return response.json();
       }).then( (data) => {
-        console.log('returned data: ', data);
-        //this.getAllData(); // stack order? 
-        
-        //this.setSelectedTrip(data._id, data);
-        // deal with errors here
+        // If new data
+        if(this.state.id == null || this.state.id == ''){
+          this.setSelectedTrip(data._id, data);
+        }
       });
     }else{
       this.setState({error: "Name can't be empty"});
@@ -212,16 +218,47 @@ class App extends Component {
       this.saveTrip();
       console.log('zoom set')
     });
-    
+
   }
 
   addPath = (path) => {
     const {paths} = this.state
     //console.log('set paths');
     paths.push(path);
-    this.setState({paths});
-    this.saveTrip();
+    this.setState({paths}, () => {
+      this.saveTrip();
+    });
+    
   }
+
+  // replace path if first or last coordinates are the same
+  // may miss edge cases. 
+
+  modifyPath = (newpath) => {
+    const {paths} = this.state
+    let index = paths.map( (item, i) => {
+
+
+      if(item[0][0] == newpath[0][0] && item[0][1] == newpath[0][1] || 
+        ( item[ item.length - 1][0] == newpath[ newpath.length -1 ][0] && 
+          item[ item.length - 1][1] == newpath[ newpath.length -1 ][1] ) 
+        ){
+        return i;
+      }
+      return -1;
+    });
+
+    if(index != -1 ){
+      paths[index] = newpath;
+    }
+
+    this.setState({paths}, () => {
+      console.log('Set pat');
+      this.saveTrip();
+    });
+    
+  }
+
 
   addSite = (latlng) => {
     const {sites} = this.state
@@ -252,6 +289,7 @@ class App extends Component {
                 name={this.state.name}
                 select={this.setSelectedTrip}
                 save={this.saveName}
+                savenew={this.saveNew}
                 />
             </Bubble>
 
@@ -284,6 +322,7 @@ class App extends Component {
           setZoom={this.setZoom}
 
           addPath={this.addPath}
+          modifyPath={this.modifyPath}
           addSite={this.addSite}
           paths={this.state.paths}
           sites={this.state.sites}

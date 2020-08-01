@@ -1,12 +1,6 @@
 import React from 'react';
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowsAlt, faEdit, faMapMarker, faMinusCircle } from '@fortawesome/free-solid-svg-icons';
-
-class TripSelect extends React.Component {
-    constructor(){
-        super();
-    }
+class TripSelect extends React.PureComponent {
 
     select = (event) => {
         this.props.select(event.target.value);
@@ -21,12 +15,9 @@ class TripSelect extends React.Component {
         return (
             <>
                 <select className="trip-select" onChange={this.select} value={this.props.id}>
-                    <option key={0} value=""> No Trip Loaded </option>
+                    <option key={0} value="No Trip Loaded"> No Trip Loaded </option>
                     {options}
                 </select>
-                <button onClick={this.props.edit} className={"button edit-button "} > 
-                    <FontAwesomeIcon icon={faEdit}> </FontAwesomeIcon> 
-                </button> 
             </>
         );
     }
