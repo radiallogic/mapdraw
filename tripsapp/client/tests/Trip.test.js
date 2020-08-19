@@ -1,4 +1,5 @@
 import React from "react";
+import ReactDOM from 'react-dom';
 import { render, unmountComponentAtNode } from "react-dom";
 import { act } from "react-dom/test-utils";
 import Trips from "./../src/components/Trip/Trips";
@@ -17,7 +18,7 @@ afterEach(() => {
   container = null;
 });
 
-const trips = [{ _id: 1, name: "trip1"}, { _id: 1, name: "trip2"} , { _id: 1, name: "trip3"}];
+const trips = [{ _id: 1, name: "trip1"}, { _id: 2, name: "trip2"} , { _id: 2, name: "trip3"}];
 
 // id={this.state.id}
 // name={this.state.name}
@@ -28,7 +29,6 @@ const savenew=jest.fn()
 // it displays not trip selected
 
 if("displays No Trip Selected", () => {
-
   const wrapper = mount(<Trips trips={trips} id={0} select={select} save={save} savenew={savenew} />)
   expect(wrapper.find('select').props().name).toBe('No Trip Selected')
 
@@ -47,45 +47,50 @@ if("trip selected updates title", () => {
 
 
 it("editing trip changes selected field", () => {
-  // Test first render and componentDidMount
   act(() => {
-    ReactDOM.render(<Trips trips={trips} id={0} select={select} save={save} savenew={savenew}  />, container);
+    const { getByTestId } =  ReactDOM.render(<Trips trips={trips} id={0} select={select} save={save} savenew={savenew}  />, container);
   });
+  console.log(getByTestId); 
 
-  const button = container.querySelector('.add');
-  //expect(document.title).toBe('You clicked 0 times');
+  userEvent.selectOptions(getByTestId("trip-select"), ["3"] );
 
-  // Test second render and componentDidUpdate
+  const button = container.querySelector('add');
+  
   act(() => {
     button.dispatchEvent(new MouseEvent('click', {bubbles: true}));
   });
 
-  //selected id should stay the same
+  const input = container.querySelector('input');
+  expect(input.value).toBe('trip3');
+  
+  // set input value to trip4
+  // mock save response?
 
-  // expect(label.textContent).toBe('You clicked 1 times');
-  // expect(document.title).toBe('You clicked 1 times');
+  const save = container.querySelector('save');
+  
+
+  expect(getByTestId("trip1").selected).toBe(false);
+  expect(getByTestId("trip3").selected).toBe(false);
+  expect(getByTestId("trip4").selected).toBe(true);
+
 });
 
-// adding selected field
 it("adding trip changes selected field", () => {
-  // Test first render and componentDidMount
   act(() => {
     ReactDOM.render(<Trips trips={trips} id={0} select={select} save={save} savenew={savenew} />, container);
   });
 
   const button = container.querySelector('.edit');
-
-  // expect(document.title).toBe('You clicked 0 times');
-
-  // Test second render and componentDidUpdate
   act(() => {
     button.dispatchEvent(new MouseEvent('click', {bubbles: true}));
   });
 
   // selected id should stay change
 
-  // expect(label.textContent).toBe('You clicked 1 times');
-  // expect(document.title).toBe('You clicked 1 times');
+  // act(() => {
+  //   Simulate.change(selectElement, { target: { value: "oranges" }});
+  // });
+
 });
 
 

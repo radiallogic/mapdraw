@@ -1,7 +1,9 @@
 import React from 'react'
-import  { LayersControl, Marker, Map, Popup, TileLayer, ZoomControl, GeoJSON, ScaleControl} from 'react-leaflet'
+import  { Marker, Map, Popup, TileLayer} from 'react-leaflet'
 
-import Paths, {ALL}  from '../Paths/react-leaflet-paths';
+import Paths  from '../Paths/react-leaflet-paths';
+
+import Site from '../components/Site/site';
 
 export const ADD = 9;
 
@@ -111,8 +113,12 @@ export default class MapContainer extends React.Component {
 				zoom={this.props.zoom}
 			/>
 
-			{this.props.sites.map((position, idx) =>
-                <Marker key={`marker-${idx}`} position={position}></Marker>
+			{this.props.sites.map((data, idx) =>
+                <Marker key={`marker-${idx}`} position={data.position}>
+					<Popup>
+						<Site site={data} save={this.props.saveSite} />
+					</Popup>
+				</Marker>
             )}
 
 		  </Map>

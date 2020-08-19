@@ -53,7 +53,7 @@ class Trips extends React.Component {
                         options={this.props.trips}
                         setContentToDefault={this.setContentToDefault}
                     />, 
-            button: <button name="add" className="button is-primary is-outlined" onClick={this.add}>Add Trip</button> 
+            button: <button id="add" className="button is-primary is-outlined" onClick={this.add}>Add Trip</button> 
             }
         )
     }
@@ -77,14 +77,15 @@ class Trips extends React.Component {
         this.addedit('edit');
     }
 
-    addedit = (addedit) =>{
-        //console.log('addedit function ', addedit );
+    addedit = (addedit) => {
         this.setState({content: <TripAddEdit
                                         addedit={addedit}
                                         name={this.props.name}
                                         save={this.props.save} 
                                         setContentToDefault={this.setContentToDefault} />, 
-                        button: <button className="button is-primary is-outlined" onClick={this.setContentToDefault}>Cancel</button>});
+
+                        button: <button id="cancel" className="button is-primary is-outlined" onClick={this.setContentToDefault}>Cancel</button>
+                    });
     }
     
     render(){
@@ -92,7 +93,8 @@ class Trips extends React.Component {
             <div id="trips" className="level-item" >   
                 {this.state.button}
                 {this.state.content}
-                <button name="edit" onClick={this.props.edit} className={"button edit-button "} > 
+
+                <button id="edit" onClick={this.edit} className={"button edit-button "} > 
                     <FontAwesomeIcon icon={faEdit}> </FontAwesomeIcon> 
                 </button> 
             </div>

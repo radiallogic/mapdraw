@@ -25,7 +25,7 @@ export default class addlink extends Component {
 
     render(){
         return(
-            <div className={} >
+            <div className='' >
                 <input type="text" name="name" value={this.state.name} onChange={this.onNameChange} />  : 
                 <input type="text" name="link" value={this.state.link} onChange={this.onLinkChange} />  
                 <button onClick={this.save} value="Save" />

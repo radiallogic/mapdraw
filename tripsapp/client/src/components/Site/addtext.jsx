@@ -19,7 +19,7 @@ export default class addtext extends Component {
 
     render(){
         return(
-            <div className={} >
+            <div className='' >
                 <textbox name="text" value={this.state.text} onChange={this.onTextChange} />  
                 <button onClick={this.save} value="Save" />
             </div>

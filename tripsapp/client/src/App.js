@@ -4,7 +4,7 @@ import "regenerator-runtime/runtime";
 
 
 import React, { Component } from "react";
-import ReactDOM, { unstable_batchedUpdates } from 'react-dom';
+import ReactDOM from 'react-dom';
 
 import User from './components/User/User'
 
@@ -262,8 +262,12 @@ class App extends Component {
 
   addSite = (latlng) => {
     const {sites} = this.state
-		sites.push(latlng);
+		sites.push({position: latlng});
 		this.setState({sites})
+  }
+
+  saveSite = () => {
+    
   }
 
   render() {

@@ -48,7 +48,7 @@ export default class Site extends Component {
         })
 
         return(
-            <div className={"bubble " + this.props.className } >
+            <div className={"bubble "} >
                 <button value="Add Link" onClick={this.addlink} /> <button value="Add Text" onClick={this.addlink} /> 
                 {rows}
             </div>
