@@ -41,7 +41,7 @@ class Trips extends React.Component {
 
     setContentToDefault = () => {
 
-        console.log('in trips, setContentToDefault: ', this.props.name ); 
+        //console.log('in trips, setContentToDefault: ', this.props.name ); 
 
         this.setState(
             {
@@ -59,9 +59,9 @@ class Trips extends React.Component {
     }
 
     save = (name, addedit) =>{
-        //console.log('save function ... ', addedit  );
+        console.log('save function ... ', addedit  );
         if(addedit == "add"){
-            //console.log(' HERE: ', addedit  );
+            console.log(' HERE: ', addedit  );
             this.props.savenew(name);
         }else{
             this.props.save(name);
@@ -81,7 +81,7 @@ class Trips extends React.Component {
         this.setState({content: <TripAddEdit
                                         addedit={addedit}
                                         name={this.props.name}
-                                        save={this.props.save} 
+                                        save={this.save} 
                                         setContentToDefault={this.setContentToDefault} />, 
 
                         button: <button id="cancel" className="button is-primary is-outlined" onClick={this.setContentToDefault}>Cancel</button>

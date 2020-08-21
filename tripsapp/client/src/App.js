@@ -34,16 +34,27 @@ class App extends Component {
       paths: [],
       sites: [],
 
+      token: '',
       error: '',
-
 
 			zoom: 6,
 			position : [51.454, -2.587],
     }
   }
 
+
   componentDidMount = () => {
     this.getAllData();
+    this.setState({position: this.getRandomPosition() }, () => {
+      console.log(this.state.position);
+    });
+  }
+
+  getRandomPosition = () => {
+    return  [ 
+      ( (Math.random() * (90 - -90) + -90).toFixed(3) * 1 ) , 
+      ( (Math.random() * (80 - -180) + -180).toFixed(3) * 1 ) ,   
+    ];
   }
 
   getAllData = () => {
@@ -156,7 +167,7 @@ class App extends Component {
 
   saveNew = (name) => {
     console.log('save New: ', name);
-    this.setState({trip: name, paths: [], vehicle: '', id: '' }, () => {
+    this.setState({trip: name, paths: [], vehicle: '', id: '', position: this.getRandomPosition() }, () => {
       this.saveTrip();
     });
   }
@@ -164,7 +175,8 @@ class App extends Component {
   saveTrip = () => {
 
     //console.log('state before save', this.state); 
-    console.log('saveTrip: ',  this.state.zoom );
+    //console.log('saveTrip: ',  this.state.zoom );
+
     if(this.state.name !== '' ){
       let body = {name:this.state.trip, 
         vehicle: this.state.vehicle, 
@@ -179,6 +191,8 @@ class App extends Component {
         body._id = this.state.id;
       }
 
+      body.token = localStorage.getItem('token');
+      
       body = JSON.stringify(body);
       console.log('body', body);
 
@@ -281,7 +295,7 @@ class App extends Component {
             { this.state.error && <h3 className="error"> { this.state.error } </h3> }
 
             <Bubble className="login-bubble">
-              <User clear={this.getAllData}/>
+              <User clear={this.getAllData} setToken={this.setToken} token={this.state.token}/>
             </Bubble>
           </div>
 

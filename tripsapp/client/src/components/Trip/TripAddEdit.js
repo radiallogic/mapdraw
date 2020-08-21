@@ -38,7 +38,7 @@ class TripAddEdit extends React.Component {
         return (
             <div id="trip-add" className="field has-addons">
                 <div className="control">
-                    <input className="input" value={this.state.value} onChange={this.update} type="text" placeholder="Trip Name" />
+                    <input id="trip-input" className="input" value={this.state.value} onChange={this.update} type="text" placeholder="Trip Name" />
                 </div>
                 <div className="control">
                     <button className="button is-primary is-light" onClick={this.save}>Save</button>

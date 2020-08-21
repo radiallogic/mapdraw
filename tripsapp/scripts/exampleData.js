@@ -8,10 +8,10 @@ db.users.insert({ "_id" : ObjectId("5ec77cca480c894f89cccac5"), "tokens" : [ ], 
   "updatedAt" : ISODate("2020-05-22T07:18:34.661Z"), "__v" : 0 })
 
 
-db.trips.insert({"user": "5ec77cca480c894f89cccac5", "name": "trip 1", 'position': [], 'zoom': 6, 'route': [], 'sites': [], 'vehicle': ''})
-db.trips.insert({"user": "5ec77cca480c894f89cccac5", "name": "trip 2", 'position': [], 'zoom': 6, 'route': [], 'sites': [], 'vehicle': ''})
-db.trips.insert({"user": "5ec77cca480c894f89cccac5", "name": "trip 3", 'position': [], 'zoom': 6, 'route': [],  'sites': [], 'vehicle': ''})
-db.trips.insert({"user": "5ec77cca480c894f89cccac5", "name": "trip 4", 'zoom': 6, 'route': [], 'vehicle': ''})
+db.trips.insert({"user": "5ec77cca480c894f89cccac5", "name": "trip 1", 'position': [51.454, -2.587], 'zoom': 6, 'route': [], 'sites': [], 'vehicle': ''})
+db.trips.insert({"user": "5ec77cca480c894f89cccac5", "name": "trip 2", 'position': [51.454, -2.587], 'zoom': 6, 'route': [], 'sites': [], 'vehicle': ''})
+db.trips.insert({"user": "5ec77cca480c894f89cccac5", "name": "trip 3", 'position': [51.454, -2.587], 'zoom': 6, 'route': [],  'sites': [], 'vehicle': ''})
+db.trips.insert({"user": "5ec77cca480c894f89cccac5", "name": "trip 4", 'position': [51.454, -2.587], 'zoom': 6, 'route': [], 'vehicle': ''})
 
 db.sites.insert({})
 

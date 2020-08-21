@@ -79536,6 +79536,16 @@ var App = /*#__PURE__*/function (_Component) {
 
     _defineProperty(_assertThisInitialized(_this), "componentDidMount", function () {
       _this.getAllData();
+
+      _this.setState({
+        position: _this.getRandomPosition()
+      }, function () {
+        console.log(_this.state.position);
+      });
+    });
+
+    _defineProperty(_assertThisInitialized(_this), "getRandomPosition", function () {
+      return [(Math.random() * (90 - -90) + -90).toFixed(3) * 1, (Math.random() * (80 - -180) + -180).toFixed(3) * 1];
     });
 
     _defineProperty(_assertThisInitialized(_this), "getAllData", function () {
@@ -79648,7 +79658,8 @@ var App = /*#__PURE__*/function (_Component) {
         trip: name,
         paths: [],
         vehicle: '',
-        id: ''
+        id: '',
+        position: _this.getRandomPosition()
       }, function () {
         _this.saveTrip();
       });
@@ -79656,8 +79667,7 @@ var App = /*#__PURE__*/function (_Component) {
 
     _defineProperty(_assertThisInitialized(_this), "saveTrip", function () {
       //console.log('state before save', this.state); 
-      console.log('saveTrip: ', _this.state.zoom);
-
+      //console.log('saveTrip: ',  this.state.zoom );
       if (_this.state.name !== '') {
         var body = {
           name: _this.state.trip,
@@ -79672,6 +79682,7 @@ var App = /*#__PURE__*/function (_Component) {
           body._id = _this.state.id;
         }
 
+        body.token = localStorage.getItem('token');
         body = JSON.stringify(body);
         console.log('body', body);
         fetch('/api/trips', {
@@ -79780,6 +79791,7 @@ var App = /*#__PURE__*/function (_Component) {
       kitlist: '',
       paths: [],
       sites: [],
+      token: '',
       error: '',
       zoom: 6,
       position: [51.454, -2.587]
@@ -79801,7 +79813,9 @@ var App = /*#__PURE__*/function (_Component) {
       }, " ", this.state.error, " "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2___default.a.createElement(_components_Bubble__WEBPACK_IMPORTED_MODULE_10__["default"], {
         className: "login-bubble"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2___default.a.createElement(_components_User_User__WEBPACK_IMPORTED_MODULE_4__["default"], {
-        clear: this.getAllData
+        clear: this.getAllData,
+        setToken: this.setToken,
+        token: this.state.token
       }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2___default.a.createElement("div", {
         className: "menu-parent"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2___default.a.createElement(_components_Bubble__WEBPACK_IMPORTED_MODULE_10__["default"], {
@@ -81811,6 +81825,7 @@ var TripAddEdit = /*#__PURE__*/function (_React$Component) {
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "control"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        id: "trip-input",
         className: "input",
         value: this.state.value,
         onChange: this.update,
@@ -81904,7 +81919,8 @@ var TripSelect = /*#__PURE__*/function (_React$PureComponent) {
         }, " ", item.name, " ");
       });
       return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", {
-        className: "trip-select block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500",
+        role: "listbox",
+        className: "",
         onChange: this.select,
         value: this.props.id
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
@@ -81997,8 +82013,7 @@ var Trips = /*#__PURE__*/function (_React$Component) {
     });
 
     _defineProperty(_assertThisInitialized(_this), "setContentToDefault", function () {
-      console.log('in trips, setContentToDefault: ', _this.props.name);
-
+      //console.log('in trips, setContentToDefault: ', this.props.name ); 
       _this.setState({
         content: /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_TripSelect__WEBPACK_IMPORTED_MODULE_2__["default"], {
           name: _this.props.name,
@@ -82017,9 +82032,11 @@ var Trips = /*#__PURE__*/function (_React$Component) {
     });
 
     _defineProperty(_assertThisInitialized(_this), "save", function (name, addedit) {
-      //console.log('save function ... ', addedit  );
+      console.log('save function ... ', addedit);
+
       if (addedit == "add") {
-        //console.log(' HERE: ', addedit  );
+        console.log(' HERE: ', addedit);
+
         _this.props.savenew(name);
       } else {
         _this.props.save(name);
@@ -82041,7 +82058,7 @@ var Trips = /*#__PURE__*/function (_React$Component) {
         content: /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_TripAddEdit__WEBPACK_IMPORTED_MODULE_1__["default"], {
           addedit: addedit,
           name: _this.props.name,
-          save: _this.props.save,
+          save: _this.save,
           setContentToDefault: _this.setContentToDefault
         }),
         button: /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
@@ -82997,7 +83014,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 
 
-
+ //cookie-parser
 
 var User = /*#__PURE__*/function (_Component) {
   _inherits(User, _Component);
@@ -83010,28 +83027,6 @@ var User = /*#__PURE__*/function (_Component) {
     _classCallCheck(this, User);
 
     _this = _super.call(this);
-
-    _defineProperty(_assertThisInitialized(_this), "componentDidMount", function () {
-      _this.isLoggedIn();
-    });
-
-    _defineProperty(_assertThisInitialized(_this), "isLoggedIn", function () {
-      fetch('/user/isloggedin/').then(function (response) {
-        return response.json();
-      }).then(function (data) {
-        console.log(' isloggedin data', data);
-
-        if (data === ['yes']) {
-          _this.setState({
-            loggedin: true
-          });
-        } else {
-          _this.setState({
-            loggedin: false
-          });
-        }
-      });
-    });
 
     _defineProperty(_assertThisInitialized(_this), "signUp", function (user, pass, passcon) {
       _this.setState({
@@ -83089,14 +83084,17 @@ var User = /*#__PURE__*/function (_Component) {
       }).then(function (response) {
         console.log('response.status ', response.status);
         console.log('response.ok ', response.ok);
+        var json = response.json();
 
         if (response.ok) {
           _this.props.clear();
 
           _this.setState({
-            loggedin: true,
+            token: json.token,
             error: ""
           });
+
+          localStorage.setItem('token', json.token);
         } else {
           _this.setState({
             error: response.json()
@@ -83115,7 +83113,7 @@ var User = /*#__PURE__*/function (_Component) {
           _this.props.clear();
 
           _this.setState({
-            loggedin: false
+            token: false
           });
         } else {
           return response.json();
@@ -83133,7 +83131,7 @@ var User = /*#__PURE__*/function (_Component) {
   _createClass(User, [{
     key: "render",
     value: function render() {
-      if (this.state.loggedin == true) {
+      if (this.props.token != false) {
         return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Logout__WEBPACK_IMPORTED_MODULE_3__["default"], {
           logout: this.logout
         }));

@@ -9,6 +9,7 @@ import { WriteError } from "mongodb";
 import nodemailer from "nodemailer";
 import "../config/passport";
 
+const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const async = require("async");
 
@@ -21,10 +22,12 @@ import graph from "fbgraph";
 export const postLogin = async (req: Request, res: Response, next: NextFunction) => {
     await check("email", "Email is not valid").isEmail().run(req);
     await check("password", "Password cannot be blank").isLength({min: 1}).run(req);
-    // eslint-disable-next-line @typescript-eslint/camelcase
     await sanitize("email").normalizeEmail({ gmail_remove_dots: false }).run(req);
 
     const errors = validationResult(req);
+
+
+    console.log('errors: ', errors); 
 
     if (!errors.isEmpty()) {
         return res.status(422).send(errors.array());
@@ -37,24 +40,18 @@ export const postLogin = async (req: Request, res: Response, next: NextFunction)
         }
         req.logIn(user, (err) => {
             if (err) { return next(err); }
-            return res.status(200).send( [{ msg: "Success! You are logged in." }] );
+
+
+            // generate JWT token here
+            var token =jwt.sign({
+                data: 'foobar'
+              }, 'secret', { expiresIn: '1h' });
+
+            return res.status(200).send( token );
         });
     })(req, res, next);
 };
 
-
-/**
- * GET /isloggedin
- * Log out.
- */
-export const isloggedin = (req: Request, res: Response) => {
-    if (req.user) {
-        return res.send(['yes']);
-    } else {
-        return res.send(['no']);
-    }
-    
-};
 
 
 /**

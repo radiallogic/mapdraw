@@ -2,33 +2,17 @@ import React, { Component } from "react";
 import Login from './Login';
 import Signup from './Signup';
 import Logout from './Logout';
+//cookie-parser
+
 
 class User extends Component {
     constructor(){
         super();
 
-        this.state = 
-        { loggedin: false, 
+        this.state = {
+          loggedin: false, 
           error: ""
         };
-    }
-
-    componentDidMount = () => {
-      this.isLoggedIn();
-    }
-
-    isLoggedIn = () => {
-      
-      fetch('/user/isloggedin/' ).then( (response) => {
-        return response.json();
-      }).then( (data) => {
-        console.log(' isloggedin data', data) 
-        if(data === ['yes']){
-          this.setState({loggedin:true});
-        }else{
-          this.setState({loggedin:false});
-        }
-    });
     }
 
     signUp = (user, pass, passcon) => {
@@ -70,9 +54,11 @@ class User extends Component {
           }).then( (response) => {
             console.log('response.status ', response.status );
             console.log('response.ok ', response.ok ); 
+            var json = response.json();
             if(response.ok){
               this.props.clear();
-              this.setState({loggedin:true, error: ""});
+              this.setState({token: json.token, error: ""});
+              localStorage.setItem('token', json.token);
             }else{
               this.setState({error: response.json() });
             }
@@ -84,7 +70,7 @@ class User extends Component {
       fetch('/user/logout/').then( (response) => {
         if(response.ok){
           this.props.clear();
-          this.setState({loggedin:false});
+          this.setState({token:false});
         }else{
           return response.json();
         }
@@ -93,7 +79,7 @@ class User extends Component {
 
     render(){
 
-      if(this.state.loggedin == true){
+      if(this.props.token != false){
         return (
           <>
               <Logout logout={this.logout} />
