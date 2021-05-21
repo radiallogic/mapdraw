@@ -1,0 +1,12 @@
+## Server
+cd server
+nodemon ./build/server.js #run 
+yarn build #build
+
+
+#Client
+yarn upgrade 
+webpack -w
+
+
+
