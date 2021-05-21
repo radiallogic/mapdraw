@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getFacebook = exports.postForgot = exports.postReset = exports.getOauthUnlink = exports.postDeleteAccount = exports.postUpdatePassword = exports.postUpdateProfile = exports.postSignup = exports.logout = exports.isloggedin = exports.postLogin = void 0;
+exports.getFacebook = exports.postForgot = exports.postReset = exports.getOauthUnlink = exports.postDeleteAccount = exports.postUpdatePassword = exports.postUpdateProfile = exports.postSignup = exports.logout = exports.postLogin = exports.isloggedin = void 0;
 const express_validator_1 = require("express-validator");
 const passport = require("passport");
 const User_1 = require("../models/User");
@@ -22,59 +22,65 @@ const crypto = require('crypto');
 const async = require("async");
 const fbgraph_1 = __importDefault(require("fbgraph"));
 /**
+ * GET /user/isloggedin
+ * isloggedin
+ */
+const isloggedin = (req, res) => {
+    console.log("isLoggedIn: ", req);
+    return res.send({}); // res.json({user:  " foo "});
+};
+exports.isloggedin = isloggedin;
+/**
  * POST /login
  * Sign in using email and password.
  */
-exports.postLogin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const postLogin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log('in post login');
     yield express_validator_1.check("email", "Email is not valid").isEmail().run(req);
     yield express_validator_1.check("password", "Password cannot be blank").isLength({ min: 1 }).run(req);
-    // eslint-disable-next-line @typescript-eslint/camelcase
-    yield express_validator_1.sanitize("email").normalizeEmail({ gmail_remove_dots: false }).run(req);
+    yield express_validator_1.check("email").normalizeEmail({ gmail_remove_dots: false }).run(req);
     const errors = express_validator_1.validationResult(req);
+    console.log('errors: ', errors);
     if (!errors.isEmpty()) {
         return res.status(422).send(errors.array());
     }
     passport.authenticate("local", (err, user, info) => {
         if (err) {
-            return next(err);
+            res.status(404).json(err);
+            return;
         }
-        if (!user) {
-            return res.send([{ msg: info.message }]);
+        if (user) {
+            //const token = user.generateJwt();
+            req.login(user, (err) => {
+                console.log("login user", user);
+                console.log("err", err);
+            });
+            res.status(200);
+            res.json({
+                userInfo: user,
+                //token: token
+            });
         }
-        req.logIn(user, (err) => {
-            if (err) {
-                return next(err);
-            }
-            return res.status(200).send([{ msg: "Success! You are logged in." }]);
-        });
-    })(req, res, next);
+        else {
+            res.status(401).json(info);
+        }
+    })(req, res);
 });
+exports.postLogin = postLogin;
 /**
- * GET /isloggedin
+ * GET /user/logout
  * Log out.
  */
-exports.isloggedin = (req, res) => {
-    if (req.user) {
-        return res.send(['yes']);
-    }
-    else {
-        return res.send(['no']);
-    }
-};
-/**
- * GET /logout
- * Log out.
- */
-exports.logout = (req, res) => {
+const logout = (req, res) => {
     req.logout();
     return res.send({});
 };
+exports.logout = logout;
 /**
  * POST /signup
  * Create a new local account.
  */
-exports.postSignup = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    //console.log(' postSignup ', req);
+const postSignup = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     yield express_validator_1.check("email", "Email is not valid").isEmail().run(req);
     yield express_validator_1.check("password", "Password must be at least 4 characters long").isLength({ min: 4 }).run(req);
     yield express_validator_1.check("confirmPassword", "Passwords do not match").equals(req.body.password).run(req);
@@ -107,15 +113,16 @@ exports.postSignup = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
                     return next(err);
                 }
             });
-            return res.status(200).send([{ msg: "completed" }]);
+            return res.status(201).send([{ msg: "completed" }]);
         });
     });
 });
+exports.postSignup = postSignup;
 /**
  * POST /account/profile
  * Update profile information.
  */
-exports.postUpdateProfile = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const postUpdateProfile = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     yield express_validator_1.check("email", "Please enter a valid email address.").isEmail().run(req);
     // eslint-disable-next-line @typescript-eslint/camelcase
     yield express_validator_1.sanitize("email").normalizeEmail({ gmail_remove_dots: false }).run(req);
@@ -129,7 +136,7 @@ exports.postUpdateProfile = (req, res, next) => __awaiter(void 0, void 0, void 0
             return next(err);
         }
         user.email = req.body.email || "";
-        user.save((err) => {
+        user.save(() => {
             if (err) {
                 if (err.code === 11000) {
                     return res.send({ "error": "The email address you have entered is already associated with an account." });
@@ -140,11 +147,12 @@ exports.postUpdateProfile = (req, res, next) => __awaiter(void 0, void 0, void 0
         });
     });
 });
+exports.postUpdateProfile = postUpdateProfile;
 /**
  * POST /account/password
  * Update current password.
  */
-exports.postUpdatePassword = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const postUpdatePassword = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     yield express_validator_1.check("password", "Password must be at least 4 characters long").isLength({ min: 4 }).run(req);
     yield express_validator_1.check("confirmPassword", "Passwords do not match").equals(req.body.password).run(req);
     const errors = express_validator_1.validationResult(req);
@@ -157,7 +165,7 @@ exports.postUpdatePassword = (req, res, next) => __awaiter(void 0, void 0, void 
             return next(err);
         }
         user.password = req.body.password;
-        user.save((err) => {
+        user.save(() => {
             if (err) {
                 return next(err);
             }
@@ -165,11 +173,12 @@ exports.postUpdatePassword = (req, res, next) => __awaiter(void 0, void 0, void 
         });
     });
 });
+exports.postUpdatePassword = postUpdatePassword;
 /**
  * POST /account/delete
  * Delete user account.
  */
-exports.postDeleteAccount = (req, res, next) => {
+const postDeleteAccount = (req, res, next) => {
     const user = req.user;
     User_1.User.remove({ _id: user.id }, (err) => {
         if (err) {
@@ -179,11 +188,12 @@ exports.postDeleteAccount = (req, res, next) => {
         res.status(200).send({ msg: "Your account has been deleted." });
     });
 };
+exports.postDeleteAccount = postDeleteAccount;
 /**
  * GET /account/unlink/:provider
  * Unlink OAuth provider.
  */
-exports.getOauthUnlink = (req, res, next) => {
+const getOauthUnlink = (req, res, next) => {
     const provider = req.params.provider;
     const user = req.user;
     User_1.User.findById(user.id, (err, user) => {
@@ -200,11 +210,12 @@ exports.getOauthUnlink = (req, res, next) => {
         });
     });
 };
+exports.getOauthUnlink = getOauthUnlink;
 /**
  * POST /reset/:token
  * Process the reset password request.
  */
-exports.postReset = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const postReset = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     yield express_validator_1.check("password", "Password must be at least 4 characters long.").isLength({ min: 4 }).run(req);
     yield express_validator_1.check("confirm", "Passwords must match.").equals(req.body.password).run(req);
     const errors = express_validator_1.validationResult(req);
@@ -262,11 +273,12 @@ exports.postReset = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
         res.redirect("/");
     });
 });
+exports.postReset = postReset;
 /**
  * POST /forgot
  * Create a random token, then the send user an email with a reset link.
  */
-exports.postForgot = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const postForgot = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     yield express_validator_1.check("email", "Please enter a valid email address.").isEmail().run(req);
     // eslint-disable-next-line @typescript-eslint/camelcase
     yield express_validator_1.sanitize("email").normalizeEmail({ gmail_remove_dots: false }).run(req);
@@ -306,8 +318,8 @@ exports.postForgot = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
             });
             const mailOptions = {
                 to: user.email,
-                from: "hackathon@starter.com",
-                subject: "Reset your password on Hackathon Starter",
+                from: "no-reply@tripsapp.com",
+                subject: "Reset your password for trips app",
                 text: `You are receiving this email because you (or someone else) have requested the reset of the password for your account.\n\n
           Please click on the following link, or paste this into your browser to complete the process:\n\n
           http://${req.headers.host}/reset/${token}\n\n
@@ -325,11 +337,12 @@ exports.postForgot = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
         res.send({ error: err });
     });
 });
+exports.postForgot = postForgot;
 /**
  * GET /api/facebook
  * Facebook API example.
  */
-exports.getFacebook = (req, res, next) => {
+const getFacebook = (req, res, next) => {
     const user = req.user;
     const token = user.tokens.find((token) => token.kind === "facebook");
     fbgraph_1.default.setAccessToken(token.accessToken);
@@ -343,4 +356,5 @@ exports.getFacebook = (req, res, next) => {
         });
     });
 };
+exports.getFacebook = getFacebook;
 //# sourceMappingURL=UserController.js.map

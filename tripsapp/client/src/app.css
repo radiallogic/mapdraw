@@ -1,5 +1,95 @@
-@tailwind base;
+@import "tailwindcss/base";
 
-@tailwind components;
+@import "tailwindcss/components";
 
-@tailwind utilities;
+@import "tailwindcss/utilities";
+
+.btn{
+    @apply border-2;
+    /* //@apply rounded; */
+    @apply border-blue-500;
+    @apply p-1;
+    @apply m-1;
+}
+.leaflet-container {
+    top: 0px;
+    left: 0px;
+
+    position: absolute;
+
+    height: 100%;
+    width: 100%;
+
+    z-index: 10;
+} 
+
+.line-icon {
+    border-radius: 50%;
+    height: 5px;
+    width: 5px;
+    background-color: rgba(255, 255, 255, .5);
+}
+
+.flex-container {
+    z-index: 900;
+    display: flex;
+    pointer-events: none;
+}
+
+.header{
+    z-index: 900;
+    flex-direction: row;
+}
+
+.page{
+    width:100%;
+    z-index: 900;
+    flex-direction: column;
+}
+
+.menu-parent{
+    flex-direction: column;
+    width: 30%;
+    z-index: 900;
+}
+
+/* .child{
+    margin: auto;
+} */
+
+
+
+.button:focus {
+    outline: none;
+}
+
+.bubble {
+    display: inline-flex;
+
+    background-color: rgba(255, 255, 255, .5);
+
+    -webkit-box-shadow: 1em 1em 3em -0.5em rgba(0,0,0,0.75);
+    -moz-box-shadow: 1em 1em 3em -0.5em rgba(0,0,0,0.75);
+    box-shadow: 1em 1em 3em -0.5em rgba(0,0,0,0.75);
+
+    border-radius: 1em;
+
+    padding: 1em;
+    margin: 1em;
+
+    z-index: 900;
+
+    pointer-events: all;
+}
+
+.login-bubble {
+    width: 12.5em;
+    display: flex;
+    justify-content: center;
+    z-index: 900;
+    margin-left: auto;
+}
+
+.ReactModalPortal, .ReactModalPortal > *{
+    z-index: 900;
+}

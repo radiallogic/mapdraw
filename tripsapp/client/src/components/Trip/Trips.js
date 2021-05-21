@@ -53,7 +53,7 @@ class Trips extends React.Component {
                         options={this.props.trips}
                         setContentToDefault={this.setContentToDefault}
                     />, 
-            button: <button id="add" className="button is-primary is-outlined" onClick={this.add}>Add Trip</button> 
+            button: <button id="add" className="btn" onClick={this.add}>Add Trip</button> 
             }
         )
     }
@@ -84,7 +84,7 @@ class Trips extends React.Component {
                                         save={this.save} 
                                         setContentToDefault={this.setContentToDefault} />, 
 
-                        button: <button id="cancel" className="button is-primary is-outlined" onClick={this.setContentToDefault}>Cancel</button>
+                        button: <button id="cancel" className="btn " onClick={this.setContentToDefault}>Cancel</button>
                     });
     }
     
@@ -94,7 +94,7 @@ class Trips extends React.Component {
                 {this.state.button}
                 {this.state.content}
 
-                <button id="edit" onClick={this.edit} className={"button edit-button "} > 
+                <button id="edit" onClick={this.edit} className={"btn edit-button "} > 
                     <FontAwesomeIcon icon={faEdit}> </FontAwesomeIcon> 
                 </button> 
             </div>

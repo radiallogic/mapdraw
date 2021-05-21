@@ -9,24 +9,32 @@ import { WriteError } from "mongodb";
 import nodemailer from "nodemailer";
 import "../config/passport";
 
-const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const async = require("async");
 
 import graph from "fbgraph";
+
+
+/**
+ * GET /user/isloggedin
+ * isloggedin
+ */
+export const isloggedin = (req: Request, res: Response) => {
+    console.log("isLoggedIn: ", req)
+    return res.send({}); // res.json({user:  " foo "});
+};
 
 /**
  * POST /login
  * Sign in using email and password.
  */
 export const postLogin = async (req: Request, res: Response, next: NextFunction) => {
+    console.log('in post login'); 
     await check("email", "Email is not valid").isEmail().run(req);
     await check("password", "Password cannot be blank").isLength({min: 1}).run(req);
-    await sanitize("email").normalizeEmail({ gmail_remove_dots: false }).run(req);
+    await check("email").normalizeEmail({ gmail_remove_dots: false }).run(req);
 
     const errors = validationResult(req);
-
-
     console.log('errors: ', errors); 
 
     if (!errors.isEmpty()) {
@@ -34,28 +42,33 @@ export const postLogin = async (req: Request, res: Response, next: NextFunction)
     }
 
     passport.authenticate("local", (err: Error, user: UserDocument, info: IVerifyOptions) => {
-        if (err) { return next(err); }
-        if (!user) {
-            return res.send( [{msg: info.message}]);
+        if (err) {
+            res.status(404).json(err);
+            return;
         }
-        req.logIn(user, (err) => {
-            if (err) { return next(err); }
+  
+        if (user) {
+            //const token = user.generateJwt();
+            req.login(user, (err) => {
+                console.log("login user", user);
+                console.log("err", err);
+            });
+            res.status(200);
+            res.json({
+              userInfo: user,
+              //token: token
+            });
+            
+        } else {
+            res.status(401).json(info);
+        }
+        
+    })(req, res);
 
-
-            // generate JWT token here
-            var token =jwt.sign({
-                data: 'foobar'
-              }, 'secret', { expiresIn: '1h' });
-
-            return res.status(200).send( token );
-        });
-    })(req, res, next);
 };
 
-
-
 /**
- * GET /logout
+ * GET /user/logout
  * Log out.
  */
 export const logout = (req: Request, res: Response) => {
@@ -63,14 +76,11 @@ export const logout = (req: Request, res: Response) => {
     return res.send({});
 };
 
-
 /**
  * POST /signup
  * Create a new local account.
  */
 export const postSignup = async (req: Request, res: Response, next: NextFunction) => {
-
-    //console.log(' postSignup ', req);
 
     await check("email", "Email is not valid").isEmail().run(req);
     await check("password", "Password must be at least 4 characters long").isLength({ min: 4 }).run(req);
@@ -108,7 +118,7 @@ export const postSignup = async (req: Request, res: Response, next: NextFunction
                     return next(err);
                 }
             });
-            return res.status(200).send( [{ msg: "completed" }] );
+            return res.status(201).send( [{ msg: "completed" }] );
         });
     });
     
@@ -135,7 +145,7 @@ export const postUpdateProfile = async (req: Request, res: Response, next: NextF
         if (err) { return next(err); }
         user.email = req.body.email || "";
 
-        user.save((err: WriteError) => {
+        user.save(() => {
             if (err) {
                 if (err.code === 11000) {
                     return res.send({ "error": "The email address you have entered is already associated with an account." });
@@ -165,7 +175,7 @@ export const postUpdatePassword = async (req: Request, res: Response, next: Next
     User.findById(user.id, (err, user: UserDocument) => {
         if (err) { return next(err); }
         user.password = req.body.password;
-        user.save((err: WriteError) => {
+        user.save(() => { // err: WriteError
             if (err) { return next(err); }
             res.status(200).send({ msg: "Password has been changed." });
         });
@@ -310,8 +320,8 @@ export const postForgot = async (req: Request, res: Response, next: NextFunction
             });
             const mailOptions = {
                 to: user.email,
-                from: "hackathon@starter.com",
-                subject: "Reset your password on Hackathon Starter",
+                from: "no-reply@tripsapp.com",
+                subject: "Reset your password for trips app",
                 text: `You are receiving this email because you (or someone else) have requested the reset of the password for your account.\n\n
           Please click on the following link, or paste this into your browser to complete the process:\n\n
           http://${req.headers.host}/reset/${token}\n\n

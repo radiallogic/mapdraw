@@ -1,59 +1,25 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
 const express = require('express');
 const app = express();
 const mongo = require('mongodb').MongoClient;
 const ObjectID = require('mongodb').ObjectID;
-const passport_1 = __importDefault(require("passport"));
-const express_session_1 = __importDefault(require("express-session"));
-const mongoose_1 = __importDefault(require("mongoose"));
-const connect_mongo_1 = __importDefault(require("connect-mongo"));
-const MongoStore = connect_mongo_1.default(express_session_1.default);
-const url = "mongodb://localhost:27017/tripsapp"; // tripsapp 
-mongoose_1.default.connect(url, { useNewUrlParser: true, useCreateIndex: true });
-var db = mongoose_1.default.connection;
+const mongoose = require("mongoose");
+const url = "mongodb://localhost:27017/tripsapp";
+mongoose.connect(url, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true });
+var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function (callback) {
     console.log("mongoose connection to db open");
 });
+var passport = require('passport');
+// Passport configuration
+const passportConfig = require("./config/passport");
+var session = require("express-session"), cookieParser = require("cookie-parser");
 app.use(express.json());
 app.use('/', express.static('../client'));
-//app.use(compression());
-app.use(express_session_1.default({
-    resave: true,
-    saveUninitialized: true,
-    secret: 'AsuperSecrettTT!!!StRinGGG',
-    store: new MongoStore({
-        url: url,
-        autoReconnect: true
-    })
-}));
-app.use(passport_1.default.initialize());
-app.use(passport_1.default.session());
-// Passport configuration
-const passportConfig = __importStar(require("./config/passport"));
+app.use(session({ secret: "supeRRRsecret", resave: true, saveUninitialized: true }));
+app.use(cookieParser());
+app.use(passport.initialize());
+app.use(passport.session());
 const userController = require('./controllers/UserController');
 /**
  * User app routes.
@@ -61,16 +27,10 @@ const userController = require('./controllers/UserController');
 app.post("/user/signup", userController.postSignup);
 app.post("/user/login", userController.postLogin);
 app.get("/user/logout", userController.logout);
-app.get("/user/isloggedin", userController.isloggedin);
+app.get("/user/isloggedin", userController.isloggedin); // isloggedin (req, res) => {console.log(req)},
 app.post("/user/forgot", userController.postForgot);
 app.post("/user/reset/:token", userController.postReset);
-// app.get("/contact", contactController.getContact);
-// app.post("/contact", contactController.postContact);
 // app.get("/account", passportConfig.isAuthenticated, userController.getAccount);
-// app.post("/account/profile", passportConfig.isAuthenticated, userController.postUpdateProfile);
-// app.post("/account/password", passportConfig.isAuthenticated, userController.postUpdatePassword);
-// app.post("/account/delete", passportConfig.isAuthenticated, userController.postDeleteAccount);
-// app.get("/account/unlink/:provider", passportConfig.isAuthenticated, userController.getOauthUnlink);
 /**
  * API examples routes.
  */
@@ -79,13 +39,13 @@ app.get("/api/facebook", passportConfig.isAuthenticated, passportConfig.isAuthor
 /**
  * OAuth authentication routes. (Sign in)
  */
-app.get("/auth/facebook", passport_1.default.authenticate("facebook", { scope: ["email", "public_profile"] }));
-app.get("/auth/facebook/callback", passport_1.default.authenticate("facebook", { failureRedirect: "/login" }), (req, res) => {
+app.get("/auth/facebook", passport.authenticate("facebook", { scope: ["email", "public_profile"] }));
+app.get("/auth/facebook/callback", passport.authenticate("facebook", { failureRedirect: "/login" }), (req, res) => {
     res.redirect(req.session.returnTo || "/");
 });
 app.get('/api/:object/', (req, res) => {
     //console.log('params: ', req.params);
-    console.log('session: ', req.session);
+    //console.log( 'session: ' , req.session)
     mongo.connect(url, { useNewUrlParser: true }, (err, client) => {
         if (err) {
             console.error(err);
@@ -97,6 +57,7 @@ app.get('/api/:object/', (req, res) => {
         const db = client.db('tripsapp');
         const collection = db.collection(object);
         let query = {};
+        //console.log( 'session2: ' , req.session)
         if (req.session.passport != undefined) {
             console.log('get for logged in user');
             query = { user: req.session.passport.user };

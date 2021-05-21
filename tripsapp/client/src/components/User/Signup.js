@@ -51,7 +51,7 @@ class Signup extends Component {
 
         return (
             <>
-            <button className="button" onClick={this.open}> Sign up </button>
+            <button className="btn" onClick={this.open}> Sign up </button>
             <ReactModal 
                 style={customStyles}
                 isOpen={this.state.open}
@@ -74,7 +74,7 @@ class Signup extends Component {
                     <input className="input" value={this.state.passcon} onChange={this.updateConfirm} type="password" placeholder="Confirm Password" />
                 </div>
                 <div className="control">
-                    <button className="button is-primary is-light" onClick={this.signup}>Sign up</button>
+                    <button className="btn is-primary is-light" onClick={this.signup}>Sign up</button>
                 </div>
             </div>
 

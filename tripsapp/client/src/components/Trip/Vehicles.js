@@ -31,7 +31,7 @@ export default class Vehicles extends React.Component {
         this.setState(
             {
             content: <VehicleSelect options={this.props.vehicles} select={this.select} vehicle={this.props.vehicle} />, 
-            button: <button className="button is-primary is-outlined" onClick={this.add}>Add Vehicle</button> 
+            button: <button className="btn" onClick={this.add}>Add Vehicle</button> 
             }
         )
     }
@@ -47,7 +47,7 @@ export default class Vehicles extends React.Component {
 
     add = () =>{
         this.setState({content:  <VehicleAdd add={this.save}/>, 
-                        button: <button className="button is-primary is-outlined" onClick={this.setContentToDefault}>Cancel</button>});
+                        button: <button className="btn" onClick={this.setContentToDefault}>Cancel</button>});
     }
 
     render(){

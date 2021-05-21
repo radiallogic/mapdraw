@@ -6,8 +6,6 @@ var BUILD_DIR = path.resolve(__dirname, './build');
 var APP_DIR = path.resolve(__dirname, './src/');
 
 
-
-
 const config = {
 
   // target: 'node',
@@ -33,8 +31,7 @@ const config = {
   },
 
   module: {
-    
-  
+
     rules: [
 
       {
@@ -50,30 +47,24 @@ const config = {
         }]
       },
       {
-        test: /(\.css)$/,
+        test: /\.css$/,
         use: [
-        {
-          loader: 'postcss-loader',
-          options: {
-            ident: 'postcss',
-            plugins: [
-              require('tailwindcss'),
-              require('autoprefixer'),
-            ],
-          },
-        }] 
-      },
+          'style-loader',
+          { loader: 'css-loader', options: { importLoaders: 1 } },
+          'postcss-loader'
+        ]
+      }
 
-      {
-       test: /(\.css|.scss)$/,
-       use: [{
-           loader: "style-loader" // creates style nodes from JS strings
-       }, {
-           loader: "css-loader" // translates CSS into CommonJS
-       }, {
-           loader: "sass-loader" // compiles Sass to CSS
-       }]
-      },
+      // {
+      //  test: /(\.css|.scss)$/,
+      //  use: [{
+      //      loader: "style-loader" // creates style nodes from JS strings
+      //  }, {
+      //      loader: "css-loader" // translates CSS into CommonJS
+      //  }, {
+      //      loader: "sass-loader" // compiles Sass to CSS
+      //  }]
+      // },
      
 
   ],

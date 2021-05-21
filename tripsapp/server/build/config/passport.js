@@ -7,13 +7,15 @@ exports.isAuthorized = exports.isAuthenticated = void 0;
 const passport_1 = __importDefault(require("passport"));
 const passport_local_1 = __importDefault(require("passport-local"));
 const passport_facebook_1 = __importDefault(require("passport-facebook"));
+//import passportToken from 'passport-jwt';
 const lodash_1 = __importDefault(require("lodash"));
-// import { User, UserType } from '../models/User';
 const User_1 = require("../models/User");
 const LocalStrategy = passport_local_1.default.Strategy;
 const FacebookStrategy = passport_facebook_1.default.Strategy;
 passport_1.default.serializeUser((user, done) => {
-    done(undefined, user.id);
+    console.log("serializeUser", done);
+    console.log("done", user);
+    done(null, user);
 });
 passport_1.default.deserializeUser((id, done) => {
     User_1.User.findById(id, (err, user) => {
@@ -24,6 +26,7 @@ passport_1.default.deserializeUser((id, done) => {
  * Sign in using Email and Password.
  */
 passport_1.default.use(new LocalStrategy({ usernameField: "email" }, (email, password, done) => {
+    console.log(' passport local ');
     User_1.User.findOne({ email: email.toLowerCase() }, (err, user) => {
         if (err) {
             return done(err);
@@ -129,16 +132,17 @@ passport_1.default.use(new FacebookStrategy({
 /**
  * Login Required middleware.
  */
-exports.isAuthenticated = (req, res, next) => {
+const isAuthenticated = (req, res, next) => {
     if (req.isAuthenticated()) {
         return next();
     }
     res.redirect("/login");
 };
+exports.isAuthenticated = isAuthenticated;
 /**
  * Authorization Required middleware.
  */
-exports.isAuthorized = (req, res, next) => {
+const isAuthorized = (req, res, next) => {
     const provider = req.path.split("/").slice(-1)[0];
     const user = req.user;
     if (lodash_1.default.find(user.tokens, { kind: provider })) {
@@ -148,4 +152,5 @@ exports.isAuthorized = (req, res, next) => {
         res.redirect(`/auth/${provider}`);
     }
 };
+exports.isAuthorized = isAuthorized;
 //# sourceMappingURL=passport.js.map

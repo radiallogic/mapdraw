@@ -10,10 +10,10 @@ class Error extends PureComponent {
         let errors = []
 
         if(typeof this.props.error === 'object'){
-            console.log('here', this.props.error[0].msg);
             return (
-                <div className="error">
-                    {this.props.error[0].msg}
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                    <strong class="font-bold">Login Error</strong>
+                    <span class="block sm:inline">{this.props.error[0].msg}</span>
                 </div>
             )
         }else{
@@ -21,9 +21,6 @@ class Error extends PureComponent {
                 null
             )
         }
-        
-
-
 
     }
 }

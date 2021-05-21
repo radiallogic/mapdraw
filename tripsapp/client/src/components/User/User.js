@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import Login from './Login';
 import Signup from './Signup';
 import Logout from './Logout';
-//cookie-parser
 
 
 class User extends Component {
@@ -55,22 +54,28 @@ class User extends Component {
             console.log('response.status ', response.status );
             console.log('response.ok ', response.ok ); 
             var json = response.json();
+            console.log('login json', json)
             if(response.ok){
               this.props.clear();
-              this.setState({token: json.token, error: ""});
-              localStorage.setItem('token', json.token);
+              this.props.setUser(json.user);
             }else{
-              this.setState({error: response.json() });
+              this.setState({error: json });
             }
           });
     }
 
     logout = () => {
       this.setState({ error: ""});
-      fetch('/user/logout/').then( (response) => {
+      fetch('/user/logout/',{
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        method: 'GET'
+      }).then( (response) => {
         if(response.ok){
           this.props.clear();
-          this.setState({token:false});
+          this.props.setUser(false);
         }else{
           return response.json();
         }
@@ -79,7 +84,7 @@ class User extends Component {
 
     render(){
 
-      if(this.props.token != false){
+      if(this.props.user != false){
         return (
           <>
               <Logout logout={this.logout} />

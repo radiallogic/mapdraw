@@ -16,7 +16,7 @@ import Vehicles from './components/Trip/Vehicles'
 import KitList from './components/Trip/KitList'
 
 import Bubble from './components/Bubble'
-import './app.scss'
+import './app.css'
 
 class App extends Component {
   constructor(){
@@ -34,7 +34,7 @@ class App extends Component {
       paths: [],
       sites: [],
 
-      token: '',
+      user: '',
       error: '',
 
 			zoom: 6,
@@ -42,13 +42,27 @@ class App extends Component {
     }
   }
 
-
   componentDidMount = () => {
+    this.isLoggedIn();
     this.getAllData();
     this.setState({position: this.getRandomPosition() }, () => {
       console.log(this.state.position);
     });
   }
+
+  isLoggedIn = () => {
+    fetch('/user/isloggedin', {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+    }).then( (response) => {
+      return response.json();
+    }).then( (data) => {
+      console.log("isloggedin data: ", data);
+    });
+  }
+
 
   getRandomPosition = () => {
     return  [ 
@@ -66,9 +80,7 @@ class App extends Component {
             return;
           }
           response.json().then( (data) => {
-
-              console.log('from server', data)
-
+              //console.log('from server', data)
             this.setState({[item]:data});
           });
         }
@@ -191,8 +203,6 @@ class App extends Component {
         body._id = this.state.id;
       }
 
-      body.token = localStorage.getItem('token');
-      
       body = JSON.stringify(body);
       console.log('body', body);
 
@@ -273,15 +283,18 @@ class App extends Component {
     
   }
 
-
   addSite = (latlng) => {
     const {sites} = this.state
 		sites.push({position: latlng});
 		this.setState({sites})
   }
 
-  saveSite = () => {
+  saveSites = () => {
     
+  }
+
+  setUser = (user) => {
+    this.setState({user: user});
   }
 
   render() {
@@ -295,7 +308,7 @@ class App extends Component {
             { this.state.error && <h3 className="error"> { this.state.error } </h3> }
 
             <Bubble className="login-bubble">
-              <User clear={this.getAllData} setToken={this.setToken} token={this.state.token}/>
+              <User clear={this.getAllData} setUser={this.setUser} user={this.state.user}/>
             </Bubble>
           </div>
 

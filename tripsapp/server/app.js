@@ -1,44 +1,32 @@
-
 const express = require('express')
 const app = express()
 const mongo = require('mongodb').MongoClient;
 const ObjectID = require('mongodb').ObjectID;
 
-import passport from "passport";
-import session from "express-session";
-import mongoose from "mongoose";
-import mongostore from "connect-mongo";
+const mongoose = require("mongoose")
+const url = "mongodb://localhost:27017/tripsapp";
 
-
-
-const MongoStore = mongostore(session);
-const url = "mongodb://localhost:27017/tripsapp"; // tripsapp 
-
-mongoose.connect(url, { useNewUrlParser: true, useCreateIndex: true });
+mongoose.connect(url, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true });
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function(callback) {
     console.log("mongoose connection to db open")
 });
 
+var passport = require('passport');
+// Passport configuration
+const passportConfig = require("./config/passport");
+
+var session = require("express-session"),
+    cookieParser = require("cookie-parser")
 
 app.use(express.json());
 app.use('/', express.static('../client'));
-//app.use(compression());
-app.use(session({
-    resave: true,
-    saveUninitialized: true,
-    secret: 'AsuperSecrettTT!!!StRinGGG',
-    store: new MongoStore({
-        url: url,
-        autoReconnect: true
-    })
-}));
-app.use(passport.initialize());
-app.use(passport.session());
 
-// Passport configuration
-import * as passportConfig from "./config/passport";
+app.use( session({ secret: "supeRRRsecret" , resave: true, saveUninitialized: true}) );
+app.use(cookieParser() );
+app.use(passport.initialize());
+app.use(passport.session() );
 
 const userController = require('./controllers/UserController');
 /**
@@ -47,18 +35,11 @@ const userController = require('./controllers/UserController');
 app.post("/user/signup", userController.postSignup);
 app.post("/user/login", userController.postLogin);
 app.get("/user/logout", userController.logout);
-app.get("/user/isloggedin", userController.isloggedin);
+app.get("/user/isloggedin", userController.isloggedin);  // isloggedin (req, res) => {console.log(req)},
 app.post("/user/forgot", userController.postForgot);
 app.post("/user/reset/:token", userController.postReset);
 
-// app.get("/contact", contactController.getContact);
-// app.post("/contact", contactController.postContact);
-
 // app.get("/account", passportConfig.isAuthenticated, userController.getAccount);
-// app.post("/account/profile", passportConfig.isAuthenticated, userController.postUpdateProfile);
-// app.post("/account/password", passportConfig.isAuthenticated, userController.postUpdatePassword);
-// app.post("/account/delete", passportConfig.isAuthenticated, userController.postDeleteAccount);
-// app.get("/account/unlink/:provider", passportConfig.isAuthenticated, userController.getOauthUnlink);
 
 /**
  * API examples routes.
@@ -74,17 +55,15 @@ app.get("/auth/facebook/callback", passport.authenticate("facebook", { failureRe
     res.redirect(req.session.returnTo || "/");
 });
 
-
-
 app.get('/api/:object/', (req, res) => {
 	//console.log('params: ', req.params);
 
-	console.log( 'session: ' , req.session)
+	//console.log( 'session: ' , req.session)
 
 	mongo.connect(url, { useNewUrlParser: true }, (err, client) => {
 		if (err) {
 			console.error(err);
-			return 
+			return;
 		}
 
 		let object = req.params.object;
@@ -95,6 +74,8 @@ app.get('/api/:object/', (req, res) => {
 		const collection = db.collection(object)
 
 		let query = {};
+		//console.log( 'session2: ' , req.session)
+
 		if( req.session.passport != undefined){ 
 			console.log('get for logged in user');
 		    query = {user: req.session.passport.user};

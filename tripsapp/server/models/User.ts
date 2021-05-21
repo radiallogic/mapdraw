@@ -65,9 +65,6 @@ userSchema.pre("save", function save(next) {
     });
 });
 
-
-
-
 const comparePassword: comparePasswordFunction = function (candidatePassword, cb) {
     bcrypt.compare(candidatePassword, this.password, (err: mongoose.Error, isMatch: boolean) => {
         cb(err, isMatch);
@@ -75,6 +72,5 @@ const comparePassword: comparePasswordFunction = function (candidatePassword, cb
 };
 
 userSchema.methods.comparePassword = comparePassword;
-
 
 export const User = mongoose.model<UserDocument>("User", userSchema);

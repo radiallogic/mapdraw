@@ -1,30 +1,36 @@
 import passport from "passport";
 import passportLocal from "passport-local";
 import passportFacebook from "passport-facebook";
+//import passportToken from 'passport-jwt';
+
 import _ from "lodash";
 
-// import { User, UserType } from '../models/User';
 import { User, UserDocument } from "../models/User";
 import { Request, Response, NextFunction } from "express";
 
 const LocalStrategy = passportLocal.Strategy;
 const FacebookStrategy = passportFacebook.Strategy;
 
-passport.serializeUser<any, any>((user, done) => {
-    done(undefined, user.id);
-});
+passport.serializeUser((user, done) => {
+    console.log("serializeUser", done); 
+    console.log("done", user); 
 
-passport.deserializeUser((id, done) => {
+    done(null, user);
+  });
+  
+  passport.deserializeUser((id, done) => {
     User.findById(id, (err, user) => {
-        done(err, user);
+      done(err, user);
     });
-});
-
+  });
 
 /**
  * Sign in using Email and Password.
  */
 passport.use(new LocalStrategy({ usernameField: "email" }, (email, password, done) => {
+
+    console.log(' passport local '); 
+
     User.findOne({ email: email.toLowerCase() }, (err, user: any) => {
         if (err) { return done(err); }
         if (!user) {
@@ -39,28 +45,6 @@ passport.use(new LocalStrategy({ usernameField: "email" }, (email, password, don
         });
     });
 }));
-
-
-// var JwtStrategy = require('passport-jwt').Strategy,
-//     ExtractJwt = require('passport-jwt').ExtractJwt;
-// var opts = {}
-// opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
-// opts.secretOrKey = 'secret';
-// opts.issuer = 'accounts.examplesoft.com';
-// opts.audience = 'yoursite.net';
-// passport.use(new JwtStrategy(opts, function(jwt_payload, done) {
-//     User.findOne({id: jwt_payload.sub}, function(err, user) {
-//         if (err) {
-//             return done(err, false);
-//         }
-//         if (user) {
-//             return done(null, user);
-//         } else {
-//             return done(null, false);
-//             // or you could create a new account
-//         }
-//     });
-// }));
 
 
 

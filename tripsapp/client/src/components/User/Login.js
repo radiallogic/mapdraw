@@ -21,8 +21,6 @@ class Login extends Component {
         ReactModal.setAppElement('#root');
     }
 
-    
-
     onFacebookLogin = () => {
         const inOneHour = new Date(new Date().getTime() + 60 * 60 * 1000);
         Cookies.set('lastLocation_before_logging', this.props.location.pathname, { expires: inOneHour });
@@ -54,7 +52,7 @@ class Login extends Component {
 
         return (
             <>
-            <button className="button" onClick={this.open}> Login </button>
+            <button className="btn" onClick={this.open}> Login </button>
             <ReactModal 
                 style={customStyles}
                 isOpen={this.state.open}
@@ -67,6 +65,10 @@ class Login extends Component {
 
                 <Error error={this.props.error} />
 
+                {/* <div className="control">
+                    <button className="btn " onClick={this.onFacebookLogin}> facebook login </button>
+                </div> */}
+
                 <div className="control">
                     <input className="input" value={this.state.email} onChange={this.updateEmail} type="text" placeholder="Email" />
                 </div>
@@ -74,7 +76,11 @@ class Login extends Component {
                     <input className="input" value={this.state.pass} onChange={this.updatePass} type="password" placeholder="Password" />
                 </div>
                 <div className="control">
-                    <button className="button is-primary is-light" onClick={this.login}>Login</button>
+                    <button className="btn" onClick={this.login}>Login</button>
+                </div>
+
+                <div className="control">
+                    <button className="btn" onClick={this.forgot}>Forgotten</button>
                 </div>
             </div>
 
