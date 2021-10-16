@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+      "outDir": "build/",
+      "target": "es6",
+      "sourceMap": true,
+      "watch": true, 
+      "esModuleInterop": true,
+      "module": "commonjs"
+    },
+    "lib": ["ES2015"], 
+    "exclude": [
+      "node_modules",
+      "scripts", 
+      "client",
+      "build"
+    ]
+  }
