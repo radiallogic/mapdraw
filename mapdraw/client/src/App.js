@@ -1,9 +1,9 @@
 // client/src/App.js
-import "core-js/stable";
-import "regenerator-runtime/runtime";
+// import "core-js/stable";
+// import "regenerator-runtime/runtime";
 
 
-import React, { Component } from "react";
+import * as React from "react"
 import ReactDOM from 'react-dom';
 
 import User from './components/User/User'
@@ -18,9 +18,10 @@ import KitList from './components/Trip/KitList'
 import Bubble from './components/Bubble'
 import './app.css'
 
-class App extends Component {
-  constructor(){
-    super();
+
+class App extends React.Component{
+  constructor(props) {
+    super(props);
 
     this.state = {
       trips: [], 
@@ -228,11 +229,18 @@ class App extends Component {
   }
 
   setMode = (mode) => {
+    console.log('set mode: ' + mode)
     this.setState({mode:mode});
   }
 
   setPosition = (position) => {
     this.setState({position:position}, () => {
+      this.saveTrip();
+    });
+  }
+
+  setBounds = (bounds) => {
+    this.setState({bounds:bounds}, () => {
       this.saveTrip();
     });
   }
@@ -351,6 +359,7 @@ class App extends Component {
           position={this.state.position}
           zoom={this.state.zoom}
           setPosition={this.setPosition}
+          setBounds={this.setBounds}
           setZoom={this.setZoom}
 
           addPath={this.addPath}

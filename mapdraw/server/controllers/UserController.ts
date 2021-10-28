@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { check, sanitize, validationResult } from "express-validator";
+import passport from "passport";
 
-import passport = require( "passport");
 import { User, UserDocument, AuthToken } from "../models/User";
 
 import { IVerifyOptions } from "passport-local";
@@ -19,9 +19,9 @@ import graph from "fbgraph";
  * GET /user/isloggedin
  * isloggedin
  */
-export const isloggedin = (req: Request, res: Response) => {
-    console.log("isLoggedIn: ", req.session.passport)
-    if( req.session != undefined){ 
+export const isloggedin = (req: any, res: Response) => {
+    console.log("isLoggedIn: ", req.session)
+    if( req.session.passport !?? undefined){ 
         res.status(200);
         return res.json({user: req.session.passport.user.email });
     }else{

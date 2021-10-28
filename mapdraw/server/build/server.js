@@ -1,7 +1,8 @@
-//server.js
-const app = require("./app");
-const port = 3000;
-app.listen(port, () => {
-    console.log(`Example app listening on port ${port}!`);
-});
+// //server.js
+// //const app = require("./app");
+// import * as app from './app'
+// const port = 3000
+// app.listen(port, () => {
+//   console.log(`Example app listening on port ${port}!`);
+// });
 //# sourceMappingURL=server.js.map

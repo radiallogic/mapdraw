@@ -1,6 +1,4 @@
-var webpack = require('webpack');
 var path = require('path');
-//var nodeExternals = require('webpack-node-externals');
 
 var BUILD_DIR = path.resolve(__dirname, './build');
 var APP_DIR = path.resolve(__dirname, './src/');
@@ -12,7 +10,7 @@ const config = {
   externals: ['tslint'], 
 
   resolve: {
-     extensions: ['.js', '.jsx']
+   extensions: ['.ts', '.tsx', '.js', '.jsx']
   },
 
   devtool: "source-map",
@@ -33,7 +31,11 @@ const config = {
   module: {
 
     rules: [
-
+      {
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
       {
         test: /\.(jsx|js)?$/,
         exclude: /node_modules/,
@@ -42,7 +44,7 @@ const config = {
           options: {
             cacheDirectory: true,
             presets: ['@babel/preset-env', '@babel/preset-react' ], // Transpiles JSX and ES6
-            plugins: ['@babel/plugin-transform-arrow-functions', '@babel/plugin-proposal-class-properties']
+            //plugins: ['@babel/plugin-transform-arrow-functions', '@babel/plugin-proposal-class-properties']
           }
         }]
       },
@@ -54,19 +56,6 @@ const config = {
           'postcss-loader'
         ]
       }
-
-      // {
-      //  test: /(\.css|.scss)$/,
-      //  use: [{
-      //      loader: "style-loader" // creates style nodes from JS strings
-      //  }, {
-      //      loader: "css-loader" // translates CSS into CommonJS
-      //  }, {
-      //      loader: "sass-loader" // compiles Sass to CSS
-      //  }]
-      // },
-     
-
   ],
   }
 };

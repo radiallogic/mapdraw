@@ -1,18 +1,39 @@
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
 const express = require('express');
 const app = express();
 const mongo = require('mongodb').MongoClient;
 const ObjectID = require('mongodb').ObjectID;
 const mongoose = require("mongoose");
-const url = "mongodb://localhost:27017/tripsapp";
-mongoose.connect(url, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true });
+const url = "mongodb://localhost:27017/mapdraw";
+const userController = require('./controllers/UserController');
+mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true }); //useCreateIndex: true,
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function (callback) {
     console.log("mongoose connection to db open");
 });
 var passport = require('passport');
-// Passport configuration
-const passportConfig = require("./config/passport");
+const passportConfig = __importStar(require("./config/passport"));
 var session = require("express-session"), cookieParser = require("cookie-parser");
 app.use(express.json());
 app.use('/', express.static('../client'));
@@ -20,7 +41,6 @@ app.use(session({ secret: "supeRRRsecret", resave: true, saveUninitialized: true
 app.use(cookieParser());
 app.use(passport.initialize());
 app.use(passport.session());
-const userController = require('./controllers/UserController');
 /**
  * User app routes.
  */
@@ -54,7 +74,7 @@ app.get('/api/:object/', (req, res) => {
         let object = req.params.object;
         //TODO: validate object is in objects
         const objects = ['trips', 'kitlists', 'routes', 'vehicles', 'sites'];
-        const db = client.db('tripsapp');
+        const db = client.db('mapdraw');
         const collection = db.collection(object);
         let query = {};
         //console.log( 'session2: ' , req.session)
@@ -80,7 +100,7 @@ app.post('/api/:object/', (req, res) => {
             console.error(err);
             return;
         }
-        const db = client.db('tripsapp');
+        const db = client.db('mapdraw');
         const collection = db.collection(req.params.object);
         let body = req.body;
         body.session = req.sessionID; // // insert user id / session id
@@ -101,7 +121,7 @@ app.post('/api/:object/', (req, res) => {
         }
         else {
             const id = new ObjectID(body._id);
-            let update = Object.assign({}, body);
+            let update = { ...body };
             delete update._id;
             collection.updateOne({ _id: id }, { $set: update }, (err, result) => {
                 if (err == null) {
@@ -123,7 +143,7 @@ app.post('/api/:object/', (req, res) => {
 // 			console.error(err);
 // 			return 
 // 		}
-// 		const db = client.db('tripsapp')
+// 		const db = client.db('mapdraw')
 // 		const collection = db.collection(req.params.object)
 // 		collection.deleteOne({name: 'Togo'}, (err, item) => {
 // 			console.log(item)
@@ -131,5 +151,9 @@ app.post('/api/:object/', (req, res) => {
 // 	})
 //  	res.send('Got a DELETE request')
 // })
-module.exports = app;
+// module.exports = app;
+const port = 3000;
+app.listen(port, () => {
+    console.log(`Example app listening on port ${port}!`);
+});
 //# sourceMappingURL=app.js.map

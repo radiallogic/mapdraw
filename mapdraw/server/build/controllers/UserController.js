@@ -1,20 +1,11 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getFacebook = exports.postForgot = exports.postReset = exports.getOauthUnlink = exports.postDeleteAccount = exports.postUpdatePassword = exports.postUpdateProfile = exports.postSignup = exports.logout = exports.postLogin = exports.isloggedin = void 0;
 const express_validator_1 = require("express-validator");
-const passport = require("passport");
+const passport_1 = __importDefault(require("passport"));
 const User_1 = require("../models/User");
 const nodemailer_1 = __importDefault(require("nodemailer"));
 require("../config/passport");
@@ -26,8 +17,8 @@ const fbgraph_1 = __importDefault(require("fbgraph"));
  * isloggedin
  */
 const isloggedin = (req, res) => {
-    console.log("isLoggedIn: ", req.session.passport);
-    if (req.session != undefined) {
+    console.log("isLoggedIn: ", req.session);
+    if (req.session.passport ?? undefined) {
         res.status(200);
         return res.json({ user: req.session.passport.user.email });
     }
@@ -41,17 +32,17 @@ exports.isloggedin = isloggedin;
  * POST /login
  * Sign in using email and password.
  */
-const postLogin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const postLogin = async (req, res, next) => {
     console.log('in post login');
-    yield express_validator_1.check("email", "Email is not valid").isEmail().run(req);
-    yield express_validator_1.check("password", "Password cannot be blank").isLength({ min: 1 }).run(req);
-    yield express_validator_1.check("email").normalizeEmail({ gmail_remove_dots: false }).run(req);
-    const errors = express_validator_1.validationResult(req);
+    await (0, express_validator_1.check)("email", "Email is not valid").isEmail().run(req);
+    await (0, express_validator_1.check)("password", "Password cannot be blank").isLength({ min: 1 }).run(req);
+    await (0, express_validator_1.check)("email").normalizeEmail({ gmail_remove_dots: false }).run(req);
+    const errors = (0, express_validator_1.validationResult)(req);
     console.log('errors: ', errors);
     if (!errors.isEmpty()) {
         return res.status(422).send(errors.array());
     }
-    passport.authenticate("local", (err, user, info) => {
+    passport_1.default.authenticate("local", (err, user, info) => {
         if (err) {
             res.status(404).json(err);
             return;
@@ -72,7 +63,7 @@ const postLogin = (req, res, next) => __awaiter(void 0, void 0, void 0, function
             res.status(401).json(info);
         }
     })(req, res);
-});
+};
 exports.postLogin = postLogin;
 /**
  * GET /user/logout
@@ -87,11 +78,11 @@ exports.logout = logout;
  * POST /signup
  * Create a new local account.
  */
-const postSignup = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    yield express_validator_1.check("email", "Email is not valid").isEmail().run(req);
-    yield express_validator_1.check("password", "Password must be at least 4 characters long").isLength({ min: 4 }).run(req);
-    yield express_validator_1.check("confirmPassword", "Passwords do not match").equals(req.body.password).run(req);
-    const errors = express_validator_1.validationResult(req);
+const postSignup = async (req, res, next) => {
+    await (0, express_validator_1.check)("email", "Email is not valid").isEmail().run(req);
+    await (0, express_validator_1.check)("password", "Password must be at least 4 characters long").isLength({ min: 4 }).run(req);
+    await (0, express_validator_1.check)("confirmPassword", "Passwords do not match").equals(req.body.password).run(req);
+    const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {
         res.status(422);
         return res.send(errors.array());
@@ -120,17 +111,17 @@ const postSignup = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
             return res.status(201).send([{ msg: "completed" }]);
         });
     });
-});
+};
 exports.postSignup = postSignup;
 /**
  * POST /account/profile
  * Update profile information.
  */
-const postUpdateProfile = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    yield express_validator_1.check("email", "Please enter a valid email address.").isEmail().run(req);
+const postUpdateProfile = async (req, res, next) => {
+    await (0, express_validator_1.check)("email", "Please enter a valid email address.").isEmail().run(req);
     // eslint-disable-next-line @typescript-eslint/camelcase
-    yield express_validator_1.sanitize("email").normalizeEmail({ gmail_remove_dots: false }).run(req);
-    const errors = express_validator_1.validationResult(req);
+    await (0, express_validator_1.sanitize)("email").normalizeEmail({ gmail_remove_dots: false }).run(req);
+    const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {
         return res.status(403).send({ "errors": errors.array() });
     }
@@ -150,16 +141,16 @@ const postUpdateProfile = (req, res, next) => __awaiter(void 0, void 0, void 0, 
             res.status(200).send({ msg: "Profile information has been updated." });
         });
     });
-});
+};
 exports.postUpdateProfile = postUpdateProfile;
 /**
  * POST /account/password
  * Update current password.
  */
-const postUpdatePassword = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    yield express_validator_1.check("password", "Password must be at least 4 characters long").isLength({ min: 4 }).run(req);
-    yield express_validator_1.check("confirmPassword", "Passwords do not match").equals(req.body.password).run(req);
-    const errors = express_validator_1.validationResult(req);
+const postUpdatePassword = async (req, res, next) => {
+    await (0, express_validator_1.check)("password", "Password must be at least 4 characters long").isLength({ min: 4 }).run(req);
+    await (0, express_validator_1.check)("confirmPassword", "Passwords do not match").equals(req.body.password).run(req);
+    const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {
         return res.send({ "errors": errors.array() });
     }
@@ -176,7 +167,7 @@ const postUpdatePassword = (req, res, next) => __awaiter(void 0, void 0, void 0,
             res.status(200).send({ msg: "Password has been changed." });
         });
     });
-});
+};
 exports.postUpdatePassword = postUpdatePassword;
 /**
  * POST /account/delete
@@ -219,10 +210,10 @@ exports.getOauthUnlink = getOauthUnlink;
  * POST /reset/:token
  * Process the reset password request.
  */
-const postReset = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    yield express_validator_1.check("password", "Password must be at least 4 characters long.").isLength({ min: 4 }).run(req);
-    yield express_validator_1.check("confirm", "Passwords must match.").equals(req.body.password).run(req);
-    const errors = express_validator_1.validationResult(req);
+const postReset = async (req, res, next) => {
+    await (0, express_validator_1.check)("password", "Password must be at least 4 characters long.").isLength({ min: 4 }).run(req);
+    await (0, express_validator_1.check)("confirm", "Passwords must match.").equals(req.body.password).run(req);
+    const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {
         return res.send({ error: errors.array() });
     }
@@ -276,17 +267,17 @@ const postReset = (req, res, next) => __awaiter(void 0, void 0, void 0, function
         }
         res.redirect("/");
     });
-});
+};
 exports.postReset = postReset;
 /**
  * POST /forgot
  * Create a random token, then the send user an email with a reset link.
  */
-const postForgot = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    yield express_validator_1.check("email", "Please enter a valid email address.").isEmail().run(req);
+const postForgot = async (req, res, next) => {
+    await (0, express_validator_1.check)("email", "Please enter a valid email address.").isEmail().run(req);
     // eslint-disable-next-line @typescript-eslint/camelcase
-    yield express_validator_1.sanitize("email").normalizeEmail({ gmail_remove_dots: false }).run(req);
-    const errors = express_validator_1.validationResult(req);
+    await (0, express_validator_1.sanitize)("email").normalizeEmail({ gmail_remove_dots: false }).run(req);
+    const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {
         return res.send({ errors: errors.array() });
     }
@@ -322,7 +313,7 @@ const postForgot = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
             });
             const mailOptions = {
                 to: user.email,
-                from: "no-reply@tripsapp.com",
+                from: "no-reply@mapdraw.com",
                 subject: "Reset your password for trips app",
                 text: `You are receiving this email because you (or someone else) have requested the reset of the password for your account.\n\n
           Please click on the following link, or paste this into your browser to complete the process:\n\n
@@ -340,7 +331,7 @@ const postForgot = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
         }
         res.send({ error: err });
     });
-});
+};
 exports.postForgot = postForgot;
 /**
  * GET /api/facebook
