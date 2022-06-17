@@ -1,13 +1,10 @@
 import * as React from "react"
 import * as turf from '@turf/turf';
 import  { MapContainer, TileLayer, useMapEvents, SVGOverlay} from 'react-leaflet'
-import { LatLngExpression, LatLngBounds, latLng} from "leaflet";
+import { LatLngExpression, LatLngBounds, latLng, LatLng} from "leaflet";
 
 import Paths  from '../Paths/Paths';
-
-// import Site from './Site/site';
-
-export const ADD = 9;
+import {ADD} from '../Paths/Constants';
 
 const bounds = new LatLngBounds( latLng(51.49, -0.08), latLng(51.5, -0.06) );
 
@@ -23,7 +20,7 @@ interface ZoomProps {
 
 const Position = (props: PositionProps): React.ReactElement => {
 	const map = useMapEvents({
-		dragend: (e ) => {
+		dragend: ( e ) => {
 		  props.setPosition( e.target.getCenter() );
 		  props.setBounds( e.target.getBounds() );
 		  console.log("map center", e.target.getCenter());
@@ -49,7 +46,7 @@ const Zoom = (props: ZoomProps): React.ReactElement  => {
 }
 
 type Props = {
-	paths: Array<turf.GeoJSONObject>;
+	paths: Array<Array<LatLng>>;
 	position: LatLngExpression;
 	zoom: number;
 	mode: number;
@@ -70,24 +67,11 @@ export default class MapComplete extends React.Component<Props, State> {
 	constructor(props: Props) {	
 		super(props);
 	};
-
-    componentDidMount = () => {
-
-    	//console.log('componentDidMount');
-		// document.addEventListener('keydown', event => {
-		// 	// Cancel the current FreeDraw action when the escape key is pressed.
-		//  	if (event.key === 'Escape') {
-		// 		this.refs.current.leafletElement.cancel();
-		//  	}
-		// });
-
-        //this.updatePosition();
-	};
 	
 	componentDidUpdate(prevProps: Props){
 		//console.log(' prevProps ', this.props.zoom, prevProps.zoom);   
 		if(this.props.paths !== prevProps.paths){
-			console.log(' Paths changed in MapComplete')
+			console.log(' Paths changed in MapCcontainer')
 		}
 		if(this.props.position !== prevProps.position ){
 			this.setState({position:this.props.position});
@@ -107,44 +91,24 @@ export default class MapComplete extends React.Component<Props, State> {
 	render() {		
 		return (
 		  <MapContainer
-		    //ref='map'
 			center={this.props.position}
 			zoom={this.props.zoom}
-
-			onClick={this.addMarker}
-			eventHandlers={{ addMarker: onclick  }}
 			>
 
-			<Zoom setZoom={this.props.setZoom} zoom={this.props.zoom}/>
+			<Zoom
+				setZoom={this.props.setZoom}
+				zoom={this.props.zoom}
+			/>
 			<Position 
 				setPosition={this.props.setPosition} 
 				setBounds={this.props.setBounds}
 			/>
 
-<SVGOverlay attributes={{ stroke: 'red' }} bounds={bounds}>
-                    <rect x="0" y="0" width="100%" height="100%" fill="blue" />
-                    <circle r="5" cx="10" cy="10" fill="red" />
-                    <text x="50%" y="50%" stroke="white">
-                        text
-                    </text>
-                    <line> </line>
-                </SVGOverlay>
-
-
 			<Paths
-				// vehicle={this.state.vehicle}
 			    paths={this.props.paths}
 			    mode={this.props.mode}
 				zoom={this.props.zoom}
 			/>
-
-			{/* {this.props.sites.map((data, idx) =>
-                <Marker key={`marker-${idx}`} position={data.position}>
-					<Popup>
-						<Site site={data} save={this.props.saveSite} />
-					</Popup>
-				</Marker>
-            )} */}
 
 			<TileLayer
 			  attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'

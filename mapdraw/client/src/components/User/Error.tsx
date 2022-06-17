@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import {ErrorMsg} from '../Types';
+import {ErrorMsg} from '../GlobalTypes';
 
 type Props = {
     error: ErrorMsg;

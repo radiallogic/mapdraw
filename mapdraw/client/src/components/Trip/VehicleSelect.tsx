@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import {Option} from "../Types";
+import {Option} from "../GlobalTypes";
 
 type Props = {
     options: Array<Option>;

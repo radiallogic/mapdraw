@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
 import customStyles from './UserStyle';
-import { ErrorMsg } from "../Types";
+import { ErrorMsg } from "../GlobalTypes";
 
 type Props = {
     login: Function;

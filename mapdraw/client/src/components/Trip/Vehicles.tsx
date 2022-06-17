@@ -3,7 +3,7 @@ import * as React from "react"
 import VehicleSelect from './VehicleSelect'
 // import VehicleCurrent from './VehicleCurrent'
 import VehicleAdd from './VehicleAdd'
-import { Option } from "../Types"
+import { Option } from "../GlobalTypes"
 
 type Props = {
     vehicles: Array<Option>;

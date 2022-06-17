@@ -2,6 +2,7 @@ import * as React from "react"
 
 type Props = {
     className: string;
+    children: any;
 }
 
 export default class Bubble extends React.PureComponent<Props> {

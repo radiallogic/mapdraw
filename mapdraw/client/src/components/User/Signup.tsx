@@ -7,7 +7,7 @@ import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import Error from './Error';
 
 import customStyles from './UserStyle';
-import { ErrorMsg } from "../Types";
+import { ErrorMsg } from "../GlobalTypes";
 
 type Props = {
     signUp: Function;

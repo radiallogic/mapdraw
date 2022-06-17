@@ -5,7 +5,7 @@ import TripSelect from './TripSelect'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowsAlt, faEdit, faMapMarker, faMinusCircle } from '@fortawesome/free-solid-svg-icons';
-import {Option} from '../Types';
+import {Option} from '../GlobalTypes';
 
 type Props = {
     name: string;
