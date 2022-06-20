@@ -1,6 +1,6 @@
 ## Server
 cd server
-nodemon ./build/server.js #run 
+nodemon ./build/app.js #run 
 yarn build #build
 
 

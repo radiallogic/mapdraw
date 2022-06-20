@@ -2,7 +2,7 @@
 
 # Use single quotes instead of double quotes to make it work with special-character passwords
 PASSWORD='toor'
-PROJECTFOLDER='tripsapp'
+PROJECTFOLDER='mapdraw'
 
 # create project folder
 #sudo mkdir "/var/www/html/${PROJECTFOLDER}"
@@ -48,7 +48,7 @@ Update
 
 sudo npm install --global webpack nodemon webpack-cli
 
-cd /var/www/html/tripsapp/;
+cd /var/www/html/mapdraw/;
 npm link webpack;
 
 echo "-- Install packages --"
@@ -115,6 +115,6 @@ echo "installing yarn"
 
 curl -o- -L https://yarnpkg.com/install.sh | bash
 
-# cd /var/www/html/tripsapp/ 
+# cd /var/www/html/mapdraw/ 
 
-echo "cd /var/www/html/tripsapp" >> /home/vagrant/.bashrc
+echo "cd /var/www/html/mapdraw" >> /home/vagrant/.bashrc
