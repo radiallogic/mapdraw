@@ -35,7 +35,6 @@ export default class Paths extends React.Component<Props, State>  {
 	};
 
 	createPolyline = (latLngs: Array<LatLngLiteral> ) => {
-        //console.log('latLngs', latLngs);
 
         if(latLngs.length < 2){
             return;
@@ -44,8 +43,6 @@ export default class Paths extends React.Component<Props, State>  {
         let c = latLngs.map( (item, i) => {
             return [ item.lat, item.lng ];
         } );
-    
-        //console.log('coords', coords);
 
         let geojson = turf.lineString(c);
 
@@ -75,7 +72,6 @@ export default class Paths extends React.Component<Props, State>  {
             return latLng(c[0], c[1]);
         })  as unknown as Array<LatLng>
 
-        console.log(latlngs);
         paths.push(latlngs);
         this.setState({paths: paths});
     }
@@ -99,13 +95,18 @@ export default class Paths extends React.Component<Props, State>  {
 
 	}
 
+    setpaths = (path: Array<any>, index: any) => {
+        let paths = this.state.paths;
+        //console.log(paths, path, index);
+        paths[index] = path;
+        this.setState({paths: paths}); 
+    }
+
 	render() {
         let paths = this.state.paths.map( (path, i) => {
             //console.log( JSON.stringify(path) );
-            return <ElbowLine positions={path} key={i} ></ElbowLine>
+            return <ElbowLine positions={path} key={i} index={i} setpaths={this.setpaths} ></ElbowLine>
         })
-
-        //console.log(paths);
 
 		return (
             <>

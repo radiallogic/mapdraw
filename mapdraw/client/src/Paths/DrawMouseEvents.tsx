@@ -32,7 +32,9 @@ export const DrawMouseEvents = (props: DrawMouseProps): React.ReactElement  => {
             e.originalEvent.preventDefault();
             // map.dragging.enable();
             console.log('mouse up')
-            props.saveline();
+            if(props.mode == ALL){
+                props.saveline();
+            }
             draw = false;
         }, 
         mousedown(e){
@@ -45,6 +47,7 @@ export const DrawMouseEvents = (props: DrawMouseProps): React.ReactElement  => {
             }
             console.log('mouse down')
         },
+
 	});
 
     return null;

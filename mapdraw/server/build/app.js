@@ -1,7 +1,11 @@
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -103,14 +107,14 @@ app.post('/api/:object/', (req, res) => {
         const db = client.db('mapdraw');
         const collection = db.collection(req.params.object);
         let body = req.body;
-        body.session = req.sessionID; // // insert user id / session id
+        body.session = req.sessionID; // insert user id / session id
         console.log(req.sessionID);
         if (body._id == null) {
             body._id = new ObjectID();
             collection.insertOne(body, (err, result) => {
                 if (err == null) {
                     console.log('Returning from Insert', result.ops);
-                    res.send(result.ops[0]);
+                    res.send(result.ops);
                 }
                 else {
                     //TODO check this for security
@@ -153,6 +157,7 @@ app.post('/api/:object/', (req, res) => {
 // })
 // module.exports = app;
 const port = 3000;
+app.use('*', express.static('../client/404.html'));
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}!`);
 });

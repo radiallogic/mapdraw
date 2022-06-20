@@ -1,6 +1,6 @@
 import * as React from "react"
 import {useMapEvents, Marker } from 'react-leaflet';
-import { DivIcon, DomEvent, LeafletMouseEvent} from 'leaflet';
+import { DivIcon, DomEvent} from 'leaflet';
 
 interface ElbowMarketProps {
     position: any;
@@ -9,8 +9,7 @@ interface ElbowMarketProps {
 }
 
 export const ElbowMarker = (props: ElbowMarketProps): React.ReactElement  => {
-    
-    let position = props.position;
+
     const icon = new DivIcon({className: 'line-icon'});
 
     return <Marker 
@@ -25,23 +24,19 @@ export const ElbowMarker = (props: ElbowMarketProps): React.ReactElement  => {
             },
             drag: (event) => {
                 // DomEvent.stopPropagation(event);
-                //event = event as unknown as LeafletMouseEvent;
                 console.log('marker drag event ', event)
-
-                // // Determine where to move the marker to from the mouse move event.
-                // const containerPoint = map.latLngToContainerPoint(event.latlng);
-                // const latLng = map.containerPointToLatLng(containerPoint);
-
-                props.updateLine(position, event.originalEvent.latlng) // event.originalEvent.latlng
-            }
+                props.updateLine(props.position, event.target._latlng) 
+            }, 
+            dragend: (event) => {
+                //console.log(event);
+            }   
             
         }}
 
         zIndexOffset={10}
-        position={position}
+        position={ props.position }
         icon={ icon } 
-        //bubblingMouseEvents={false} 
+        bubblingMouseEvents={false}
         >
-f
         </Marker>;
 }

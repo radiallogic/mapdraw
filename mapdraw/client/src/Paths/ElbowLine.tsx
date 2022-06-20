@@ -1,84 +1,71 @@
-import {latLng, LatLng, LatLngLiteral, LeafletMouseEvent} from "leaflet";
-import React, { useState, useEffect } from 'react';
-import {useMapEvents, Polyline} from 'react-leaflet';
-import {ElbowMarker} from './ElbowMarker';
+import {latLng, LatLng, LeafletMouseEvent} from "leaflet";
+import React from 'react';
+import { Polyline } from 'react-leaflet';
+import { ElbowMarker } from './ElbowMarker';
 import * as turf from '@turf/turf';
-import { isConditionalExpression } from "typescript";
+import * as _ from "lodash";
+
 
 interface ElbowLineProps {
     positions: Array<LatLng>
+    setpaths: Function;
+    index: any;
 }
 
 const blueOptions = { color: 'blue' }
 
 export const ElbowLine = (props: ElbowLineProps): React.ReactElement  => {
     
-    //let coords = props.positions;
-    // use state for coords. 
-    const [coords, setCoords] = useState([]);
-
-    useEffect(() => {
-        setCoords(props.positions);
-    }, [props])
+    const coords = props.positions;
 
     const addElbow = (e: LeafletMouseEvent) => {
-        console.log('add elbow')
-        
+
         let positions = coords.map( coord => {
             return [coord.lng, coord.lat]
         } ) as unknown as Array<turf.Position>;
 
-        console.log("positions", positions); 
-
         const line = turf.lineString(positions);
         const splitter = turf.point([e.latlng.lng, e.latlng.lat]);
-        
-        console.log("splitter", splitter); 
 
         const split = turf.lineSplit(line, splitter);
-
-        console.log("split", split); 
 
         let linePart = split.features[1].geometry.coordinates; // only works with middle bits
         let bit = linePart.pop(); // remove duplicate coordinates;
         let newline = split.features[0].geometry.coordinates.concat( linePart );
 
-        console.log("newline", newline);
-
         let tmp = newline.map(bit => {
             return latLng( bit[1], bit[0]) 
         }) as unknown as Array<LatLng>;
 
-        setCoords(tmp);
-
+        props.setpaths(tmp, props.index);
     }
 
     const updateLine = (position: LatLng, latLng: LatLng) => {
         console.log('update line')
         // swap old and new marker position
         let tmp = coords.map( coord => {
-            if(coord == position){
+            console.log(coord, position)
+            if( _.isEqual(coord, position) ){
                 return latLng;
             }else{
                 return coord;
             }
         })
-
-        console.log('tmp: ', tmp); 
-        setCoords(tmp);
+        props.setpaths(tmp, props.index);
     }
 
     const removeElbow = (e: LeafletMouseEvent) => {
-        console.log('remove elbow')
+        //console.log('remove elbow', coords)
         let latlng = latLng(e.latlng.lat, e.latlng.lng);
         let tmp = coords.map( coord => {
-            if(coord == latlng){
-                console.log("removeElbow", coord, latlng ); 
+            if( _.isEqual(coord, latlng)){
+                console.log('remove elbow at: ', latlng); 
             }else{
                 return coord;
             }
         })
-        setCoords(tmp);
+        tmp = _.compact(tmp);
+        props.setpaths(tmp, props.index);
     }
     
     let markers = coords.map( (latLng, i) => {

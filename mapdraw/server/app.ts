@@ -105,7 +105,7 @@ app.post('/api/:object/', (req, res) => { // data/data:
 		const collection = db.collection(req.params.object)
 
 		let body = req.body;
-		body.session = req.sessionID; // // insert user id / session id
+		body.session = req.sessionID; // insert user id / session id
 		console.log(req.sessionID); 
 
 		if(body._id == null){
@@ -113,7 +113,7 @@ app.post('/api/:object/', (req, res) => { // data/data:
 			collection.insertOne(body, (err, result) => {
 				if(err == null){
 					console.log('Returning from Insert', result.ops);
-					res.send(result.ops[0])
+					res.send(result.ops)
 				}else{
 					//TODO check this for security
 					res.send(err)
@@ -166,6 +166,9 @@ app.post('/api/:object/', (req, res) => { // data/data:
 
 
 const port = 3000
+
+
+app.use('*', express.static('../client/404.html'));
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}!`);
