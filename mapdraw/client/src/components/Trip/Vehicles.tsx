@@ -11,6 +11,7 @@ type Props = {
 
     select: Function;
     add: Function;
+    remove: Function;
 }
 
 type State = {

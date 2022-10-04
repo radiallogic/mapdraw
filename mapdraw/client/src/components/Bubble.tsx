@@ -14,5 +14,4 @@ export default class Bubble extends React.PureComponent<Props> {
             </div>
         )
     }
-
 }

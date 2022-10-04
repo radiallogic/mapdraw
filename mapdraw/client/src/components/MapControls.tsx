@@ -1,8 +1,8 @@
 import * as React from "react"
-import {ALL, NONE, ADD, DELETE}  from '../Paths/Constants';
+import {ADD, EDIT, MOVE, DELETE} from './Constants';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowsAlt, faEdit, faMapMarker, faMinusCircle } from '@fortawesome/free-solid-svg-icons';
+import { faArrowsAlt, faEdit, faRandom, faDrawPolygon, faMapMarker, faMinusCircle } from '@fortawesome/free-solid-svg-icons';
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 
 interface Props {
@@ -25,7 +25,7 @@ interface HighlightProps {
 const HighlightButton: React.FC<HighlightProps> = ({onClick, icon, highlight}) => {
     let outline = '';
     if (highlight == true){
-        outline = "focus:outline-black";
+        outline = "bg-white";
     }
 
     return (<button onClick={onClick} className={"btn " + outline } >
@@ -48,13 +48,13 @@ class MapControls extends React.Component<Props, State> {
     }
 
     move = () => {
-        this.props.setMode(NONE);
+        this.props.setMode(MOVE);
         this.unsetAllHighlights();
         this.setState({ move_highlight: true });
     }
 
     edit = () => {
-        this.props.setMode(ALL);
+        this.props.setMode(EDIT);
         this.unsetAllHighlights();
         this.setState({ edit_highlight: true });
     }
@@ -80,13 +80,15 @@ class MapControls extends React.Component<Props, State> {
             } )
     }
 
+
+//<i class="fa fa-random" aria-hidden="true"></i>
+//<i class="fa-solid fa-draw-polygon"></i>
+
     render(){
         return( 
             <> 
                 <HighlightButton onClick={this.move} icon={faArrowsAlt} highlight={this.state.move_highlight} />
-
-                <HighlightButton onClick={this.edit} icon={faEdit} highlight={this.state.edit_highlight} />
-
+                <HighlightButton onClick={this.edit} icon={faDrawPolygon} highlight={this.state.edit_highlight} />
                 <HighlightButton onClick={this.add} icon={faMapMarker} highlight={this.state.add_highlight} />
 
                 <HighlightButton onClick={this.delete} icon={faMinusCircle} highlight={this.state.delete_highlight} />

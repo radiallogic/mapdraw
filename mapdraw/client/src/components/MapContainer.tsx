@@ -1,10 +1,11 @@
 import * as React from "react"
-import * as turf from '@turf/turf';
 import  { MapContainer, TileLayer, useMapEvents, SVGOverlay} from 'react-leaflet'
 import { LatLngExpression, LatLngBounds, latLng, LatLng} from "leaflet";
 
-import Paths  from '../Paths/Paths';
-import {ADD} from '../Paths/Constants';
+import Paths  from './Paths/Paths';
+import { Sites }  from './Sites/Sites';
+import { TSite } from "./Sites/SiteTypes";
+import { Path } from "./Paths/PathTypes";
 
 const bounds = new LatLngBounds( latLng(51.49, -0.08), latLng(51.5, -0.06) );
 
@@ -46,15 +47,21 @@ const Zoom = (props: ZoomProps): React.ReactElement  => {
 }
 
 type Props = {
-	paths: Array<Array<LatLng>>;
+	paths: Array<Path>;
 	position: LatLngExpression;
 	zoom: number;
-	mode: number;
+	mode: string;
 
 	setPosition: Function;
 	setBounds: Function;
 	setZoom: Function;
+	setMode: Function;
+	setPaths: Function;
+	setSites: Function;
+
 	addSite: Function;
+	saveSite: Function;
+	sites: Array<TSite>;
 }
 
 type State = {
@@ -67,7 +74,11 @@ export default class MapComplete extends React.Component<Props, State> {
 	constructor(props: Props) {	
 		super(props);
 	};
-	
+
+	componentDidMount = () => {
+	    this.setState({position: this.props.position} );
+	}
+
 	componentDidUpdate(prevProps: Props){
 		//console.log(' prevProps ', this.props.zoom, prevProps.zoom);   
 		if(this.props.paths !== prevProps.paths){
@@ -78,13 +89,6 @@ export default class MapComplete extends React.Component<Props, State> {
 		}
 		if(this.props.zoom !== prevProps.zoom ){
 			this.setState({zoom:this.props.zoom});
-		}
-	}
-
-	addMarker = (event:any) => {
-		if(this.props.mode == ADD){ 
-			//console.log("addMarker", event );
-			this.props.addSite(event.latlng);
 		}
 	}
 
@@ -99,15 +103,26 @@ export default class MapComplete extends React.Component<Props, State> {
 				setZoom={this.props.setZoom}
 				zoom={this.props.zoom}
 			/>
+
 			<Position 
 				setPosition={this.props.setPosition} 
 				setBounds={this.props.setBounds}
 			/>
 
 			<Paths
+				setMode={this.props.setMode}
+				setPaths={this.props.setPaths}
 			    paths={this.props.paths}
 			    mode={this.props.mode}
 				zoom={this.props.zoom}
+			/>
+
+			<Sites
+				setSites={this.props.setSites}
+				addSite={this.props.addSite}
+				saveSite={this.props.saveSite}
+				mode={this.props.mode}
+				sites={this.props.sites}
 			/>
 
 			<TileLayer

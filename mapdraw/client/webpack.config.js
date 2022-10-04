@@ -21,7 +21,7 @@ const config = {
   },
   mode: 'development',
   entry: {
-     main: APP_DIR + '/App.js'
+     main: APP_DIR + '/App.tsx'
   },
   output: {
     filename: 'bundle.js',
