@@ -24,8 +24,8 @@ const Position = (props: PositionProps): React.ReactElement => {
 		dragend: ( e ) => {
 		  props.setPosition( e.target.getCenter() );
 		  props.setBounds( e.target.getBounds() );
-		  console.log("map center", e.target.getCenter());
-		  console.log("map bounds", e.target.getBounds());
+		//   console.log("map center", e.target.getCenter());
+		//   console.log("map bounds", e.target.getBounds());
 		}
 	});
 	return null;
@@ -81,9 +81,9 @@ export default class MapComplete extends React.Component<Props, State> {
 
 	componentDidUpdate(prevProps: Props){
 		//console.log(' prevProps ', this.props.zoom, prevProps.zoom);   
-		if(this.props.paths !== prevProps.paths){
-			console.log(' Paths changed in MapCcontainer')
-		}
+		// if(this.props.paths !== prevProps.paths){
+		// 	console.log(' Paths changed in MapCcontainer')
+		// }
 		if(this.props.position !== prevProps.position ){
 			this.setState({position:this.props.position});
 		}

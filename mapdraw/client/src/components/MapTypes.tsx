@@ -10,6 +10,7 @@ export interface TVehicle {
 export interface TUser {
   name: string;
   loggedin: boolean;
+  admin?: boolean;
 }
 
 export interface TTrip {

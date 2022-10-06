@@ -23,7 +23,7 @@ export const isloggedin = (req: any, res: Response) => {
     console.log("isLoggedIn: ", req.session)
     if( req.session.passport !?? undefined){ 
         res.status(200);
-        return res.json({user: req.session.passport.user.email });
+        return res.json({user: req.session.passport.user });
     }else{
         res.status(200);
         return res.json({user: null });
@@ -78,7 +78,13 @@ export const postLogin = async (req: Request, res: Response, next: NextFunction)
  * Log out.
  */
 export const logout = (req: Request, res: Response) => {
-    req.logout();
+    //req.logout();
+    req.logOut(function(err) {
+        if (err) { 
+            //return next(err);
+        }
+        res.redirect('/');
+      });
     return res.send({});
 };
 
@@ -192,7 +198,7 @@ export const postDeleteAccount = (req: Request, res: Response, next: NextFunctio
     const user = req.user as UserDocument;
     User.remove({ _id: user.id }, (err) => {
         if (err) { return next(err); }
-        req.logout();
+        //req.logout();
         res.status(200).send({ msg: "Your account has been deleted." });
     });
 };

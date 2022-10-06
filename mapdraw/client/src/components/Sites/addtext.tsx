@@ -28,7 +28,7 @@ export default class addtext extends React.Component<Props, State> {
         return(
             <div className='' >
                 <textarea name="text" value={this.state.text} onChange={this.onTextChange} />  
-                <button onClick={this.save} value="Save" />
+                <button onClick={this.save}>Save</button>
             </div>
         )
     }

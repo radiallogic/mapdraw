@@ -4,5 +4,6 @@ export type Option = {
 }
 
 export type ErrorMsg = {
-    message: string;
+    valid: boolean;
+    message?: string;
 }

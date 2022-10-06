@@ -3,17 +3,25 @@ import Login from './Login';
 import Signup from './Signup';
 import Logout from './Logout';
 import { ErrorMsg } from "../GlobalTypes";
+import { TUser } from "../MapTypes";
 
 type Props = {
-  user?: string;
-
+  user?: TUser;
   clear: Function;
   setUser: Function;
 }
 
 type State = {
-  loggedin: boolean;
   error: ErrorMsg;  
+}
+
+const emptyerror:ErrorMsg ={
+  valid: false
+}
+
+export const nullUser:TUser = {
+  name: 'none',
+  loggedin: false
 }
 
 class User extends React.Component<Props, State> {
@@ -21,13 +29,12 @@ class User extends React.Component<Props, State> {
         super(props);
 
         this.state = {
-          loggedin: false, 
-          error: {message: ""}
+          error: emptyerror
         };
     }
 
     signUp = (user: string, pass: string, passcon: string) => {
-        this.setState({ error: {message: ""} });
+        this.setState({error:emptyerror});
         let body = {email: user, password: pass, confirmPassword: passcon};
         let bodyStr = JSON.stringify(body);
         console.log('body', body);
@@ -42,21 +49,29 @@ class User extends React.Component<Props, State> {
           }).then( (response) => {
             if(response.ok){
               this.props.clear();
-              this.setState({loggedin:true, error: {message: ""}});
-              //TODO FIXME
-              var json:any = response.json();
-              this.props.setUser(json.user);
+
+              let j = response.json() as any;
+              const u:TUser = {
+                loggedin: true,
+                name: j.email
+              }
+              this.props.setUser(u);
             }else{
-              this.setState({error: {message: json } });
+
+              const e:ErrorMsg = {
+                message: response.json() as any as string, 
+                valid: true
+              }
+              this.setState({error: e});
             }
         });
     }
 
     login = (user: string, pass: string) => {
-        this.setState({error: {message: ""}});
+        this.setState({error:emptyerror});
         let body = {email: user, password: pass};
         let bodyStr = JSON.stringify(body);
-        console.log('body', body);
+        //console.log('body', body);
 
         fetch('/user/login/', {
             headers: {
@@ -66,23 +81,29 @@ class User extends React.Component<Props, State> {
             method: 'POST',
             body: bodyStr
           }).then( (response) => {
-            console.log('response.status ', response.status );
-            console.log('response.ok ', response.ok ); 
-            //TODO FIXME
-            var json:any = response.json();
-            console.log('login json', json)
-
             if(response.ok){
               this.props.clear();
-              this.props.setUser(json.user);
+
+              let j = response.json() as any;
+              console.log("build user object from this", j);
+              const u:TUser = {
+                loggedin: true,
+                name: j.email
+              }
+              this.props.setUser(u);
             }else{
-              this.setState({error: {message: json}});
+
+              const e:ErrorMsg = {
+                message: response.json() as any as string,
+                valid: true
+              }
+              this.setState({error: e});
             }
-          });
+          })
     }
 
     logout = () => {
-      this.setState({error: {message: ""}});
+      this.setState({error:emptyerror});
       fetch('/user/logout/',{
         headers: {
           'Accept': 'application/json',
@@ -92,7 +113,7 @@ class User extends React.Component<Props, State> {
       }).then( (response) => {
         if(response.ok){
           this.props.clear();
-          this.props.setUser(false);
+          this.props.setUser(nullUser);
         }else{
           return response.json();
         }
@@ -101,10 +122,10 @@ class User extends React.Component<Props, State> {
 
     render(){
 
-      if(this.props.user != null){
+      if(this.props.user.loggedin == true){
         return (
           <>
-              Logged in as: {this.props.user} <Logout logout={this.logout} />
+            Logged in as: {this.props.user.name} || <Logout logout={this.logout} />
           </>
         )
       }else{
@@ -119,5 +140,26 @@ class User extends React.Component<Props, State> {
     }
 }
 
-
 export default User;
+
+export const isLoggedIn = ():TUser => {
+  fetch('/user/isloggedin', {
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+  }).then( (response) => {
+    let j = response.json() as any;
+    console.log("isloggedin ", j);
+    const u:TUser = {
+      loggedin: true,
+      name: j.email
+    }
+
+    return u;    
+  });
+
+  return nullUser;
+}
+
+

@@ -20,10 +20,10 @@ const isloggedin = (req, res) => {
     console.log("isLoggedIn: ", req.session);
     if (req.session.passport ?? undefined) {
         res.status(200);
-        return res.json({ user: req.session.passport.user.email });
+        return res.json({ user: req.session.passport.user });
     }
     else {
-        res.status(200);
+        res.status(403);
         return res.json({ user: null });
     }
 };
@@ -70,7 +70,13 @@ exports.postLogin = postLogin;
  * Log out.
  */
 const logout = (req, res) => {
-    req.logout();
+    //req.logout();
+    req.logOut(function (err) {
+        if (err) {
+            //return next(err);
+        }
+        res.redirect('/');
+    });
     return res.send({});
 };
 exports.logout = logout;
@@ -179,7 +185,7 @@ const postDeleteAccount = (req, res, next) => {
         if (err) {
             return next(err);
         }
-        req.logout();
+        //req.logout();
         res.status(200).send({ msg: "Your account has been deleted." });
     });
 };

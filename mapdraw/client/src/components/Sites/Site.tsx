@@ -85,15 +85,28 @@ export default class SiteMarker extends React.Component<Props, State>{
         })
 
         return(
-            <Marker position={this.props.site.position}>
+            <Marker 
+                position={this.props.site.position}
+                draggable={true}
+                bubblingMouseEvents={false}
+                eventHandlers={ {
+                    // dblclick: (e) => {
+                    //     DomEvent.stopPropagation(e);
+                    //     props.removeElbow(e);
+                    // },
+                    mouseup: (event) => { 
+                        // dragend doesn't fire on desktop for some reason
+                        //console.log("mouseup", event); 
+                        
+                    }
+                } }
+            >
                 <Popup>
-                    <div className={"bubble "} >
-                        <button value="Add Link" onClick={this.addlink} /> <button value="Add Text" onClick={this.addlink} /> 
-                        {rows}
-                    </div>
+                    <button onClick={this.addText}>Add Text</button> 
+                    <hr/>
+                    {rows}
                 </Popup>
             </Marker>
         )
     }
-
 }

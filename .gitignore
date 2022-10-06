@@ -1,7 +1,8 @@
 
 
-tripsapp/node_modules
-tripsapp/client/node_modules
-tripsapp/client/L.Pather
-tripsapp/client/Leaflet.FreeDraw
-tripsapp/client/react-leaflet-freedraw
+mapdraw/node_modules
+mapdraw/client/node_modules
+mapdraw/client/L.Pather
+mapdraw/client/Leaflet.FreeDraw
+mapdraw/client/react-leaflet-freedraw
+mapdraw/server/node_modules
