@@ -1,7 +1,6 @@
 
 import * as React from "react"
-// import {LatLngBounds, latLng, LatLng, } from 'leaflet';
-import SiteMarker from './Site';
+import SiteMarker from './SiteMarker';
 import { DrawMouseEvents } from './DrawMouseEvents';
 import { TSite } from "./SiteTypes";
 

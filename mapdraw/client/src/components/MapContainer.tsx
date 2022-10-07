@@ -94,7 +94,7 @@ export default class MapComplete extends React.Component<Props, State> {
 
 	render() {		
 		return (
-		  <MapContainer
+		  <MapContainer 
 			center={this.props.position}
 			zoom={this.props.zoom}
 			>

@@ -88,7 +88,9 @@ class App extends React.Component<Props, State> {
       console.log("position: ", this.state.position);
     });
 
-    this.setState({user:isLoggedIn()});
+    this.setState({user:isLoggedIn()}, () => {
+      console.log('this.state.user: ',this.state.user)
+    });
     this.getAllData();
   }
 
@@ -368,7 +370,7 @@ class App extends React.Component<Props, State> {
     const {sites} = this.state
     
     const s: TSite = {
-      rows: [],
+      content: '',
       position: latlng
     }
 

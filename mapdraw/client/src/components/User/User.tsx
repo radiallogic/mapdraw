@@ -153,7 +153,7 @@ export const isLoggedIn = ():TUser => {
     console.log("isloggedin ", j);
     const u:TUser = {
       loggedin: true,
-      name: j.email
+      name: j.user
     }
 
     return u;    
