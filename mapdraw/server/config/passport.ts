@@ -1,7 +1,7 @@
 import passport from "passport";
 import passportLocal from "passport-local";
 import passportFacebook from "passport-facebook";
-//import passportToken from 'passport-jwt';
+// import passportToken from 'passport-jwt';
 
 import _ from "lodash";
 
@@ -10,6 +10,7 @@ import { Request, Response, NextFunction } from "express";
 
 const LocalStrategy = passportLocal.Strategy;
 const FacebookStrategy = passportFacebook.Strategy;
+// const JWTStrategy = passportToken.Strategy;
 
 passport.serializeUser((user, done) => {
     console.log("serializeUser", done); 
@@ -20,6 +21,8 @@ passport.serializeUser((user, done) => {
   
   passport.deserializeUser((id, done) => {
     User.findById(id, (err, user) => {
+
+        console.log('deserializeUser', err, user ); 
       done(err, user);
     });
   });
@@ -46,6 +49,28 @@ passport.use(new LocalStrategy({ usernameField: "email" }, (email, password, don
     });
 }));
 
+
+// /**
+//  * Sign in using JWT
+//  */
+//  passport.use(new JWTStrategy({ usernameField: "email" }, (email, password, done) => {
+
+//     console.log(' jwt '); 
+
+//     User.findOne({ email: email.toLowerCase() }, (err, user: any) => {
+//         if (err) { return done(err); }
+//         if (!user) {
+//             return done(undefined, false, { message: `Email ${email} not found.` });
+//         }
+//         user.comparePassword(password, (err: Error, isMatch: boolean) => {
+//             if (err) { return done(err); }
+//             if (isMatch) {
+//                 return done(undefined, user);
+//             }
+//             return done(undefined, false, { message: "Invalid email or password." });
+//         });
+//     });
+// }));
 
 
 /**
@@ -128,6 +153,7 @@ passport.use(new FacebookStrategy({
  * Login Required middleware.
  */
 export const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
+    console.log('in isAuthenticated'); 
     if (req.isAuthenticated()) {
         return next();
     }
@@ -138,6 +164,7 @@ export const isAuthenticated = (req: Request, res: Response, next: NextFunction)
  * Authorization Required middleware.
  */
 export const isAuthorized = (req: Request, res: Response, next: NextFunction) => {
+    console.log('in isAuthorized');
     const provider = req.path.split("/").slice(-1)[0];
 
     const user = req.user as UserDocument;

@@ -7,11 +7,12 @@ exports.isAuthorized = exports.isAuthenticated = void 0;
 const passport_1 = __importDefault(require("passport"));
 const passport_local_1 = __importDefault(require("passport-local"));
 const passport_facebook_1 = __importDefault(require("passport-facebook"));
-//import passportToken from 'passport-jwt';
+// import passportToken from 'passport-jwt';
 const lodash_1 = __importDefault(require("lodash"));
 const User_1 = require("../models/User");
 const LocalStrategy = passport_local_1.default.Strategy;
 const FacebookStrategy = passport_facebook_1.default.Strategy;
+// const JWTStrategy = passportToken.Strategy;
 passport_1.default.serializeUser((user, done) => {
     console.log("serializeUser", done);
     console.log("done", user);
@@ -19,6 +20,7 @@ passport_1.default.serializeUser((user, done) => {
 });
 passport_1.default.deserializeUser((id, done) => {
     User_1.User.findById(id, (err, user) => {
+        console.log('deserializeUser', err, user);
         done(err, user);
     });
 });
@@ -45,6 +47,25 @@ passport_1.default.use(new LocalStrategy({ usernameField: "email" }, (email, pas
         });
     });
 }));
+// /**
+//  * Sign in using JWT
+//  */
+//  passport.use(new JWTStrategy({ usernameField: "email" }, (email, password, done) => {
+//     console.log(' jwt '); 
+//     User.findOne({ email: email.toLowerCase() }, (err, user: any) => {
+//         if (err) { return done(err); }
+//         if (!user) {
+//             return done(undefined, false, { message: `Email ${email} not found.` });
+//         }
+//         user.comparePassword(password, (err: Error, isMatch: boolean) => {
+//             if (err) { return done(err); }
+//             if (isMatch) {
+//                 return done(undefined, user);
+//             }
+//             return done(undefined, false, { message: "Invalid email or password." });
+//         });
+//     });
+// }));
 /**
  * OAuth Strategy Overview
  *
@@ -133,6 +154,7 @@ passport_1.default.use(new FacebookStrategy({
  * Login Required middleware.
  */
 const isAuthenticated = (req, res, next) => {
+    console.log('in isAuthenticated');
     if (req.isAuthenticated()) {
         return next();
     }
@@ -143,6 +165,7 @@ exports.isAuthenticated = isAuthenticated;
  * Authorization Required middleware.
  */
 const isAuthorized = (req, res, next) => {
+    console.log('in isAuthorized');
     const provider = req.path.split("/").slice(-1)[0];
     const user = req.user;
     if (lodash_1.default.find(user.tokens, { kind: provider })) {

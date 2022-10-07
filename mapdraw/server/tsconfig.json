@@ -5,7 +5,7 @@
     "esModuleInterop":true,
     "module": "commonjs",
     "target": "esnext",
-    "allowJs": true,
+    //"allowJs": true,
     "sourceMap": true,
     "watch": true, 
     "moduleResolution": "node"

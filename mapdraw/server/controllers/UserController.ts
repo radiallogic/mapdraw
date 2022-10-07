@@ -19,7 +19,7 @@ import graph from "fbgraph";
  * GET /user/isloggedin
  * isloggedin
  */
-export const isloggedin = (req: any, res: Response) => {
+export const isloggedin = (req: Request, res: Response) => {
     console.log("isLoggedIn: ", req.session)
     if( req.session.passport !?? undefined){ 
         res.status(200);
@@ -35,7 +35,7 @@ export const isloggedin = (req: any, res: Response) => {
  * Sign in using email and password.
  */
 export const postLogin = async (req: Request, res: Response, next: NextFunction) => {
-    console.log('in post login'); 
+    console.log('in postLogin'); 
     await check("email", "Email is not valid").isEmail().run(req);
     await check("password", "Password cannot be blank").isLength({min: 1}).run(req);
     await check("email").normalizeEmail({ gmail_remove_dots: false }).run(req);
@@ -60,17 +60,25 @@ export const postLogin = async (req: Request, res: Response, next: NextFunction)
                 console.log("err", err);
             });
             res.status(200);
-            res.json({
-              user: user,
-              //token: token
+
+            req.session.user = user;
+
+            req.session.save(() => {
+              console.log('in session save: ' , req.session);
+            
+              return res.json({
+                user   : user,
+              });
             });
+            
+            req.session.isLoggedIn = true;
+            console.log("Set isLoggedIn. Currently: " + req.session);
             
         } else {
             res.status(401).json(info);
         }
         
     })(req, res);
-
 };
 
 /**
@@ -78,13 +86,17 @@ export const postLogin = async (req: Request, res: Response, next: NextFunction)
  * Log out.
  */
 export const logout = (req: Request, res: Response) => {
-    //req.logout();
+
+    req.session.destroy(function(err) {
+        // cannot access session here
+    })
+
     req.logOut(function(err) {
         if (err) { 
             //return next(err);
         }
-        res.redirect('/');
       });
+    res.status(200)
     return res.send({});
 };
 

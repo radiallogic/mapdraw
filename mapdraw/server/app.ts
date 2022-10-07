@@ -14,17 +14,44 @@ db.once('open', function(callback) {
     console.log("mongoose connection to db open")
 });
 
-var passport = require('passport');
+const passport = require('passport');
 import * as passportConfig from "./config/passport";
 
-var session = require("express-session"),
-    cookieParser = require("cookie-parser")
+const session = require("express-session");
+const MongoDBStore = require('connect-mongodb-session')(session);
+var store = new MongoDBStore({
+	uri: 'mongodb://localhost:27017/connect_mongodb_session_test',
+	collection: 'mySessions'
+  });
+
+const cookieParser = require("cookie-parser")
 
 app.use(express.json());
+app.use(cookieParser());
+
 app.use('/', express.static('../client'));
 
-app.use( session({ secret: "supeRRRsecret" , resave: true, saveUninitialized: true}) );
-app.use(cookieParser() );
+app.use( session(
+	{ secret: "supeRRRsecret",
+	  resave: true,
+	  saveUninitialized: true,
+	  cookie: { 
+		secure: false,
+		httpOnly: false,
+		maxAge: 1000 * 60 * 60 * 24 * 365 * 100,
+		},
+	  store: store,
+	  sameSite: false,
+	  
+	}
+	)
+);
+
+// Catch errors
+store.on('error', function(error) {
+	console.log('error store', error);
+  });
+
 app.use(passport.initialize());
 app.use(passport.session() );
 
@@ -76,7 +103,7 @@ app.get('/api/:object/', (req, res) => {
 		let query = {};
 		//console.log( 'session2: ' , req.session)
 
-		if( req.session.passport != undefined){ 
+		if( req.session.passport != undefined){
 			console.log('get for logged in user');
 		    query = {user: req.session.passport.user};
 		}else{
@@ -106,7 +133,7 @@ app.post('/api/:object/', (req, res) => { // data/data:
 
 		let body = req.body;
 		body.session = req.sessionID; // insert user id / session id
-		console.log(req.sessionID); 
+		//console.log(req.sessionID); 
 
 		if(body._id == null){
 			body._id = new ObjectID();
@@ -137,11 +164,7 @@ app.post('/api/:object/', (req, res) => { // data/data:
 				}
 			})
 		}
-
-		
 	})
-
-	
 })
 
 // app.delete('/api/:object/:id', (req, res) => {

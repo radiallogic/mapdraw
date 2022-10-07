@@ -23,7 +23,7 @@ const isloggedin = (req, res) => {
         return res.json({ user: req.session.passport.user });
     }
     else {
-        res.status(403);
+        res.status(200);
         return res.json({ user: null });
     }
 };
@@ -33,7 +33,7 @@ exports.isloggedin = isloggedin;
  * Sign in using email and password.
  */
 const postLogin = async (req, res, next) => {
-    console.log('in post login');
+    console.log('in postLogin');
     await (0, express_validator_1.check)("email", "Email is not valid").isEmail().run(req);
     await (0, express_validator_1.check)("password", "Password cannot be blank").isLength({ min: 1 }).run(req);
     await (0, express_validator_1.check)("email").normalizeEmail({ gmail_remove_dots: false }).run(req);
@@ -54,10 +54,17 @@ const postLogin = async (req, res, next) => {
                 console.log("err", err);
             });
             res.status(200);
-            res.json({
-                user: user,
-                //token: token
+            req.session.user = user;
+            req.session.save(() => {
+                console.log('in session save: ', req.session);
+                return res.json({
+                    test: 'test',
+                    user: user,
+                    name: user.email
+                });
             });
+            req.session.isLoggedIn = true;
+            console.log("Set isLoggedIn. Currently: " + req.session);
         }
         else {
             res.status(401).json(info);
@@ -70,13 +77,15 @@ exports.postLogin = postLogin;
  * Log out.
  */
 const logout = (req, res) => {
-    //req.logout();
+    req.session.destroy(function (err) {
+        // cannot access session here
+    });
     req.logOut(function (err) {
         if (err) {
             //return next(err);
         }
-        res.redirect('/');
     });
+    res.status(200);
     return res.send({});
 };
 exports.logout = logout;
