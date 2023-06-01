@@ -20,7 +20,7 @@ passport_1.default.serializeUser((user, done) => {
 });
 passport_1.default.deserializeUser((id, done) => {
     User_1.User.findById(id, (err, user) => {
-        console.log('deserializeUser', err, user);
+        //console.log('deserializeUser', err, user ); 
         done(err, user);
     });
 });

@@ -11,6 +11,7 @@
   "author": "",
   "license": "",
   "dependencies": {
+    "@types/bcrypt": "^5.0.0",
     "@types/lodash": "^4.14.175",
     "@types/passport-facebook": "^2.1.11",
     "@types/passport-jwt": "^3.0.6",

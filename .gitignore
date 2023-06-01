@@ -6,3 +6,4 @@ mapdraw/client/L.Pather
 mapdraw/client/Leaflet.FreeDraw
 mapdraw/client/react-leaflet-freedraw
 mapdraw/server/node_modules
+node_modules

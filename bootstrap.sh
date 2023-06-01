@@ -19,16 +19,18 @@ sudo apt-get install dirmngr -y --install-recommends
 
 echo "Install nodejs "
 sudo apt-get install curl software-properties-common
-curl -sL https://deb.nodesource.com/setup_16.x | sudo bash -
+curl -sL https://deb.nodesource.com/setup_18.x | sudo bash -
 sudo apt-get install -y nodejs apache2 
 
 
 echo "-- Install mongodb key"
-sudo wget -qO - https://www.mongodb.org/static/pgp/server-4.2.asc | sudo apt-key add -
+curl -fsSL https://pgp.mongodb.com/server-6.0.asc | \
+   sudo gpg -o /usr/share/keyrings/mongodb-server-6.0.gpg \
+   --dearmor
+echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-6.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
+sudo apt-get update
 
 echo "-- Install mongodb"
-echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.2 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.2.list
-sudo apt-get update
 sudo apt-get install -y mongodb-org
 
 

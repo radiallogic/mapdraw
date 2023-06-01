@@ -1,1 +1,1 @@
-{"virtualbox":{"/var/www/html/":{"guestpath":"/var/www/html","hostpath":"/Users/radiallogic/Development/mapdraw","disabled":false,"__vagrantfile":true}}}
+{"virtualbox":{"/var/www/html/":{"guestpath":"/var/www/html","hostpath":"/Users/radiallogic/Development/tripsapp","disabled":false,"__vagrantfile":true}}}

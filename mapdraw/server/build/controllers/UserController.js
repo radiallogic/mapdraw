@@ -58,9 +58,7 @@ const postLogin = async (req, res, next) => {
             req.session.save(() => {
                 console.log('in session save: ', req.session);
                 return res.json({
-                    test: 'test',
                     user: user,
-                    name: user.email
                 });
             });
             req.session.isLoggedIn = true;

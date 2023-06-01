@@ -8,13 +8,15 @@ export type UserDocument = mongoose.Document & {
     passwordResetExpires: Date;
 
     facebook: string;
+    twitter: string,
+    google: string,
     tokens: AuthToken[];
 
     profile: {
         name: string
     };
 
-    comparePassword: comparePasswordFunction;
+    //comparePassword: comparePasswordFunction;
 };
 
 type comparePasswordFunction = (candidatePassword: string, cb: (err: any, isMatch: any) => {}) => void;
@@ -37,17 +39,18 @@ const userSchema = new mongoose.Schema({
 
     profile: {
         name: String,
-    }
+    },
+
 }, { timestamps: true });
 
 /**
  * Password hash middleware.
  */
 userSchema.pre("save", function save(next) {
-    console.log('pre save'); 
+    console.log('pre save');
 
     const user = this as UserDocument;
-    
+
     if (!user.isModified("password")) { return next(); }
 
     bcrypt.genSalt(10, (err, salt) => {
