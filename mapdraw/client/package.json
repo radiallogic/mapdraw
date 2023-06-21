@@ -28,6 +28,7 @@
     "autoprefixer": "^10.3.7",
     "core-js": "^3.18.3",
     "jest": "^28.1.1",
+    "jotai": "^2.2.1",
     "leaflet": "^1.8.0",
     "lodash": "^4.17.21",
     "postcss": "^8.3.9",

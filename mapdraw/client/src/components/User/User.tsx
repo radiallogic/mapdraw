@@ -12,154 +12,161 @@ type Props = {
 }
 
 type State = {
-  error: ErrorMsg;  
+  error: ErrorMsg;
 }
 
-const emptyerror:ErrorMsg ={
+const emptyerror: ErrorMsg = {
   valid: false
 }
 
-export const nullUser:TUser = {
+export const nullUser: TUser = {
   name: 'none',
   loggedin: false
 }
 
 class User extends React.Component<Props, State> {
-    constructor(props: Props) {
-        super(props);
+  constructor(props: Props) {
+    super(props);
 
-        this.state = {
-          error: emptyerror
-        };
-    }
+    this.state = {
+      error: emptyerror
+    };
+  }
 
-    signUp = (user: string, pass: string, passcon: string) => {
-        this.setState({error:emptyerror});
-        let body = {email: user, password: pass, confirmPassword: passcon};
-        let bodyStr = JSON.stringify(body);
-        console.log('body', body);
+  signUp = (user: string, pass: string, passcon: string) => {
+    this.setState({ error: emptyerror });
+    let body = { email: user, password: pass, confirmPassword: passcon };
+    let bodyStr = JSON.stringify(body);
+    console.log('body', body);
 
-        fetch('/user/signup/', {
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json'
-            },
-            method: 'POST',
-            body: bodyStr
-          }).then( (response) => {
-            if(response.ok){
-              this.props.clear();
+    fetch('/user/signup/', {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      method: 'POST',
+      body: bodyStr
+    }).then((response) => {
+      if (response.ok) {
+        this.props.clear();
+        return response.json();
 
-              let j = response.json() as any;
-              const u:TUser = {
-                loggedin: true,
-                name: j.email
-              }
-              this.props.setUser(u);
-            }else{
+      } else {
 
-              const e:ErrorMsg = {
-                message: response.json() as any as string, 
-                valid: true
-              }
-              this.setState({error: e});
-            }
-        });
-    }
-
-    login = (user: string, pass: string) => {
-        this.setState({error:emptyerror});
-        let body = {email: user, password: pass};
-        let bodyStr = JSON.stringify(body);
-        //console.log('body', body);
-
-        fetch('/user/login/', {
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json'
-            },
-            method: 'POST',
-            body: bodyStr
-          }).then( (response) => {
-            if(response.ok){
-              this.props.clear();
-
-              let j = response.json() as any;
-              console.log("build user object from this", j);
-              const u:TUser = {
-                loggedin: true,
-                name: j.email
-              }
-              this.props.setUser(u);
-            }else{
-
-              const e:ErrorMsg = {
-                message: response.json() as any as string,
-                valid: true
-              }
-              this.setState({error: e});
-            }
-          })
-    }
-
-    logout = () => {
-      this.setState({error:emptyerror});
-      fetch('/user/logout/',{
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        method: 'GET'
-      }).then( (response) => {
-        if(response.ok){
-          this.props.clear();
-          this.props.setUser(nullUser);
-        }else{
-          return response.json();
+        const e: ErrorMsg = {
+          message: response.json() as any as string,
+          valid: true
         }
-      });
-    }
-
-    render(){
-
-      if(this.props.user.loggedin == true){
-        return (
-          <>
-            Logged in as: {this.props.user.name} || <Logout logout={this.logout} />
-          </>
-        )
-      }else{
-        return (
-          <>
-              <Login login={this.login} error={this.state.error} />
-              <Signup signUp={this.signUp} error={this.state.error} />
-          </>
-        )
+        this.setState({ error: e });
       }
-        
+    }).then((json) => {
+
+      const u: TUser = {
+        loggedin: true,
+        name: json.user.email
+      }
+      this.props.setUser(u);
+
+    });
+  }
+
+  login = (user: string, pass: string) => {
+    this.setState({ error: emptyerror });
+    let body = { email: user, password: pass };
+    let bodyStr = JSON.stringify(body);
+    //console.log('body', body);
+
+    fetch('/user/login/', {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      method: 'POST',
+      body: bodyStr
+    }).then((response) => {
+      if (response.ok) {
+        this.props.clear();
+        return response.json();
+      } else {
+        const e: ErrorMsg = {
+          message: response.json() as any as string,
+          valid: true
+        }
+        this.setState({ error: e });
+      }
+    }).then((json) => {
+      console.log("json", json);
+      const u: TUser = {
+        loggedin: true,
+        name: json.user.email
+      }
+      console.log("set user", u);
+      this.props.setUser(u);
+
+    })
+  }
+
+  logout = () => {
+    this.setState({ error: emptyerror });
+    fetch('/user/logout/', {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      method: 'GET'
+    }).then((response) => {
+      if (response.ok) {
+        this.props.clear();
+        this.props.setUser(nullUser);
+      } else {
+        return response.json();
+      }
+    });
+  }
+
+  render() {
+
+    if (this.props.user.loggedin == true) {
+      return (
+        <>
+          Logged in as: {this.props.user.name} || <Logout logout={this.logout} />
+        </>
+      )
+    } else {
+      return (
+        <>
+          <Login login={this.login} error={this.state.error} />
+          <Signup signUp={this.signUp} error={this.state.error} />
+        </>
+      )
     }
+
+  }
 }
 
 export default User;
 
-export const isLoggedIn = ():TUser => {
-  fetch('/user/isloggedin', {
+export const isLoggedIn = async (): Promise<TUser> => {
+
+  let u: TUser = nullUser
+
+  await fetch('/user/isloggedin', {
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     },
-  }).then( (response) => {
-    let j = response.json() as any;
-    console.log("isloggedin ", j);
-    const u:TUser = {
+  }).then((response) => {
+    return response.json()
+  }).then((json) => {
+    console.log("isloggedin ", json);
+    u = {
       loggedin: true,
-      name: j.user
+      name: json.user.email
     }
-
-    return u;    
   });
 
-  return nullUser;
+  return u;
 }
+
 
 

@@ -1,13 +1,13 @@
 import * as React from "react"
-import  { MapContainer, TileLayer, useMapEvents, SVGOverlay} from 'react-leaflet'
-import { LatLngExpression, LatLngBounds, latLng, LatLng} from "leaflet";
+import { MapContainer, TileLayer, useMapEvents, SVGOverlay } from 'react-leaflet'
+import { LatLngExpression, LatLngBounds, latLng, LatLng } from "leaflet";
 
-import Paths  from './Paths/Paths';
-import { Sites }  from './Sites/Sites';
+import Paths from './Paths/Paths';
+import { Sites } from './Sites/Sites';
 import { TSite } from "./Sites/SiteTypes";
 import { Path } from "./Paths/PathTypes";
 
-const bounds = new LatLngBounds( latLng(51.49, -0.08), latLng(51.5, -0.06) );
+const bounds = new LatLngBounds(latLng(51.49, -0.08), latLng(51.5, -0.06));
 
 interface PositionProps {
 	setPosition: Function;
@@ -21,25 +21,25 @@ interface ZoomProps {
 
 const Position = (props: PositionProps): React.ReactElement => {
 	const map = useMapEvents({
-		dragend: ( e ) => {
-		  props.setPosition( e.target.getCenter() );
-		  props.setBounds( e.target.getBounds() );
-		//   console.log("map center", e.target.getCenter());
-		//   console.log("map bounds", e.target.getBounds());
+		dragend: (e) => {
+			props.setPosition(e.target.getCenter());
+			props.setBounds(e.target.getBounds());
+			//   console.log("map center", e.target.getCenter());
+			//   console.log("map bounds", e.target.getBounds());
 		}
 	});
 	return null;
 }
 
-const Zoom = (props: ZoomProps): React.ReactElement  => {
+const Zoom = (props: ZoomProps): React.ReactElement => {
 	const map = useMapEvents({
 		click() {
 			map.locate()
 		},
 		locationfound(e) {
-			if(props.zoom !==  map.getZoom() ){
-				props.setZoom( map.getZoom() )
-				console.log("map getZoom", map.getZoom() );
+			if (props.zoom !== map.getZoom()) {
+				props.setZoom(map.getZoom())
+				console.log("map getZoom", map.getZoom());
 			}
 		},
 	});
@@ -71,65 +71,65 @@ type State = {
 }
 
 export default class MapComplete extends React.Component<Props, State> {
-	constructor(props: Props) {	
+	constructor(props: Props) {
 		super(props);
 	};
 
 	componentDidMount = () => {
-	    this.setState({position: this.props.position} );
+		this.setState({ position: this.props.position });
 	}
 
-	componentDidUpdate(prevProps: Props){
+	componentDidUpdate(prevProps: Props) {
 		//console.log(' prevProps ', this.props.zoom, prevProps.zoom);   
 		// if(this.props.paths !== prevProps.paths){
-		// 	console.log(' Paths changed in MapCcontainer')
+		// 	console.log(' Paths changed in MapContainer')
 		// }
-		if(this.props.position !== prevProps.position ){
-			this.setState({position:this.props.position});
+		if (this.props.position !== prevProps.position) {
+			this.setState({ position: this.props.position });
 		}
-		if(this.props.zoom !== prevProps.zoom ){
-			this.setState({zoom:this.props.zoom});
+		if (this.props.zoom !== prevProps.zoom) {
+			this.setState({ zoom: this.props.zoom });
 		}
 	}
 
-	render() {		
+	render() {
 		return (
-		  <MapContainer 
-			center={this.props.position}
-			zoom={this.props.zoom}
+			<MapContainer
+				center={this.props.position}
+				zoom={this.props.zoom}
 			>
 
-			<Zoom
-				setZoom={this.props.setZoom}
-				zoom={this.props.zoom}
-			/>
+				<Zoom
+					setZoom={this.props.setZoom}
+					zoom={this.props.zoom}
+				/>
 
-			<Position 
-				setPosition={this.props.setPosition} 
-				setBounds={this.props.setBounds}
-			/>
+				<Position
+					setPosition={this.props.setPosition}
+					setBounds={this.props.setBounds}
+				/>
 
-			<Paths
-				setMode={this.props.setMode}
-				setPaths={this.props.setPaths}
-			    paths={this.props.paths}
-			    mode={this.props.mode}
-				zoom={this.props.zoom}
-			/>
+				<Paths
+					setMode={this.props.setMode}
+					setPaths={this.props.setPaths}
+					paths={this.props.paths}
+					mode={this.props.mode}
+					zoom={this.props.zoom}
+				/>
 
-			<Sites
-				setSites={this.props.setSites}
-				addSite={this.props.addSite}
-				saveSite={this.props.saveSite}
-				mode={this.props.mode}
-				sites={this.props.sites}
-			/>
+				<Sites
+					setSites={this.props.setSites}
+					addSite={this.props.addSite}
+					saveSite={this.props.saveSite}
+					mode={this.props.mode}
+					sites={this.props.sites}
+				/>
 
-			<TileLayer
-			  attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-			  url='https://{s}.tile.osm.org/{z}/{x}/{y}.png'
-			/>
-		  </MapContainer>
+				<TileLayer
+					attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+					url='https://{s}.tile.osm.org/{z}/{x}/{y}.png'
+				/>
+			</MapContainer>
 		);
 	}
 }

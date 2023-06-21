@@ -1,4 +1,4 @@
-use mapdraw;
+db = connect('mongodb://localhost/mapdraw');
 
 db.createCollection("trips");
 db.createCollection("sites");

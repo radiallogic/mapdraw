@@ -15,8 +15,6 @@ export type UserDocument = mongoose.Document & {
     profile: {
         name: string
     };
-
-    //comparePassword: comparePasswordFunction;
 };
 
 type comparePasswordFunction = (candidatePassword: string, cb: (err: any, isMatch: any) => {}) => void;

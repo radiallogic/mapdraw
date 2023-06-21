@@ -8,10 +8,11 @@ const url = "mongodb://localhost:27017/mapdraw";
 const userController = require('./controllers/UserController');
 
 mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true }); //useCreateIndex: true,
+mongoose.set('strictQuery', false);
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function(callback) {
-    console.log("mongoose connection to db open")
+db.once('open', function (callback) {
+	console.log("mongoose connection to db open")
 });
 
 const passport = require('passport');
@@ -22,7 +23,7 @@ const MongoDBStore = require('connect-mongodb-session')(session);
 var store = new MongoDBStore({
 	uri: 'mongodb://localhost:27017/connect_mongodb_session_test',
 	collection: 'mySessions'
-  });
+});
 
 const cookieParser = require("cookie-parser")
 
@@ -31,29 +32,30 @@ app.use(cookieParser());
 
 app.use('/', express.static('../client'));
 
-app.use( session(
-	{ secret: "supeRRRsecret",
-	  resave: true,
-	  saveUninitialized: true,
-	  cookie: { 
-		secure: false,
-		httpOnly: false,
-		maxAge: 1000 * 60 * 60 * 24 * 365 * 100,
+app.use(session(
+	{
+		secret: "supeRRRsecret",
+		resave: true,
+		saveUninitialized: true,
+		cookie: {
+			secure: false,
+			httpOnly: false,
+			maxAge: 1000 * 60 * 60 * 24 * 365 * 100,
 		},
-	  store: store,
-	  sameSite: false,
-	  
+		store: store,
+		sameSite: false,
+
 	}
-	)
+)
 );
 
 // Catch errors
-store.on('error', function(error) {
+store.on('error', function (error) {
 	console.log('error store', error);
-  });
+});
 
 app.use(passport.initialize());
-app.use(passport.session() );
+app.use(passport.session());
 
 
 /**
@@ -79,14 +81,10 @@ app.get("/api/facebook", passportConfig.isAuthenticated, passportConfig.isAuthor
  */
 app.get("/auth/facebook", passport.authenticate("facebook", { scope: ["email", "public_profile"] }));
 app.get("/auth/facebook/callback", passport.authenticate("facebook", { failureRedirect: "/login" }), (req, res) => {
-    res.redirect(req.session.returnTo || "/");
+	res.redirect(req.session.returnTo || "/");
 });
 
 app.get('/api/:object/', (req, res) => {
-	//console.log('params: ', req.params);
-
-	//console.log( 'session: ' , req.session)
-
 	mongo.connect(url, { useNewUrlParser: true }, (err, client) => {
 		if (err) {
 			console.error(err);
@@ -95,23 +93,22 @@ app.get('/api/:object/', (req, res) => {
 
 		let object = req.params.object;
 		//TODO: validate object is in objects
-		const objects = ['trips', 'kitlists', 'routes', 'vehicles', 'sites']; 
+		const objects = ['trips', 'kitlists', 'routes', 'vehicles', 'sites'];
 
 		const db = client.db('mapdraw')
 		const collection = db.collection(object)
+		console.log(object);
 
 		let query = {};
-		//console.log( 'session2: ' , req.session)
-
-		if( req.session.passport != undefined){
+		if (req.session.passport != undefined) {
 			console.log('get for logged in user');
-		    query = {user: req.session.passport.user};
-		}else{
+			query = { user: req.session.passport.user };
+		} else {
 			console.log('get where no user exists ');
-			query = {session: req.sessionID};
-			query = { "user" : { "$exists" : false }}
+			query = { "user": { "$exists": false } }
 		}
-		
+
+		// returns nothing for logged in user?
 		collection.find(query).toArray((err, items) => {
 			res.send(items);
 		})
@@ -120,13 +117,13 @@ app.get('/api/:object/', (req, res) => {
 
 app.post('/api/:object/', (req, res) => { // data/data:
 
-	console.log('Got a POST request'); 
+	console.log('Got a POST request');
 	console.log('body is ', req.body);
-	
+
 	mongo.connect(url, { useNewUrlParser: true }, (err, client) => {
 		if (err) {
 			console.error(err);
-			return 
+			return
 		}
 		const db = client.db('mapdraw')
 		const collection = db.collection(req.params.object)
@@ -135,29 +132,29 @@ app.post('/api/:object/', (req, res) => { // data/data:
 		body.session = req.sessionID; // insert user id / session id
 		//console.log(req.sessionID); 
 
-		if(body._id == null){
+		if (body._id == null) {
 			body._id = new ObjectID();
 			collection.insertOne(body, (err, result) => {
-				if(err == null){
+				if (err == null) {
 					console.log('Returning from Insert', result.ops);
 					res.send(result.ops)
-				}else{
+				} else {
 					//TODO check this for security
 					res.send(err)
 					console.log('error: ', err)
 				}
 			})
-		}else{
+		} else {
 
 			const id = new ObjectID(body._id);
-			let update = {...body};
+			let update = { ...body };
 			delete update._id;
-			
-			collection.updateOne({_id: id },  { $set: update} , (err, result) => {
-				if(err == null){
+
+			collection.updateOne({ _id: id }, { $set: update }, (err, result) => {
+				if (err == null) {
 					console.log(" Returning from Update: ", body);
 					res.send(body)
-				}else{
+				} else {
 					//TODO check this for security
 					res.send(err)
 					console.log('error: ', err)
@@ -181,7 +178,7 @@ app.post('/api/:object/', (req, res) => { // data/data:
 // 			console.log(item)
 // 		})
 // 	})
-	
+
 //  	res.send('Got a DELETE request')
 // })
 
@@ -194,6 +191,6 @@ const port = 3000
 app.use('*', express.static('../client/404.html'));
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}!`);
+	console.log(`Example app listening on port ${port}!`);
 });
 

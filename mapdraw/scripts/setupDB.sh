@@ -1,2 +1,1 @@
-mongo < ./indexes.js
-mongo < ./exampleData.js
+mongosh --file indexes.js --file exampleData.js

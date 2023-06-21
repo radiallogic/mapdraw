@@ -17,7 +17,7 @@ const userSchema = new mongoose_1.default.Schema({
     tokens: Array,
     profile: {
         name: String,
-    }
+    },
 }, { timestamps: true });
 /**
  * Password hash middleware.
