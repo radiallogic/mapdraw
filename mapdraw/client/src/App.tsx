@@ -19,8 +19,6 @@ import { TVehicle, TTrip, TUser } from './components/MapTypes';
 import { Path } from './components/Paths/PathTypes';
 import { ErrorMsg } from "./components/GlobalTypes";
 
-// import { atom, useAtom} from 'jotai'
-// import { PathsAtom} from './globals'
 
 type Props = {
 
@@ -328,8 +326,21 @@ class App extends React.Component<Props, State> {
     this.setState({ paths: paths });
   }
 
-  setSites = (Sites: Array<TSite>) => {
-    this.setState({ sites: Sites });
+  updateSite = (site: TSite) => {
+
+    console.log('updateSite', site);
+    console.log('updateSite', this.state.sites);
+
+
+    let list = this.state.sites;
+    list.map((loopsite: TSite, i) => {
+
+      if (loopsite.position.lat === site.position.lat && loopsite.position.lng === site.position.lng) {
+        loopsite.content = site.content;
+      }
+    });
+
+    this.setState({ sites: list });
   }
 
 
@@ -403,7 +414,7 @@ class App extends React.Component<Props, State> {
           setPosition={this.setPosition}
           setBounds={this.setBounds}
           setZoom={this.setZoom}
-          setSites={this.setSites}
+          updateSite={this.updateSite}
           setPaths={this.setPaths}
 
           paths={this.state.paths}

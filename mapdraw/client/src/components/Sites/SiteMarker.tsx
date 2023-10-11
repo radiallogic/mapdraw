@@ -9,7 +9,7 @@ import {TSite} from './SiteTypes'
 type Props = {
     site: TSite;
     save: Function;
-    setSites: Function;
+    updateSite: Function;
 }
 
 type State = {
@@ -33,7 +33,10 @@ export default class SiteMarker extends React.Component<Props, State>{
     }
 
     componentDidMount = () => {
-        this.setState({site: this.props.site}); 
+        this.setState({site: this.props.site}, () => { 
+
+            console.log("site loaded with position", this.state.site)
+        }); 
     }
 
     componentDidUpdate = (prevProps: Props) => {
@@ -43,7 +46,7 @@ export default class SiteMarker extends React.Component<Props, State>{
     } 
 
     saveSite = () => {
-        this.props.setSites(this.state.site);
+        this.props.updateSite(this.state.site);
         this.props.save();
     }
 
@@ -54,7 +57,7 @@ export default class SiteMarker extends React.Component<Props, State>{
 
     setSiteContent = (content: string) => {
         const s: TSite = {
-            position: new LatLng(0,0),
+            position: this.state.site.position,
             content: content
         }
 
@@ -63,17 +66,15 @@ export default class SiteMarker extends React.Component<Props, State>{
 
     render(){
 
-        //console.log(this.state.site)
-
         let content = null;
         if(this.state.edit == false){
             if(this.state.site.content != ''){
-                content = <div dangerouslySetInnerHTML={{__html: this.state.site.content}} /> 
+                content = <div onClick={this.edit} dangerouslySetInnerHTML={{__html: this.state.site.content}} /> 
             }else{
                 content = <button onClick={this.edit} > "Click here to edit and add content" </button>
             }
         }else{
-            content = <ReactQuill theme="snow" value={this.state.site.content} onChange={this.setSiteContent} />;
+            content = <ReactQuill theme="snow" value={this.state.site.content} onChange={ this.setSiteContent } />;
         }
 
         return(
@@ -86,7 +87,7 @@ export default class SiteMarker extends React.Component<Props, State>{
                         
                     },
                     popupclose: () => {
-                        this.props.save();
+                        this.saveSite();
                         this.setState({edit:false});
                     }
                 } }

@@ -57,7 +57,7 @@ type Props = {
 	setZoom: Function;
 	setMode: Function;
 	setPaths: Function;
-	setSites: Function;
+	updateSite: Function;
 
 	addSite: Function;
 	saveSite: Function;
@@ -119,7 +119,7 @@ export default class MapComplete extends React.Component<Props, State> {
 				/>
 
 				<Sites
-					setSites={this.props.setSites}
+					updateSite={this.props.updateSite}
 					addSite={this.props.addSite}
 					saveSite={this.props.saveSite}
 					mode={this.props.mode}

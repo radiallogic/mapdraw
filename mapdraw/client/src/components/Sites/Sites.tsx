@@ -6,7 +6,7 @@ import { TSite } from "./SiteTypes";
 
 
 type Props = {
-    setSites: Function;
+    updateSite: Function;
     sites: Array<TSite>;
     addSite: Function;
     saveSite: Function;
@@ -14,12 +14,9 @@ type Props = {
 }
 
 export const Sites = (props: Props): React.ReactElement  => {
-    
-    console.log('Sites props', props.sites);
 
     let sites = props.sites.map( (site: TSite, i) => {
-        //console.log( JSON.stringify(path) );
-        return <SiteMarker site={site} setSites={props.setSites} save={props.saveSite} key={i}></SiteMarker>
+        return <SiteMarker site={site} updateSite={props.updateSite} save={props.saveSite} key={i}></SiteMarker>
     });
 
 	return (
