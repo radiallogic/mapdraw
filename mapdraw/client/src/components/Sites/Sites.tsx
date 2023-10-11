@@ -14,10 +14,12 @@ type Props = {
 }
 
 export const Sites = (props: Props): React.ReactElement  => {
-	
+    
+    console.log('Sites props', props.sites);
+
     let sites = props.sites.map( (site: TSite, i) => {
         //console.log( JSON.stringify(path) );
-        return <SiteMarker site={site} save={props.saveSite} key={i}></SiteMarker>
+        return <SiteMarker site={site} setSites={props.setSites} save={props.saveSite} key={i}></SiteMarker>
     });
 
 	return (

@@ -28,9 +28,10 @@ const app = express();
 const mongo = require('mongodb').MongoClient;
 const ObjectID = require('mongodb').ObjectID;
 const mongoose = require("mongoose");
-const url = "mongodb://localhost:27017/mapdraw";
+const url = "mongodb://mongodb:27017/mapdraw";
 const userController = require('./controllers/UserController');
 mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true }); //useCreateIndex: true,
+mongoose.set('strictQuery', false);
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function (callback) {
@@ -41,14 +42,15 @@ const passportConfig = __importStar(require("./config/passport"));
 const session = require("express-session");
 const MongoDBStore = require('connect-mongodb-session')(session);
 var store = new MongoDBStore({
-    uri: 'mongodb://localhost:27017/connect_mongodb_session_test',
+    uri: 'mongodb://mongodb:27017/connect_mongodb_session_test',
     collection: 'mySessions'
 });
 const cookieParser = require("cookie-parser");
 app.use(express.json());
 app.use(cookieParser());
 app.use('/', express.static('../client'));
-app.use(session({ secret: "supeRRRsecret",
+app.use(session({
+    secret: "supeRRRsecret",
     resave: true,
     saveUninitialized: true,
     cookie: {
@@ -88,8 +90,6 @@ app.get("/auth/facebook/callback", passport.authenticate("facebook", { failureRe
     res.redirect(req.session.returnTo || "/");
 });
 app.get('/api/:object/', (req, res) => {
-    //console.log('params: ', req.params);
-    //console.log( 'session: ' , req.session)
     mongo.connect(url, { useNewUrlParser: true }, (err, client) => {
         if (err) {
             console.error(err);
@@ -100,17 +100,18 @@ app.get('/api/:object/', (req, res) => {
         const objects = ['trips', 'kitlists', 'routes', 'vehicles', 'sites'];
         const db = client.db('mapdraw');
         const collection = db.collection(object);
+        console.log(object);
         let query = {};
-        //console.log( 'session2: ' , req.session)
         if (req.session.passport != undefined) {
             console.log('get for logged in user');
-            query = { user: req.session.passport.user };
+            query = { user: req.session.passport.user.email };
         }
         else {
             console.log('get where no user exists ');
-            query = { session: req.sessionID };
             query = { "user": { "$exists": false } };
         }
+        console.log('query is ', query);
+        // returns nothing for logged in user?
         collection.find(query).toArray((err, items) => {
             res.send(items);
         });
@@ -127,13 +128,14 @@ app.post('/api/:object/', (req, res) => {
         const db = client.db('mapdraw');
         const collection = db.collection(req.params.object);
         let body = req.body;
-        body.session = req.sessionID; // insert user id / session id
-        //console.log(req.sessionID); 
+        body.session = req.sessionID; // add session id
+        body.user = req.session.passport.user.email; // add user id
+        console.log("body is ", body);
         if (body._id == null) {
             body._id = new ObjectID();
             collection.insertOne(body, (err, result) => {
                 if (err == null) {
-                    console.log('Returning from Insert', result.ops);
+                    console.log('Returning from Insert2', result);
                     res.send(result.ops);
                 }
                 else {

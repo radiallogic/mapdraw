@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "install": "npm link webpack",
     "webpack": "webpack -w",
     "test": "jest"
   },
@@ -27,8 +28,9 @@
     "@types/react-modal": "^3.13.1",
     "autoprefixer": "^10.3.7",
     "core-js": "^3.18.3",
+    "husky": "^8.0.3",
     "jest": "^28.1.1",
-    "jotai": "^2.2.1",
+    "jotai": "^2.4.2",
     "leaflet": "^1.8.0",
     "lodash": "^4.17.21",
     "postcss": "^8.3.9",

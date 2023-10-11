@@ -9,6 +9,7 @@ import {TSite} from './SiteTypes'
 type Props = {
     site: TSite;
     save: Function;
+    setSites: Function;
 }
 
 type State = {
@@ -42,6 +43,7 @@ export default class SiteMarker extends React.Component<Props, State>{
     } 
 
     saveSite = () => {
+        this.props.setSites(this.state.site);
         this.props.save();
     }
 
@@ -61,7 +63,7 @@ export default class SiteMarker extends React.Component<Props, State>{
 
     render(){
 
-        console.log(this.state.site)
+        //console.log(this.state.site)
 
         let content = null;
         if(this.state.edit == false){
@@ -84,6 +86,7 @@ export default class SiteMarker extends React.Component<Props, State>{
                         
                     },
                     popupclose: () => {
+                        this.props.save();
                         this.setState({edit:false});
                     }
                 } }

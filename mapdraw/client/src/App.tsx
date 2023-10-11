@@ -19,6 +19,8 @@ import { TVehicle, TTrip, TUser } from './components/MapTypes';
 import { Path } from './components/Paths/PathTypes';
 import { ErrorMsg } from "./components/GlobalTypes";
 
+// import { atom, useAtom} from 'jotai'
+// import { PathsAtom} from './globals'
 
 type Props = {
 
@@ -105,11 +107,12 @@ class App extends React.Component<Props, State> {
     // ( ( n2 * (80 - -180) + -180).toFixed(3) * 1 ) ,   
 
     const ll = new LatLng(pos[0], pos[1]);
-    console.log('ll', ll);
+    console.log(' rand ll', ll);
     return ll;
   }
 
   getAllData = () => {
+    console.log('getAllData');
     ['trips', 'vehicles', 'kitlists'].map((item) => {
       fetch('/api/' + item)
         .then((response) => {
@@ -117,87 +120,42 @@ class App extends React.Component<Props, State> {
             console.log('Looks like there was a problem. Status Code: ' + response.status);
             return;
           }
-          response.json().then((data) => {
-            //console.log('from server', data)
-            this.setState({ [item]: data } as any);
-          });
-        }
-        )
-        .catch(function (err) {
+          return response.json()
+        }).then((data) => {
+            if(item == 'trips'){
+              if(data != undefined){
+                // To support multiple trips, save all trips to state. 
+
+                this.setSelectedTrip(data[0]._id, data[0]);
+              }
+            }else{
+              this.setState({ [item]: data } as any);
+            }
+        }) .catch(function (err) {
           console.log('Fetch Error :-S', err);
         });
     });
+    
   }
 
-  // addKitlist = (kitlist) => {
-  //   this.setState(prevState => ({
-  //     kitlists: [...prevState.kitlists, kitlist]
-  //   }))
-  // }
 
-  // removekitlist = (kitlist) => {
-  //   let kitlists = [...this.state.kitlists]; 
-  //   const index = array.indexOf(kitlist)
-  //   if (index !== -1) {
-  //     array.splice(index, 1);
-  //     this.setState({kitlists: kitlists});
-  //   }
-  // }
-
-  addVehicle = (TVehicle: TVehicle) => {
-    console.log('add TVehicle: ', TVehicle);
-    // save to server here
-
-    this.setState(prevState => ({
-      vehicles: [...prevState.vehicles, TVehicle]
-    }), () => {
-      console.log('vehicles: ', this.state.vehicles);
-    });
-  }
-
-  removeVehicle = (TVehicle: TVehicle) => {
-    // let vehicles = [...this.state.vehicles]; 
-    // const index = TVehicle.index()
-    // if (index !== -1) {
-    //   index.splice(1);
-    //   this.setState({vehicles: vehicles});
-    // }
-  }
 
   setSelectedTrip = (id: string, data: TTrip) => {
-    console.log('setSelectedTrip');
 
-    if (data != null) {
-      // update id row in js.
-      this.setState(prevState => ({
-        trips: [...prevState.trips, data]
-      }))
-    }
-
-    this.state.trips.map((item: TTrip) => {
-      if (item._id == id) {
-
-        if (item.paths == undefined) {
-          item.paths = [];
-        }
-        if (item.sites == undefined) {
-          item.sites = [];
-        }
-
-        this.setState(
-          {
-            name: item.name,
-            id: item._id,
-            //TVehicle: item.TVehicle,
-            paths: item.paths,
-            sites: item.sites,
-            zoom: item.zoom,
-            position: item.position
-          }, () => { // kitlist: item.kitlist
-            console.log("state now: ", this.state);
-          });
-      }
-    })
+    this.setState(
+      {
+        name: data.name,
+        id: data._id,
+        //TVehicle: item.TVehicle,
+        // kitlist: item.kitlist, 
+        paths: data.paths,
+        sites: data.sites,
+        zoom: data.zoom,
+        position: data.position
+      }, () => {
+        console.log("state now: ", this.state);
+      });
+      
   }
 
   setSelectedVehicle = (TVehicle: string) => {
@@ -246,21 +204,24 @@ class App extends React.Component<Props, State> {
 
   saveTrip = () => {
 
-    //console.log('state before save', this.state); 
+    // const [patom, setPath] = useAtom(PathsAtom);
+    // console.log( "paths atom in save", patom)
+    console.log('state before save', this.state); 
     //console.log('saveTrip: ',  this.state.zoom );
+
     if (this.state.user.loggedin != true) {
       const e: ErrorMsg = {
         valid: true,
-        message: 'Warning (Your drawings won\'t be saved unless you login)'
+        message: 'Warning (Your drawings won\'t be saved unless you login, test)'
       }
       this.setState({ error: e });
       return;
     }
-    if (this.state.name !== '') {
+    //if (this.state.name !== '') {
       let body = {
-        _id: null as any,
-        name: this.state.trip,
-        TVehicle: this.state.TVehicle,
+        _id: this.state.id,
+        name: "test", //this.state.trip,
+        vehicle: this.state.TVehicle,
         paths: this.state.paths,
         sites: this.state.sites,
         zoom: this.state.zoom,
@@ -285,19 +246,20 @@ class App extends React.Component<Props, State> {
       }).then((response) => {
         return response.json();
       }).then((data) => {
+        console.log('data', data);
         // If new data
         if (this.state.id == null || this.state.id == '') {
           this.setSelectedTrip(data._id, data);
         }
       });
-    } else {
+    // } else {
 
-      const e: ErrorMsg = {
-        valid: true,
-        message: "Name can't be empty"
-      }
-      this.setState({ error: e });
-    }
+    //   const e: ErrorMsg = {
+    //     valid: true,
+    //     message: "Name can't be empty"
+    //   }
+    //   this.setState({ error: e });
+    // }
   }
 
   setMode = (mode: string) => {
@@ -337,36 +299,8 @@ class App extends React.Component<Props, State> {
 
   }
 
-  // replace Path if first or last coordinates are the same
-  // may miss edge cases. 
-
-  // modifyPath = (newpath) => {
-  //   const {paths} = this.state
-  //   let index = paths.map( (item, i) => {
-
-
-  //     if(item[0][0] == newpath[0][0] && item[0][1] == newpath[0][1] || 
-  //       ( item[ item.length - 1][0] == newpath[ newpath.length -1 ][0] && 
-  //         item[ item.length - 1][1] == newpath[ newpath.length -1 ][1] ) 
-  //       ){
-  //       return i;
-  //     }
-  //     return -1;
-  //   });
-
-  //   if(index != -1 ){
-  //     paths[index] = newpath;
-  //   }
-
-  //   this.setState({paths}, () => {
-  //     console.log('Set pat');
-  //     this.saveTrip();
-  //   });
-
-  // }
-
   addSite = (latlng: LatLng) => {
-    console.log('latlng', latlng)
+    console.log('addsite in main', latlng)
     const { sites } = this.state
 
     const s: TSite = {
@@ -375,8 +309,9 @@ class App extends React.Component<Props, State> {
     }
 
     sites.push(s);
+
     this.setState({ sites }, () => {
-      console.log('app sites')
+      console.log('app sites, post save', sites)
     })
   }
 
@@ -385,11 +320,11 @@ class App extends React.Component<Props, State> {
   }
 
   setUser = (user: TUser) => {
-    console.log('in set user', user);
     this.setState({ user: user });
   }
 
   setPaths = (paths: Array<Path>) => {
+    console.log("setpaths", paths)
     this.setState({ paths: paths });
   }
 
@@ -397,22 +332,30 @@ class App extends React.Component<Props, State> {
     this.setState({ sites: Sites });
   }
 
+
+  addVehicle = (TVehicle: TVehicle) => {
+    console.log('add TVehicle: ', TVehicle);
+    // save to server here
+
+    this.setState(prevState => ({
+      vehicles: [...prevState.vehicles, TVehicle]
+    }), () => {
+      console.log('vehicles: ', this.state.vehicles);
+    });
+  }
+
+  removeVehicle = (TVehicle: TVehicle) => {
+    // let vehicles = [...this.state.vehicles]; 
+    // const index = TVehicle.index()
+    // if (index !== -1) {
+    //   index.splice(1);
+    //   this.setState({vehicles: vehicles});
+    // }
+  }
+
   render() {
-
-
     const controlBubbles =
       <><Bubble className="child">
-        <Trips
-          trips={this.state.trips}
-          id={this.state.id}
-          name={this.state.name}
-          select={this.setSelectedTrip}
-          save={this.saveName}
-          savenew={this.saveNew}
-        />
-        {/* </Bubble>
-      
-    <Bubble className="child" > */}
         <hr />
         <Vehicles
           vehicles={this.state.vehicles as any}

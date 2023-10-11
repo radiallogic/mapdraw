@@ -1,0 +1,16 @@
+# Base Image
+FROM mongo:latest
+
+# Create app directory
+WORKDIR /usr/src/app
+
+# Bundle app source
+COPY . .
+
+
+RUN sysctl -w vm.max_map_count=262144
+
+# # Run the app
+WORKDIR /usr/src/app/scripts
+# CMD ["sh", "./setupDB.sh"]
+

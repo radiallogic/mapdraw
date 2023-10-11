@@ -1,5 +1,5 @@
 import * as React from "react"
-import { MapContainer, TileLayer, useMapEvents, SVGOverlay } from 'react-leaflet'
+import { MapContainer, TileLayer, useMapEvents, SVGOverlay, ZoomControl } from 'react-leaflet'
 import { LatLngExpression, LatLngBounds, latLng, LatLng } from "leaflet";
 
 import Paths from './Paths/Paths';
@@ -80,10 +80,10 @@ export default class MapComplete extends React.Component<Props, State> {
 	}
 
 	componentDidUpdate(prevProps: Props) {
-		//console.log(' prevProps ', this.props.zoom, prevProps.zoom);   
-		// if(this.props.paths !== prevProps.paths){
-		// 	console.log(' Paths changed in MapContainer')
-		// }
+		console.log(' prevProps ', this.props.zoom, prevProps.zoom);   
+		if(this.props.paths !== prevProps.paths){
+			console.log(' Paths changed in MapContainer')
+		}
 		if (this.props.position !== prevProps.position) {
 			this.setState({ position: this.props.position });
 		}
@@ -97,6 +97,7 @@ export default class MapComplete extends React.Component<Props, State> {
 			<MapContainer
 				center={this.props.position}
 				zoom={this.props.zoom}
+				zoomControl={false}
 			>
 
 				<Zoom
@@ -124,6 +125,7 @@ export default class MapComplete extends React.Component<Props, State> {
 					mode={this.props.mode}
 					sites={this.props.sites}
 				/>
+				<ZoomControl position='bottomright' />
 
 				<TileLayer
 					attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'

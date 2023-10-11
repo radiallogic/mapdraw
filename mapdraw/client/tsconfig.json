@@ -8,7 +8,6 @@
     "jsx": "react",
     "allowJs": true,
     "sourceMap": true,
-    "watch": true, 
     "moduleResolution": "node"
   },
   "exclude": [

@@ -6,7 +6,8 @@
   "scripts": {
     "build": "npx tsc --allowJs --skipLibCheck ",
     "start": "nodemon ./build/app.js",
-    "test": "npx jest ./build/tests/ --detectOpenHandles --forceExit"
+    "test": "npx jest ./build/tests/ --detectOpenHandles --forceExit",
+    "dockerstart": "concurrently \"nodemon ./build/app.js\" \"cd ../client && webpack -w \""
   },
   "author": "",
   "license": "",
@@ -28,7 +29,7 @@
     "fbgraph": "^1.4.4",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
-    "mongodb": "^4.1.3",
+    "mongodb": "^4.17.1",
     "mongoose": "^6.0.11",
     "nodemailer": "^6.7.0",
     "passport": "^0.6.0",
@@ -46,6 +47,7 @@
     "@types/passport": "^1.0.7",
     "@typescript-eslint/eslint-plugin": "^5.1.0",
     "@typescript-eslint/parser": "^5.1.0",
+    "concurrently": "^6.4.0",
     "eslint": "^8.0.1",
     "jest": "^28.1.1",
     "nodemon": "^2.0.14",

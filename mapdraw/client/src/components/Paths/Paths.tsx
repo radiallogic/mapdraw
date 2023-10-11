@@ -1,5 +1,9 @@
 import * as React from "react"
 import * as turf from '@turf/turf';
+
+// import {  atom, useAtom } from 'jotai'
+// import { PathsAtom } from "../../globals";
+
 import {LatLngBounds, latLng, LatLng} from 'leaflet';
 import {Polyline, useMapEvents, useMapEvent} from 'react-leaflet';
 import {DrawMouseEvents} from './DrawMouseEvents'
@@ -24,7 +28,6 @@ const EMPTY = [[0, 0],];
 const bounds = new LatLngBounds( latLng(51.3, -0.10), latLng(51.5, -0.06) );
 const blackOptions = { color: 'black' }
 
-
 export default class Paths extends React.Component<Props, State>  {
 	zoom: number;
 	paths: Array<Path>;
@@ -37,6 +40,12 @@ export default class Paths extends React.Component<Props, State>  {
             latLngs : EMPTY
         }
 	};
+
+    componentDidUpdate(prevProps: Props) { 
+		if(this.props.paths !== prevProps.paths){ 
+            this.setState({paths: this.props.paths});
+		}
+	}
 
 	createPolyline = (latLngs: Array<LatLng> ) => {
 
@@ -82,6 +91,9 @@ export default class Paths extends React.Component<Props, State>  {
         }
         paths.push(p);
         this.setState({paths: paths});
+
+        //console.log('setpaths in app.tsx: ', paths);
+        this.props.setPaths(paths);
     }
 
 	drawline = (point: LatLng) => {
@@ -94,7 +106,7 @@ export default class Paths extends React.Component<Props, State>  {
     }
 
     savePolyline = () => {
-        console.log("savePolyline"); 
+        //console.log("savePolyline"); 
         this.createPolyline(this.state.latLngs);
         this.setState({latLngs : EMPTY} );
     }
@@ -104,12 +116,14 @@ export default class Paths extends React.Component<Props, State>  {
         //console.log(paths, path, index);
         paths[index] = path;
         this.setState({paths: paths}); 
+
+        //  for saving on server
+        //console.log('setpaths: ', paths);
+        this.props.setPaths(paths);
     }
 
 	render() {
         let paths = this.state.paths.map( (path: Path, i: number) => {
-            //console.log( JSON.stringify(path) );
-            console.log('paths index: ', i );
             return <ElbowLine positions={path} key={i} index={i} setpaths={this.setpaths} ></ElbowLine>
         })
 

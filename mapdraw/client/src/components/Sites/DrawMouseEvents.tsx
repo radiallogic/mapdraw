@@ -14,9 +14,7 @@ export const DrawMouseEvents = (props: DrawMouseProps): React.ReactElement  => {
             DomEvent.stopPropagation(e);
             e.originalEvent.preventDefault();
 
-
-            
-            console.log('addsite');
+            //console.log('addsite 2');
             props.addSite(e.latlng);
 		}
 	});

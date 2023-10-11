@@ -1,6 +1,12 @@
+
+docker-compose up --build
+docker exec -it node-app bash
+docker exec -it mongodb bash
+
+
 ## Server
 cd server
-nodemon ./build/app.js #run 
+nodemon ./build/app.js #runs atomatically in docker-compose 
 yarn build #build
 
 
