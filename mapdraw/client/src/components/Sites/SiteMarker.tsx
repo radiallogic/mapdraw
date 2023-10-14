@@ -33,10 +33,7 @@ export default class SiteMarker extends React.Component<Props, State>{
     }
 
     componentDidMount = () => {
-        this.setState({site: this.props.site}, () => { 
-
-            console.log("site loaded with position", this.state.site)
-        }); 
+        this.setState({site: this.props.site} );
     }
 
     componentDidUpdate = (prevProps: Props) => {

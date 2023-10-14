@@ -10,7 +10,7 @@ const config = {
   externals: ['tslint'], 
 
   resolve: {
-   extensions: ['.ts', '.tsx', '.js', '.jsx']
+   extensions: ['.ts', '.tsx', '.js', '.jsx', ] //'.css'
   },
 
   devtool: "source-map",
@@ -44,7 +44,8 @@ const config = {
           options: {
             cacheDirectory: true,
             presets: ['@babel/preset-env', '@babel/preset-react' ], // Transpiles JSX and ES6
-            //plugins: ['@babel/plugin-transform-arrow-functions', '@babel/plugin-proposal-class-properties']
+            //plugins: ['@babel/plugin-transform-arrow-functions', '@babel/plugin-proposal-class-properties'] 
+            // plugin-proposal-class-properties is now uninstalled
           }
         }]
       },
@@ -53,7 +54,7 @@ const config = {
         use: [
           'style-loader',
           { loader: 'css-loader', options: { importLoaders: 1 } },
-          'postcss-loader'
+          'postcss-loader',
         ]
       }
   ],

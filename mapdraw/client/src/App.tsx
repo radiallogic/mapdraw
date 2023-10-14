@@ -19,7 +19,6 @@ import { TVehicle, TTrip, TUser } from './components/MapTypes';
 import { Path } from './components/Paths/PathTypes';
 import { ErrorMsg } from "./components/GlobalTypes";
 
-
 type Props = {
 
 }
@@ -84,9 +83,9 @@ class App extends React.Component<Props, State> {
 
   componentDidMount = async () => {
 
-    this.setState({ position: this.getRandomPosition() }, () => {
-      console.log("position: ", this.state.position);
-    });
+    // this.setState({ position: this.getRandomPosition() }, () => {
+    //   console.log("position: ", this.state.position);
+    // });
     this.getAllData();
 
     let u = await isLoggedIn();
@@ -139,6 +138,9 @@ class App extends React.Component<Props, State> {
 
 
   setSelectedTrip = (id: string, data: TTrip) => {
+
+
+    console.log('setSelectedTrip: ', data);
 
     this.setState(
       {
@@ -266,9 +268,13 @@ class App extends React.Component<Props, State> {
   }
 
   setPosition = (position: LatLngExpression) => {
-    this.setState({ position: position }, () => {
-      this.saveTrip();
-    });
+
+    console.log( 'set position', position)
+  
+    this.setState({ position: position },
+      () => {
+        this.saveTrip();
+      });
   }
 
   setBounds = (bounds: LatLngExpression) => {
@@ -279,6 +285,8 @@ class App extends React.Component<Props, State> {
 
   setZoom = (zoom: number) => {
     console.log('app set zoom ', this.state.zoom, zoom);
+
+
     this.setState({ zoom: zoom }, () => {
       this.saveTrip();
       console.log('zoom set')

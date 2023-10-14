@@ -27,7 +27,7 @@ EXPOSE 8080
 
 # Run the app
 WORKDIR /usr/src/app/client
-RUN npm install
+RUN yarn install
 
 #RUN npm link webpack
 

@@ -18,7 +18,6 @@ interface ElbowLineProps {
 const blueOptions = { color: 'blue' }
 
 export const ElbowLine = (props: ElbowLineProps): React.ReactElement  => {
-    console.log("ElbowLineProps", props);
 
     const coords = props.positions.points;
 

@@ -1,9 +1,6 @@
-@import "tailwindcss/base";
-
-@import "tailwindcss/components";
-
-@import "tailwindcss/utilities";
-
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 .btn{
     @apply border-2;
@@ -18,7 +15,6 @@
     @apply p-2;
     @apply m-1;
 }
-
 
 .leaflet-container {
     top: 0px;
@@ -100,6 +96,6 @@
     margin-left: auto;
 }
 
-.ReactModalPortal, .ReactModalPortal > *{
+/* .ReactModalPortal, .ReactModalPortal > *{
     z-index: 900;
-}
+} */
